@@ -48,11 +48,44 @@ namespace Map {
             assert(!graph.are_adjacent(*nodes[1], *nodes[4]));
             assert(!graph.are_adjacent(*nodes[5], *nodes[2]));
 
+            assert(graph.is_connected());
+
+            ////
+            // None connected graph
+            Graph graph2;
+
+            // Insert 6 stub nodes
+            for (int i = 0; i < 6; i++)
+                graph2.insert_node(*new Node());
+
+            nodes = graph2.get_nodes();
+            graph2.insert_edge(*nodes[0], *nodes[1]);
+            graph2.insert_edge(*nodes[0], *nodes[2]);
+
+            assert(!graph2.is_connected());
+
             return true;
         }
 
         bool test_continent_graph() {
+            auto* continent = new Continent("Continent test");
 
+            Country* c1 = new Country("1");
+            Country* c2 = new Country("2");
+            Country* c3 = new Country("3");
+            Country* c4 = new Country("4");
+
+            continent->add_country(*c1);
+            continent->add_country(*c2);
+            continent->add_country(*c3);
+            continent->add_country(*c4);
+
+            continent->insert_edge(*c1, *c2);
+            continent->insert_edge(*c1, *c3);
+            continent->insert_edge(*c1, *c4);
+            continent->insert_edge(*c3, *c4);
+
+            delete continent;
         }
 
         bool test_composed_map() {
@@ -63,15 +96,13 @@ namespace Map {
             cout << "[TEST] -----" << endl;
             cout << "[TEST] - Running Map component tests." << endl;
 
-            bool result = test_simple_graph();
+            test_simple_graph();
+            test_continent_graph();
+            test_composed_map();
 
             cout << "[TEST] - End of Map component testing." << endl;
-            cout << "[TEST] - Result: " << result << endl;
             cout << "[TEST] -----" << endl;
-            return result;
+            return true;
         };
     }
 }
-
-// ======= Helpers for clarity
-

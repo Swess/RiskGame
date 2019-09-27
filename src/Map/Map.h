@@ -15,6 +15,8 @@ namespace Map {
 
         Node();
 
+        ~Node();
+
         int get_deg();
     };
 
@@ -23,6 +25,8 @@ namespace Map {
         Node *b;
 
         Edge(Node *a, Node *b);
+
+        ~Edge();
 
         Node *opposite(const Node &node);
     };
@@ -48,6 +52,8 @@ namespace Map {
     public:
         Graph();
 
+        ~Graph();
+
         void insert_node(Node &new_node);
 
         void remove_node(Node &node);
@@ -59,15 +65,19 @@ namespace Map {
         vector<Edge *> get_edges() const;
 
         vector<Node *> get_nodes() const;
+
+        bool is_connected();
     };
 
     class Continent : public Graph {
         static int id_count;
+    public:
         int *id;
         string *name;
 
-    public:
-        Continent(string *name);
+        Continent(const string &name);
+
+        virtual ~Continent();
 
         void add_country(Country &country);
 

@@ -1,4 +1,7 @@
 #include "Map.h"
+#include <iostream>
+#include <list>
+#include <algorithm>
 
 namespace Map {
     //
@@ -15,6 +18,11 @@ namespace Map {
         return nullptr;
     }
 
+    Edge::~Edge() {
+        a = nullptr;
+        b = nullptr;
+    }
+
     //
     // Node
     //
@@ -23,6 +31,10 @@ namespace Map {
     }
 
     Node::Node() { incidents_edges = new vector<Edge *>; }
+
+    Node::~Node() {
+        delete incidents_edges;
+    }
 
 
     //
@@ -119,9 +131,50 @@ namespace Map {
 //
 //    }
 
-
-
         // nodes->erase(index);
+    }
+
+    Graph::~Graph() {
+        for (auto &node : *nodes)
+            delete node;
+
+        for (auto &edge : *edges)
+            delete edge;
+
+        delete nodes;
+        delete edges;
+    }
+
+    bool Graph::is_connected() {
+        // BFS to check if we are able to visit each nodes
+        int size = nodes->size();
+        if (size < 2) return true;
+
+        Node *current = nodes->front();
+        vector<Node *> *visited = new vector<Node *>;
+
+        list<Node *> queue;
+        visited->insert(visited->begin(), current);
+        queue.push_back(current);
+
+        // Iterate
+        vector<Edge *>::iterator i;
+        while (!queue.empty()) {
+            current = queue.front();
+            queue.pop_front();
+
+            for(i=current->incidents_edges->begin(); i != current->incidents_edges->end(); i++){
+                Node* opposite = (*i)->opposite(*current);
+
+                // If not visited
+                if ( opposite != nullptr && find(visited->begin(), visited->end(), opposite) == visited->end() ){
+                    visited->push_back(opposite);
+                    queue.push_back(opposite);
+                }
+            }
+        }
+
+        return nodes->size() == visited->size();
     }
 
     //
@@ -129,7 +182,8 @@ namespace Map {
     //
     int Continent::id_count = 0;
 
-    Continent::Continent(string *name) : name(name) {
+    Continent::Continent(const string &name) {
+        this->name = new string(name);
         id = new int(++id_count);
     }
 
@@ -144,6 +198,11 @@ namespace Map {
 
     void Continent::remove_country(Country &country) {
         this->remove_node(country);
+    }
+
+    Continent::~Continent() {
+        delete name;
+        delete id;
     }
 
 
