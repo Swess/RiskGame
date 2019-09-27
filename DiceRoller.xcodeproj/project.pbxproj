@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2449C1062335AD95006B55D9 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2449C1052335AD95006B55D9 /* main.cpp */; };
+		2449C1062335AD95006B55D9 /* DiceDriver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2449C1052335AD95006B55D9 /* DiceDriver.cpp */; };
+		2449C10F2335ADFD006B55D9 /* Dice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2449C10D2335ADFD006B55D9 /* Dice.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +25,9 @@
 
 /* Begin PBXFileReference section */
 		2449C1022335AD95006B55D9 /* DiceRoller */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DiceRoller; sourceTree = BUILT_PRODUCTS_DIR; };
-		2449C1052335AD95006B55D9 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		2449C1052335AD95006B55D9 /* DiceDriver.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = DiceDriver.cpp; sourceTree = "<group>"; };
+		2449C10D2335ADFD006B55D9 /* Dice.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Dice.cpp; sourceTree = "<group>"; };
+		2449C10E2335ADFD006B55D9 /* Dice.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Dice.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,7 +60,9 @@
 		2449C1042335AD95006B55D9 /* DiceRoller */ = {
 			isa = PBXGroup;
 			children = (
-				2449C1052335AD95006B55D9 /* main.cpp */,
+				2449C10E2335ADFD006B55D9 /* Dice.hpp */,
+				2449C10D2335ADFD006B55D9 /* Dice.cpp */,
+				2449C1052335AD95006B55D9 /* DiceDriver.cpp */,
 			);
 			path = DiceRoller;
 			sourceTree = "<group>";
@@ -118,7 +123,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2449C1062335AD95006B55D9 /* main.cpp in Sources */,
+				2449C10F2335ADFD006B55D9 /* Dice.cpp in Sources */,
+				2449C1062335AD95006B55D9 /* DiceDriver.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
