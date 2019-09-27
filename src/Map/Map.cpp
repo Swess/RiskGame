@@ -22,6 +22,8 @@ namespace Map {
         return incidents_edges->size();
     }
 
+    Node::Node() { incidents_edges = new vector<Edge *>; }
+
 
     //
     // Country
@@ -60,23 +62,22 @@ namespace Map {
     }
 
     bool Graph::are_adjacent(Node &a, Node &b) {
-        Node testing = a;
-        Node searching = b;
+        Node *testing = &a;
+        Node *searching = &b;
 
         // Iterate only for lowest degree node
         if (b.get_deg() < a.get_deg()) {
-            testing = b;
-            searching = a;
+            testing = &b;
+            searching = &a;
         }
 
         // Check all incidences
-        for (int i = 0; i < testing.get_deg(); i++) {
-            Edge *e = testing.incidents_edges->at(i);
+        for (int i = 0; i < testing->get_deg(); i++) {
+            Edge *e = testing->incidents_edges->at(i);
 
             // Comparing pointers
-            if (e->a == &searching || e->b == &searching) {
+            if (e->opposite(*testing) == searching)
                 return true;
-            }
         }
 
         return false;

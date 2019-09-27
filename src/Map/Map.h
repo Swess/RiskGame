@@ -13,6 +13,8 @@ namespace Map {
     struct Node {
         vector<Edge *> *incidents_edges;
 
+        Node();
+
         int get_deg();
     };
 
