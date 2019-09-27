@@ -5,6 +5,15 @@
 //
 Edge::Edge(Node *a, Node *b) : a(a), b(b) {}
 
+Node *Edge::opposite(const Node &node) {
+    if( &node == a )
+        return b;
+    if( &node == b )
+        return a;
+
+    return nullptr;
+}
+
 //
 // Node
 //
@@ -18,20 +27,23 @@ int Node::get_deg() {
 //
 Country::Country(const string &name) {
     this->name = new string(name);
+    this->nb_armies = new int;
     incidents_edges = new vector<Edge *>;
 }
 
-Country::~Country() {
-    delete this->name;
-    delete this->nb_armies;
+Country::Country(const string &name, const Continent &continent) : Country(name) {
+    this->continent = const_cast<Continent *>(&continent);
+}
 
-    for (int i = 0; i < incidents_edges->size(); ++i) {
-        // Delete each edges
-    }
+Country::~Country() {
+    delete name;
+    delete nb_armies;
+    delete incidents_edges;
 
     // Remove dangling pointers
-    this->name = nullptr;
-    this->nb_armies = nullptr;
+    name = nullptr;
+    nb_armies = nullptr;
+    incidents_edges = nullptr;
 }
 
 
@@ -76,16 +88,38 @@ void Graph::insert_node(Node &new_node) {
 
 Edge *Graph::insert_edge(Node &a, Node &b) {
     Edge *edge_ptr = new Edge(&a, &b);
+
+    // Add to graph list
     edges->push_back(edge_ptr);
+
+    // Add to incidents edge list
+    a.incidents_edges->push_back(edge_ptr);
+    b.incidents_edges->push_back(edge_ptr);
+
     return edge_ptr;
 }
 
-vector<Edge *> Graph::get_edges() {
+vector<Edge *> Graph::get_edges() const {
     return *edges;
 }
 
-vector<Node *> Graph::get_nodes() {
+vector<Node *> Graph::get_nodes() const {
     return *nodes;
+}
+
+void Graph::remove_node(Node &node) {
+    // Remove all edge connected to it
+
+    // Remove from graph's nodes list
+
+//    vector<Node *>::iterator ptr;
+//    for (ptr = nodes->begin(); ptr < nodes->begin(); ptr++){
+//
+//    }
+
+
+
+    // nodes->erase(index);
 }
 
 //
@@ -95,6 +129,19 @@ int Continent::id_count = 0;
 
 Continent::Continent(string *name) : name(name) {
     id = new int(++id_count);
+}
+
+void Continent::add_country(Country &country) {
+    // If already part of a continent
+//    if (country.continent != nullptr)
+//        country.continent->remove_node(country);
+
+    this->insert_node(country);
+    country.continent = this;
+}
+
+void Continent::remove_country(Country &country) {
+    this->remove_node(country);
 }
 
 
@@ -107,4 +154,18 @@ void Map::add_country(const Country *new_country) {
 
 void Map::connect(const Country *a, const Country *b) {
     graph->insert_edge((Node &) *a, (Node &) *b);
+}
+
+void Map::add_continent(const Graph *continent) {
+    vector<Edge *> edges = continent->get_edges();
+
+    for (int i = 0; i < edges.size(); i++) {
+        // Add both Nodes from the edge
+        graph->insert_node(*edges[i]->a);
+        graph->insert_node(*edges[i]->b);
+
+        // Connect them
+        graph->insert_edge(*edges[i]->a, *edges[i]->b);
+    }
+
 }

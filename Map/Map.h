@@ -6,6 +6,7 @@
 using namespace std;
 
 struct Edge;
+class Continent;
 
 struct Node {
     vector<Edge *> *incidents_edges;
@@ -18,16 +19,20 @@ struct Edge {
     Node *b;
 
     Edge(Node *a, Node *b);
+
+    Node* opposite(const Node &node);
 };
 
 class Country : public Node {
 public:
     string *name;
     int *nb_armies;
+    Continent *continent;
     // TODO: Add the owner player of this country
 
-
     Country(const string &name);
+
+    Country(const string &name, const Continent &continent);
 
     virtual ~Country();
 };
@@ -41,13 +46,15 @@ public:
 
     void insert_node(Node &new_node);
 
+    void remove_node(Node &node);
+
     Edge *insert_edge(Node &a, Node &b);
 
     bool are_adjacent(Node &a, Node &b);
 
-    vector<Edge *> get_edges();
+    vector<Edge *> get_edges() const;
 
-    vector<Node *> get_nodes();
+    vector<Node *> get_nodes() const;
 };
 
 class Continent : public Graph {
@@ -57,6 +64,9 @@ class Continent : public Graph {
 
 public:
     Continent(string *name);
+
+    void add_country(Country &country);
+    void remove_country(Country &country);
 };
 
 class Map {

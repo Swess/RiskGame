@@ -1,10 +1,10 @@
 #include <iostream>
+#include "Map.h"
 
 using namespace std;
 
-int main(){
+int run(){
     cout << "Map Unit test" << endl;
-
 
     return 0;
 };
