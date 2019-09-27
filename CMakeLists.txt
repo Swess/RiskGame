@@ -3,4 +3,8 @@ project(Team12_DominationGame)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(Team12_DominationGame Map/MapDriver.cpp Map/Map.cpp)
+# Include all subdirectories CMakeList here
+# They should append compilation to the SRC_FILES list
+include(src/Map/CMakeLists.txt)
+
+add_executable(Team12_DominationGame src/main.cpp ${SRC_FILES})
