@@ -68,28 +68,113 @@ namespace Map {
         }
 
         bool test_continent_graph() {
-            auto* continent = new Continent("Continent test");
+            Continent continent("Continent test");
 
             Country* c1 = new Country("1");
             Country* c2 = new Country("2");
             Country* c3 = new Country("3");
             Country* c4 = new Country("4");
 
-            continent->add_country(*c1);
-            continent->add_country(*c2);
-            continent->add_country(*c3);
-            continent->add_country(*c4);
+            continent.insert_country(*c1);
+            continent.insert_country(*c2);
+            continent.insert_country(*c3);
+            continent.insert_country(*c4);
 
-            continent->insert_edge(*c1, *c2);
-            continent->insert_edge(*c1, *c3);
-            continent->insert_edge(*c1, *c4);
-            continent->insert_edge(*c3, *c4);
+            continent.insert_edge(*c1, *c2);
+            continent.insert_edge(*c1, *c3);
+            continent.insert_edge(*c1, *c4);
+            continent.insert_edge(*c3, *c4);
 
-            delete continent;
+            vector<Node *> nodes = continent.get_nodes();
+            assert(continent.is_connected());
+            assert(continent.are_adjacent(*c1, *c2));
+            assert(continent.are_adjacent(*c1, *c4));
+            assert(continent.are_adjacent(*c3, *c4));
+            assert(!continent.are_adjacent(*c2, *c4));
+
+            return true;
+        }
+
+        bool test_continent_country_exclusivity(){
+            Country* c1 = new Country("1");
+            Country* c2 = new Country("2");
+            Country* c3 = new Country("3");
+            Country* c4 = new Country("4");
+
+            Continent continent1("Empire1");
+            continent1.insert_country(*c1);
+            continent1.insert_country(*c2);
+            continent1.insert_country(*c3);
+            continent1.insert_country(*c4);
+            continent1.insert_edge(*c1, *c3);
+            continent1.insert_edge(*c2, *c3);
+
+            Continent continent2("Empire2");
+            // This should assign the countries to continent2, and remove them from continent1
+            continent2.insert_country(*c3);
+            continent2.insert_country(*c4);
+
+            assert(continent1.get_nodes().size() == 2);
+            assert(continent2.get_nodes().size() == 2);
+
+            // Make sure the edge has also been removed
+            assert(continent1.get_edges().empty());
+            assert(c2->incidents_edges->empty());
+
+            return true;
         }
 
         bool test_composed_map() {
+            Map map;
 
+            Continent continent1("America");
+            Continent continent2("Asia");
+
+            // Insert 5 stub country
+            for (int i = 0; i < 5; i++)
+                continent1.insert_node(*new Country("Stub Name"));
+
+            for (int i = 0; i < 5; i++)
+                continent2.insert_node(*new Country("Stub Name"));
+
+            vector<Node *> c1_nodes = continent1.get_nodes();
+            vector<Node *> c2_nodes = continent2.get_nodes();
+
+            // Insert some stub edges in continents
+            continent1.insert_edge(*c1_nodes[0], *c1_nodes[1]);
+            continent1.insert_edge(*c1_nodes[1], *c1_nodes[2]);
+            continent1.insert_edge(*c1_nodes[2], *c1_nodes[3]);
+            continent1.insert_edge(*c1_nodes[3], *c1_nodes[4]);
+            continent1.insert_edge(*c1_nodes[0], *c1_nodes[3]);
+            continent1.insert_edge(*c1_nodes[2], *c1_nodes[4]);
+
+            continent2.insert_edge(*c2_nodes[0], *c2_nodes[1]);
+            continent2.insert_edge(*c2_nodes[1], *c2_nodes[2]);
+            continent2.insert_edge(*c2_nodes[2], *c2_nodes[3]);
+            continent2.insert_edge(*c2_nodes[3], *c2_nodes[4]);
+            continent2.insert_edge(*c2_nodes[0], *c2_nodes[3]);
+            continent2.insert_edge(*c2_nodes[2], *c2_nodes[4]);
+
+            map.insert_continent(&continent1);
+            map.insert_continent(&continent2);
+
+            // Make stub continent links
+            map.connect_countries((Country &)(*c1_nodes[2]), (Country &)(*c2_nodes[0]));
+            map.connect_countries((Country &)(*c1_nodes[4]), (Country &)(*c2_nodes[4]));
+
+            // Continent are unmodified and self contained
+            // Map is now a super set of nodes/edges from merged continents
+            assert(continent1.get_nodes().size() == 5);
+            assert(continent2.get_nodes().size() == 5);
+            //assert(map.get_nodes().size() == 10);
+            //assert(map.get_edges().size() == continent1.get_edges().size() + continent2.get_edges().size() + 2);
+
+            // Still connected
+            assert(continent1.is_connected());
+            assert(continent2.is_connected());
+            assert(map.is_connected());
+
+            return true;
         }
 
         bool run() {
@@ -98,6 +183,7 @@ namespace Map {
 
             test_simple_graph();
             test_continent_graph();
+            test_continent_country_exclusivity();
             test_composed_map();
 
             cout << "[TEST] - End of Map component testing." << endl;

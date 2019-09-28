@@ -31,6 +31,14 @@ namespace Map {
         Node *opposite(const Node &node);
     };
 
+    class ContinentalEdge : public Edge {
+        Continent *c1, *c2;
+    public:
+        ContinentalEdge(Node *a, Node *b, Continent *c1, Continent *c2);
+
+        Continent *opposite(const Continent &continent);
+    };
+
     class Country : public Node {
     public:
         string *name;
@@ -40,9 +48,9 @@ namespace Map {
 
         Country(const string &name);
 
-        Country(const string &name, const Continent &continent);
-
         virtual ~Country();
+
+        bool in_continent();
     };
 
     class Graph {
@@ -52,13 +60,15 @@ namespace Map {
     public:
         Graph();
 
-        ~Graph();
+        virtual ~Graph();
 
         void insert_node(Node &new_node);
 
-        void remove_node(Node &node);
+        bool remove_node(Node &node);
 
         Edge *insert_edge(Node &a, Node &b);
+
+        bool remove_edge(Edge &edge);
 
         bool are_adjacent(Node &a, Node &b);
 
@@ -66,7 +76,7 @@ namespace Map {
 
         vector<Node *> get_nodes() const;
 
-        bool is_connected();
+        virtual bool is_connected();
     };
 
     class Continent : public Graph {
@@ -79,19 +89,27 @@ namespace Map {
 
         virtual ~Continent();
 
-        void add_country(Country &country);
+        void insert_country(Country &country);
 
         void remove_country(Country &country);
+
+        bool is_connected() override;
     };
 
     class Map {
+        vector<Continent *> *continents;
+        vector<ContinentalEdge *> *edges;
     public:
-        Graph *graph;
+        Map();
 
-        void add_continent(const Graph *continent);
+        ~Map();
 
-        void add_country(const Country *new_country);
+        void insert_continent(Continent *continent);
 
-        void connect(const Country *a, const Country *b);
+        ContinentalEdge *connect_countries(Country &country1, Country &country2);
+
+        vector<Continent *> get_continents();
+
+        bool is_connected();
     };
 }
