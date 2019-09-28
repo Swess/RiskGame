@@ -7,4 +7,10 @@ set(CMAKE_CXX_STANDARD 17)
 # They should append compilation to the SRC_FILES list
 include(src/Map/CMakeLists.txt)
 
-add_executable(Team12_DominationGame src/main.cpp ${SRC_FILES})
+add_executable(Team12_DominationGame main.cpp src/Player/Player.cpp src/Player/Player.h src/Player/player_color.h src/Player/PlayerDriver.cpp src/MapLoader/MapLoader.cpp src/MapLoader/MapLoader.h src/MapLoader/MapLoaderDriver.cpp src/exceptions.h ${SRC_FILES})
+
+add_custom_command(
+        TARGET Team12_DominationGame POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/ressources $<TARGET_FILE_DIR:Team12_DominationGame>/ressources
+)

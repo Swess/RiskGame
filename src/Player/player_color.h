@@ -1,0 +1,14 @@
+//
+// Created by ker10 on 2019-09-26.
+//
+
+#ifndef TEAM12_DOMINATIONGAME_PLAYER_COLOR_H
+#define TEAM12_DOMINATIONGAME_PLAYER_COLOR_H
+
+
+enum player_color {
+    RED, BLUE, GREEN, BLACK, GRAY, WHITE
+};
+
+
+#endif //TEAM12_DOMINATIONGAME_PLAYER_COLOR_H
