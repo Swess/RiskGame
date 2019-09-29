@@ -70,10 +70,6 @@ namespace Map {
         incidents_edges = nullptr;
     }
 
-    bool Country::in_continent() {
-        return this->continent;
-    }
-
 
     //
     // Graph
@@ -212,18 +208,15 @@ namespace Map {
     //
     // Continent
     //
-    int Continent::id_count = 0;
-
     Continent::Continent(const string &name) {
+        incidents_edges = new vector<ContinentalEdge *>;
         this->name = new string(name);
-        id = new int(++id_count);
     }
 
     void Continent::insert_country(Country &country) {
         // If already part of a continent
         if (country.continent)
             country.continent->remove_node(country);
-
 
         this->insert_node(country);
         country.continent = this;
@@ -234,8 +227,8 @@ namespace Map {
     }
 
     Continent::~Continent() {
+        delete incidents_edges;
         delete name;
-        delete id;
     }
 
     bool Continent::is_connected() {
@@ -268,7 +261,7 @@ namespace Map {
             }
         }
 
-        return true;
+        return nodes->size() == visited->size();
     }
 
 
@@ -292,7 +285,7 @@ namespace Map {
         delete edges;
     }
 
-    ContinentalEdge* Map::connect_countries(Country &country1, Country &country2) {
+    ContinentalEdge* Map::connect_continents(Country &country1, Country &country2) {
         if( !country1.continent || !country2.continent ){
             cout << "Could not connect countries since one/both of them is not part of a continent." << endl;
             return nullptr;
@@ -318,21 +311,54 @@ namespace Map {
 
         // Add to incidents edge list
         country1.incidents_edges->push_back(edge_ptr);
+        country1.continent->incidents_edges->push_back(edge_ptr);
         country2.incidents_edges->push_back(edge_ptr);
+        country2.continent->incidents_edges->push_back(edge_ptr);
 
         return edge_ptr;
     }
 
     bool Map::is_connected() {
-        // Check if all continent are connected internally
+        // Check if all continent are connected themselves internally
         for(int i=0; i<continents->size(); i++){
             if (!continents->at(i)->is_connected())
                 return false;
         }
 
-        // Check if continents are interconnected, use ContinentalEdges
-        return true;
-        // return Graph::is_connected();
+        // Check if all continents are interconnected, using ContinentalEdges
+        // BFS to check if we are able to visit each continent
+        int size = continents->size();
+        if (size < 2) return true;
+
+        Continent *current = continents->front();
+        auto *visited = new vector<Continent *>;
+
+        list<Continent *> queue;
+        visited->insert(visited->begin(), current);
+        queue.push_back(current);
+
+        // Iterate
+        vector<ContinentalEdge *>::iterator i;
+        while (!queue.empty()) {
+            current = queue.front();
+            queue.pop_front();
+
+            for (i = current->incidents_edges->begin(); i != current->incidents_edges->end(); i++) {
+                Continent *opposite = (*i)->opposite(*current);
+
+                // If not visited
+                if (opposite && find(visited->begin(), visited->end(), opposite) == visited->end()) {
+                    visited->push_back(opposite);
+                    queue.push_back(opposite);
+                }
+            }
+        }
+
+        return continents->size() == visited->size();
+    }
+
+    vector<Continent *> Map::get_continents() {
+        return *continents;
     }
 
 

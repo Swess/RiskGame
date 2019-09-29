@@ -49,8 +49,6 @@ namespace Map {
         Country(const string &name);
 
         virtual ~Country();
-
-        bool in_continent();
     };
 
     class Graph {
@@ -80,9 +78,12 @@ namespace Map {
     };
 
     class Continent : public Graph {
-        static int id_count;
+    private:
+        // Name hiding specific method. Should be using insert_country instead
+        using Graph::insert_node;
     public:
-        int *id;
+
+        vector<ContinentalEdge *> *incidents_edges;
         string *name;
 
         Continent(const string &name);
@@ -106,7 +107,7 @@ namespace Map {
 
         void insert_continent(Continent *continent);
 
-        ContinentalEdge *connect_countries(Country &country1, Country &country2);
+        ContinentalEdge *connect_continents(Country &country1, Country &country2);
 
         vector<Continent *> get_continents();
 
