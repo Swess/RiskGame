@@ -178,7 +178,7 @@ namespace Map::Driver {
 
         test_simple_graph();
         test_continent_graph();
-        // test_continent_country_exclusivity();
+        test_continent_country_exclusivity();
         test_composed_map();
 
         cout << "[TEST] - End of Map component testing." << endl;

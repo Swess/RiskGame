@@ -97,9 +97,9 @@ namespace Map {
     }
 
     Map::~Map() {
-        for (auto c : *countries){
+        for (auto c : *countries)
             delete c;
-        }
+
         countries->clear();
 
         delete continents;
@@ -108,6 +108,10 @@ namespace Map {
     }
 
     void Map::insert_country(Country &new_node) {
+        // Check if already in (Has an index)
+        if(*new_node.index != -1)
+            return;
+
         *new_node.index = countries->size();
         countries->push_back(&new_node);
 
