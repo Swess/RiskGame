@@ -1,4 +1,5 @@
 #include "Map.h"
+#include <iostream>
 #include <list>
 
 namespace Map {
@@ -7,7 +8,7 @@ namespace Map {
         this->name = new string(name);
         this->index = new int(-1);
         this->continent_index = new int(-1);
-        this->nb_armies = new int;
+        this->nb_armies = new int(0);
     }
 
     Country::~Country() {
@@ -24,10 +25,11 @@ namespace Map {
     }
 
     Continent::Continent(const string &name, Map *map) {
-        this->index = new int(-1);
+        this->index = new int(map->get_continents().size());
         this->size = new int(0);
         this->name = new string(name);
         this->map = map;
+        map->add_continent(this);
     }
 
     Continent::~Continent() {
@@ -44,13 +46,15 @@ namespace Map {
     bool Continent::is_connected() {
         if(*size < 2) return true;
         int current = -1;
-        int visited_count = 0;
+        int visited_count = 1;
 
         // Finding first country in this continent
-        vector<Country> countries = map->get_countries();
+        vector<Country *> countries = map->get_countries();
         for(unsigned i=0; i<countries.size(); i++){
-            if(countries[i].continent_index == index)
-                current = *countries[i].index;
+            if(*countries[i]->continent_index == *index){
+                current = *countries[i]->index;
+                break;
+            }
         }
 
         if(current == -1) return false;     // Should never happen... Something went wrong
@@ -68,7 +72,8 @@ namespace Map {
 
             // Adjacents of current visited node
             for(it = map->edges->at(current).begin(); it!=map->edges->at(current).end(); it++){
-                if(!visited[*it]){
+                // Not visited, and in continent only
+                if(!visited[*it] && *countries[*it]->continent_index == *index){
                     visited[*it] = true;
                     queue.push_back(*it);
                     visited_count++;
@@ -86,12 +91,17 @@ namespace Map {
 
 
     Map::Map() {
-        continents = new vector<Continent>;
-        countries = new vector<Country>;
+        continents = new vector<Continent *>;
+        countries = new vector<Country *>;
         edges = new vector<vector<int>>;
     }
 
     Map::~Map() {
+        for (auto c : *countries){
+            delete c;
+        }
+        countries->clear();
+
         delete continents;
         delete countries;
         delete edges;
@@ -99,7 +109,7 @@ namespace Map {
 
     void Map::insert_country(Country &new_node) {
         *new_node.index = countries->size();
-        countries->push_back(new_node);
+        countries->push_back(&new_node);
 
         // Create edges mem loc
         edges->push_back(*new vector<int>);
@@ -119,11 +129,11 @@ namespace Map {
         return false;
     }
 
-    vector<Country> Map::get_countries() const {
+    vector<Country *> Map::get_countries() const {
         return *countries;
     }
 
-    vector<Continent> Map::get_continents() const {
+    vector<Continent *> Map::get_continents() const {
         return *continents;
     }
 
@@ -134,10 +144,10 @@ namespace Map {
 
     void Map::connect(Continent &cont, Country &country) {
         if (*country.continent_index != -1)
-            continents->at(*country.continent_index).size--;
+            (*continents->at(*country.continent_index)->size)--;
 
-        country.continent_index = cont.index;
-        cont.size++;
+        *country.continent_index = *cont.index;
+        (*cont.size)++;
     }
 
     void Map::biconnect(const Country &a, const Country &b) {
@@ -176,6 +186,10 @@ namespace Map {
         }
 
         return true;
+    }
+
+    void Map::add_continent(Continent *continent) {
+        continents->push_back(continent);
     }
 
 

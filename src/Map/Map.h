@@ -41,14 +41,16 @@ namespace Map {
     };
 
     class Map {
-        vector<Continent> *continents;
-        vector<Country> *countries;
+        vector<Continent *> *continents;
+        vector<Country *> *countries;
     public:
         vector<vector<int>> *edges;
 
         Map();
 
         ~Map();
+
+        void add_continent(Continent *continent);
 
         void insert_country(Country &new_node);
 
@@ -62,9 +64,9 @@ namespace Map {
 
         bool are_adjacent(int &a, int &b);
 
-        vector<Country> get_countries() const;
+        vector<Country *> get_countries() const;
 
-        vector<Continent> get_continents() const;
+        vector<Continent *> get_continents() const;
 
         bool is_connected();
     };
