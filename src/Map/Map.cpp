@@ -23,11 +23,11 @@ namespace Map {
         nb_armies = nullptr;
     }
 
-    Continent::Continent(const string &name) {
+    Continent::Continent(const string &name, Map *map) {
         this->index = new int(-1);
         this->size = new int(0);
         this->name = new string(name);
-        this->map = nullptr;
+        this->map = map;
     }
 
     Continent::~Continent() {
@@ -80,6 +80,10 @@ namespace Map {
         return visited_count == *size;
     }
 
+    int Continent::get_size() {
+        return *size;
+    }
+
 
     Map::Map() {
         continents = new vector<Continent>;
@@ -99,11 +103,6 @@ namespace Map {
 
         // Create edges mem loc
         edges->push_back(*new vector<int>);
-    }
-
-    void Map::connect(const Country &a, const Country &b) {
-        // Define direction, a to b
-        edges->at(*a.index).push_back(*b.index);
     }
 
     bool Map::are_adjacent(const Country &a, const Country &b) {
@@ -128,12 +127,22 @@ namespace Map {
         return *continents;
     }
 
+    void Map::connect(const Country &a, const Country &b) {
+        // Define direction, a to b
+        edges->at(*a.index).push_back(*b.index);
+    }
+
     void Map::connect(Continent &cont, Country &country) {
         if (*country.continent_index != -1)
             continents->at(*country.continent_index).size--;
 
         country.continent_index = cont.index;
         cont.size++;
+    }
+
+    void Map::biconnect(const Country &a, const Country &b) {
+        connect(a, b);
+        connect(b, a);
     }
 
     bool Map::is_connected() {

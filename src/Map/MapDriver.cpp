@@ -6,119 +6,118 @@ using namespace std;
 
 namespace Map::Driver {
     bool test_simple_graph() {
-        Graph graph;
+        Map map;
 
         // Insert 6 stub nodes
         for (int i = 0; i < 6; i++)
-            graph.insert_node(*new Node());
+            map.insert_country(*new Country("Stub name"));
 
-        vector<Node *> nodes = graph.get_nodes();
+        vector<Country> countries = map.get_countries();
 
         // Link them a specific manner
-        graph.insert_edge(*nodes[0], *nodes[1]);
-        graph.insert_edge(*nodes[0], *nodes[2]);
-        graph.insert_edge(*nodes[1], *nodes[2]);
+        map.biconnect(countries[0], countries[1]);
+        map.biconnect(countries[0], countries[2]);
+        map.biconnect(countries[1], countries[2]);
 
-        graph.insert_edge(*nodes[2], *nodes[3]);
-        graph.insert_edge(*nodes[3], *nodes[4]);
-        graph.insert_edge(*nodes[4], *nodes[5]);
-        graph.insert_edge(*nodes[3], *nodes[5]);
-
-        vector<Edge *> edges = graph.get_edges();
+        map.biconnect(countries[2], countries[3]);
+        map.biconnect(countries[3], countries[4]);
+        map.biconnect(countries[4], countries[5]);
+        map.biconnect(countries[3], countries[5]);
 
         // Validate state
-        assert(nodes.size() == 6);
-        assert(edges.size() == 7);
+        assert(map.get_countries().size() == 6);
 
-        assert(edges[0]->opposite(*nodes[0]) == (nodes[1]));
-        assert(edges[0]->opposite(*nodes[1]) == (nodes[0]));
-
-        assert(graph.are_adjacent(*nodes[0], *nodes[1]));
-        assert(graph.are_adjacent(*nodes[0], *nodes[2]));
-        assert(graph.are_adjacent(*nodes[1], *nodes[2]));
-        assert(graph.are_adjacent(*nodes[2], *nodes[3]));
-        assert(graph.are_adjacent(*nodes[3], *nodes[4]));
-        assert(graph.are_adjacent(*nodes[4], *nodes[5]));
-        assert(graph.are_adjacent(*nodes[3], *nodes[5]));
+        assert(map.are_adjacent(countries[0], countries[1]));
+        assert(map.are_adjacent(countries[0], countries[2]));
+        assert(map.are_adjacent(countries[1], countries[2]));
+        assert(map.are_adjacent(countries[2], countries[3]));
+        assert(map.are_adjacent(countries[3], countries[4]));
+        assert(map.are_adjacent(countries[4], countries[5]));
+        assert(map.are_adjacent(countries[3], countries[5]));
 
         // Test some cases that should not be true
-        assert(!graph.are_adjacent(*nodes[0], *nodes[5]));
-        assert(!graph.are_adjacent(*nodes[0], *nodes[3]));
-        assert(!graph.are_adjacent(*nodes[1], *nodes[4]));
-        assert(!graph.are_adjacent(*nodes[5], *nodes[2]));
+        assert(!map.are_adjacent(countries[0], countries[5]));
+        assert(!map.are_adjacent(countries[0], countries[3]));
+        assert(!map.are_adjacent(countries[1], countries[4]));
+        assert(!map.are_adjacent(countries[5], countries[2]));
 
-        assert(graph.is_connected());
+        assert(map.is_connected());
 
         ////
         // None connected graph
-        Graph graph2;
+        Map map2;
 
         // Insert 6 stub nodes
         for (int i = 0; i < 6; i++)
-            graph2.insert_node(*new Node());
+            map2.insert_country(*new Country("Stub"));
 
-        nodes = graph2.get_nodes();
-        graph2.insert_edge(*nodes[0], *nodes[1]);
-        graph2.insert_edge(*nodes[0], *nodes[2]);
+        countries = map2.get_countries();
+        map2.biconnect(countries[0], countries[1]);
+        map2.biconnect(countries[0], countries[2]);
 
-        assert(!graph2.is_connected());
+        assert(!map2.is_connected());
 
         return true;
     }
 
     bool test_continent_graph() {
-        Continent continent("Continent test");
+        Map map;
+        Continent continent("Continent test", &map);
 
         Country *c1 = new Country("1");
         Country *c2 = new Country("2");
         Country *c3 = new Country("3");
         Country *c4 = new Country("4");
+        Country *c5 = new Country("5");
 
+        // Adding to continent adds to the map also, but already connected
         continent.insert_country(*c1);
         continent.insert_country(*c2);
         continent.insert_country(*c3);
         continent.insert_country(*c4);
 
-        continent.insert_edge(*c1, *c2);
-        continent.insert_edge(*c1, *c3);
-        continent.insert_edge(*c1, *c4);
-        continent.insert_edge(*c3, *c4);
 
-        vector<Node *> nodes = continent.get_nodes();
+        map.biconnect(*c1, *c2);
+        map.biconnect(*c1, *c3);
+        map.biconnect(*c1, *c4);
+        map.biconnect(*c3, *c4);
+
+        // Add one extra random country
+        map.insert_country(*c5);
+
         assert(continent.is_connected());
-        assert(continent.are_adjacent(*c1, *c2));
-        assert(continent.are_adjacent(*c1, *c4));
-        assert(continent.are_adjacent(*c3, *c4));
-        assert(!continent.are_adjacent(*c2, *c4));
+        assert(!map.is_connected());
+        assert(map.are_adjacent(*c1, *c2));
+        assert(map.are_adjacent(*c1, *c4));
+        assert(map.are_adjacent(*c3, *c4));
+        assert(!map.are_adjacent(*c2, *c4));
 
         return true;
     }
 
     bool test_continent_country_exclusivity() {
+        Map map;
+
         Country *c1 = new Country("1");
         Country *c2 = new Country("2");
         Country *c3 = new Country("3");
         Country *c4 = new Country("4");
 
-        Continent continent1("Empire1");
+        Continent continent1("Empire1", &map);
         continent1.insert_country(*c1);
         continent1.insert_country(*c2);
         continent1.insert_country(*c3);
         continent1.insert_country(*c4);
-        continent1.insert_edge(*c1, *c3);
-        continent1.insert_edge(*c2, *c3);
+        map.biconnect(*c1, *c3);
+        map.biconnect(*c2, *c3);
 
-        Continent continent2("Empire2");
+        Continent continent2("Empire2", &map);
         // This should assign the countries to continent2, and remove them from continent1
         continent2.insert_country(*c3);
         continent2.insert_country(*c4);
 
-        assert(continent1.get_nodes().size() == 2);
-        assert(continent2.get_nodes().size() == 2);
-
-        // Make sure the edge has also been removed
-        assert(continent1.get_edges().empty());
-        assert(c2->incidents_edges->empty());
+        assert(continent1.get_size() == 2);
+        assert(continent2.get_size() == 2);
 
         return true;
     }
@@ -126,8 +125,8 @@ namespace Map::Driver {
     bool test_composed_map() {
         Map map;
 
-        Continent continent1("America");
-        Continent continent2("Asia");
+        Continent continent1("America", &map);
+        Continent continent2("Asia", &map);
 
         // Insert 5 stub country
         for (int i = 0; i < 5; i++)
@@ -136,35 +135,32 @@ namespace Map::Driver {
         for (int i = 0; i < 5; i++)
             continent2.insert_country(*new Country("Stub Name"));
 
-        vector<Node *> c1_nodes = continent1.get_nodes();
-        vector<Node *> c2_nodes = continent2.get_nodes();
+        vector<Country> countries = map.get_countries();
 
         // Insert some stub edges in continents
-        continent1.insert_edge(*c1_nodes[0], *c1_nodes[1]);
-        continent1.insert_edge(*c1_nodes[1], *c1_nodes[2]);
-        continent1.insert_edge(*c1_nodes[2], *c1_nodes[3]);
-        continent1.insert_edge(*c1_nodes[3], *c1_nodes[4]);
-        continent1.insert_edge(*c1_nodes[0], *c1_nodes[3]);
-        continent1.insert_edge(*c1_nodes[2], *c1_nodes[4]);
+        // Continent1 links
+        map.biconnect(countries[0], countries[1]);
+        map.biconnect(countries[1], countries[2]);
+        map.biconnect(countries[2], countries[3]);
+        map.biconnect(countries[3], countries[4]);
+        map.biconnect(countries[0], countries[3]);
+        map.biconnect(countries[2], countries[4]);
 
-        continent2.insert_edge(*c2_nodes[0], *c2_nodes[1]);
-        continent2.insert_edge(*c2_nodes[1], *c2_nodes[2]);
-        continent2.insert_edge(*c2_nodes[2], *c2_nodes[3]);
-        continent2.insert_edge(*c2_nodes[3], *c2_nodes[4]);
-        continent2.insert_edge(*c2_nodes[0], *c2_nodes[3]);
-        continent2.insert_edge(*c2_nodes[2], *c2_nodes[4]);
-
-        map.insert_continent(&continent1);
-        map.insert_continent(&continent2);
+        // Continent2 links
+        int c1_size = continent1.get_size();
+        map.biconnect(countries[c1_size+0], countries[c1_size+1]);
+        map.biconnect(countries[c1_size+1], countries[c1_size+2]);
+        map.biconnect(countries[c1_size+2], countries[c1_size+3]);
+        map.biconnect(countries[c1_size+3], countries[c1_size+4]);
+        map.biconnect(countries[c1_size+0], countries[c1_size+3]);
+        map.biconnect(countries[c1_size+2], countries[c1_size+4]);
 
         // Make stub continent links
-        map.connect_continents((Country &) (*c1_nodes[2]), (Country &) (*c2_nodes[0]));
-        map.connect_continents((Country &) (*c1_nodes[4]), (Country &) (*c2_nodes[4]));
+        map.biconnect(countries[2], countries[c1_size+0]);
+        map.biconnect(countries[4], countries[c1_size+4]);
 
-        // Continent are unmodified and self contained
-        // Map is now a super set of continent and edge connecting country of different continent
-        assert(continent1.get_nodes().size() == 5);
-        assert(continent2.get_nodes().size() == 5);
+        assert(continent1.get_size() == 5);
+        assert(continent2.get_size() == 5);
         assert(map.get_continents().size() == 2);
 
         // Still connected

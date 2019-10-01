@@ -24,16 +24,18 @@ namespace Map {
 
     class Continent {
     public:
-        int *index;
         int *size;
+        int *index;
         string *name;
         Map *map;
 
-        Continent(const string &name);
+        Continent(const string &name, Map *map);
 
         ~Continent();
 
         void insert_country(Country &country);
+
+        int get_size();
 
         bool is_connected();
     };
@@ -50,7 +52,9 @@ namespace Map {
 
         void insert_country(Country &new_node);
 
-        void connect(const Country &a, const Country &b);
+        void connect(const Country &from, const Country &to);
+
+        void biconnect(const Country &a, const Country &b);
 
         void connect(Continent &cont, Country &country);
 
