@@ -7,8 +7,51 @@
 #ifndef TEAM12_DOMINATIONGAME_MAPLOADER_H
 #define TEAM12_DOMINATIONGAME_MAPLOADER_H
 #include <string>
+#include <vector>
 
 using namespace std;
+
+class MapLoader;
+/*
+ * Struct to save the data in the first pass
+ * */
+struct _continent {
+    string * name;
+    int * bonus;
+    string * color;
+    string toString() {
+        return "Name: " + (*name)
+        + ", bonus: "+ to_string(*bonus)
+        + ", color: " + (*color);
+    };
+};
+
+struct _country {
+    int * index;
+    string * name;
+    int * continentIndex;
+    int * x;
+    int * y;
+    string toString() {
+        return "index: " + to_string(*index)
+        + ", name:" + (*name)
+        + ", continentIndex: " + to_string(*continentIndex)
+        + ", x: " + to_string(*x)
+        + ", y: " + to_string(*y);
+     }
+};
+
+struct _border {
+    int * countryIndex;
+    vector<int> * values;
+    string toString() {
+        string temp;
+        for (int value : *values) {
+            temp += ( to_string(value) + ", " );
+        }
+        return "countryIndex: " + to_string(*countryIndex) + ", " +  temp;
+    }
+};
 
 /*
  * Helping class Sections
@@ -18,7 +61,7 @@ using namespace std;
 class Sections {
 public:
     enum Value {
-        continents,
+        continent,
         countries,
         borders,
     };
@@ -27,7 +70,7 @@ public:
     Sections(Value s);
 
     explicit operator bool() = delete;
-    void strategy(const string &line);
+    void strategy(const string &line, MapLoader &mapLoader);
     string toString();
     static Sections::Value getSectionFromString(const string& s);
     static bool isStringAValidSection(const string& s);
@@ -39,14 +82,22 @@ private:
 class MapLoader {
 private:
     ifstream *input_stream;
-    void closeFile();
+    MapLoader closeFile();
     Sections * section = nullptr ;
+    vector<_continent> * continents_temp;
+    vector<_country> * countries_temp;
+    vector<_border> * borders_temp;
     MapLoader openFile(const string& path);
     MapLoader readFile();
 public:
     MapLoader();
+
+    void addContinentToMemory(const _continent &continent);
+    void addCountryToMemory(const _country &country);
+    void addBorderToMemory(const _border &border);
+
     void load(const string& path);
-    void run();
+    void build();
 
 };
 
