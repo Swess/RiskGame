@@ -11,6 +11,8 @@ namespace Map {
 
     class Country {
     public:
+        Country(const string &name, const int &index);
+
         int *index;
         string *name;
         int *continent_index;
@@ -27,9 +29,12 @@ namespace Map {
         int *size;
         int *index;
         string *name;
+        int *bonus;
+        string *color;
         Map *map;
 
         Continent(const string &name, Map *map);
+        Continent(const string &name, const int &bonus, const string &color, Map *map);
 
         ~Continent();
 

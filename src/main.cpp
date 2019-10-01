@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Map/MapDriver.h"
 //#include "PlayerDriver.cpp"
-#include "src/MapLoader/MapLoaderDriver.cpp"
+#include "MapLoader/MapLoaderDriver.h"
 
 using namespace std;
 
@@ -9,7 +9,7 @@ using namespace std;
 int main() {
     cout << "Domination Game - Team 12 - COMP 345" << endl;
 
-    MapLoaderDriver::run();
+    MapLoader::Driver::run();
 //    PlayerDriver.run();
 //    cout << "Domination Game - Team 12 - COMP 345" << endl;
 
