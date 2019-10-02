@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 include(src/Map/CMakeLists.txt)
 include(src/MapLoader/CMakeLists.txt)
 
-add_executable(Team12_DominationGame src/main.cpp src/Player/Player.cpp src/Player/Player.h src/Player/player_color.h src/Player/PlayerDriver.cpp src/exceptions.h ${SRC_FILES})
+add_executable(Team12_DominationGame src/main.cpp src/exceptions.h ${SRC_FILES})
 
 add_custom_command(
         TARGET Team12_DominationGame POST_BUILD

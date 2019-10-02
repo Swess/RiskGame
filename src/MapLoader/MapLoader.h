@@ -3,7 +3,7 @@
 // Singleton
 // Created by ker10 on 2019-09-27.
 //
-
+#pragma once
 #include <string>
 #include <vector>
 #include "../Map/Map.h"
@@ -20,12 +20,6 @@ namespace MapLoader {
         string *name;
         int *bonus;
         string *color;
-
-        string toString() {
-            return "Name: " + (*name)
-                   + ", bonus: " + to_string(*bonus)
-                   + ", color: " + (*color);
-        };
     };
 
     struct _country {
@@ -34,27 +28,11 @@ namespace MapLoader {
         int *continentIndex;
         int *x;
         int *y;
-
-        string toString() {
-            return "index: " + to_string(*index)
-                   + ", name:" + (*name)
-                   + ", continentIndex: " + to_string(*continentIndex)
-                   + ", x: " + to_string(*x)
-                   + ", y: " + to_string(*y);
-        }
     };
 
     struct _border {
         int *countryIndex;
         vector<int> *values;
-
-        string toString() {
-            string temp;
-            for (int value : *values) {
-                temp += (to_string(value) + ", ");
-            }
-            return "countryIndex: " + to_string(*countryIndex) + ", " + temp;
-        }
     };
 
 /*
@@ -91,28 +69,27 @@ namespace MapLoader {
     private:
         ifstream *input_stream;
 
-        MapLoader closeFile();
-
         Sections *section = nullptr;
         vector<_continent> *continents_temp;
         vector<_country> *countries_temp;
         vector<_border> *borders_temp;
 
-        MapLoader openFile(const string &path);
-
-        MapLoader readFile();
+        MapLoader * openFile(const string &path);
+        MapLoader * readFile();
+        MapLoader * closeFile();
 
         Map::Map *map;
+
     public:
         MapLoader();
-
+        virtual ~MapLoader();
         void addContinentToMemory(const _continent &continent);
 
         void addCountryToMemory(const _country &country);
 
         void addBorderToMemory(const _border &border);
 
-        MapLoader load(const string &path);
+        MapLoader * load(const string &path);
 
         Map::Map * build();
 

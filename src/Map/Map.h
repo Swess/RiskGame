@@ -11,15 +11,13 @@ namespace Map {
 
     class Country {
     public:
-        Country(const string &name, const int &index);
+        Country(const string &name);
 
         int *index;
         string *name;
         int *continent_index;
         int *nb_armies;
         // TODO: Add the owner player of this country
-
-        Country(const string &name);
 
         ~Country();
     };
