@@ -1,0 +1,19 @@
+; THIS MAP IS FOR TESTING PURPOSE
+; DON'T USE IN PRODUCTION
+
+name World Map
+
+[files]
+pic world_pic.jpg
+map world_map.gif
+crd risk.cards
+prv world.jpg
+
+[continents]
+North-America yellow
+South-America 2 red
+Europe 5 blue
+Africa 3 orange
+Asia 7 green
+Australia 2 magenta
+
