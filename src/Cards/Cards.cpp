@@ -86,6 +86,7 @@ Deck::Deck(string *countries, int size) {
         // During that call it creates a copy, but only of the ptr (country / type), but the other one destroys them
         // This leads to an vector of Cards that points to undefined mem values...
         // The reason why it crashes later...
+        // PS: This means you need a copy constructor to copy the values also
 
         cards->push_back(Card(countries[i], Card::Type(starting + (i %3))));
 
