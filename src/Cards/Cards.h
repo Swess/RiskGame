@@ -7,14 +7,18 @@
 
 #pragma once
 #include <string>
+#include <vector>
 
 using namespace std;
 
 class Card {
 public:
-    enum Type {infantry = 0, artillery = 1, cavalry = 2};
+    enum Type {INFANTRY = 0, ARTILLERY = 1, CAVALRY = 2};
     Card();
-    Card(string*, Type*);
+    Card(string country, Type type);
+//    ~Card();
+    string getCountry();
+    Card::Type getType();
 
 private:
     string *country;
@@ -24,25 +28,30 @@ private:
 
 class Deck {
 public:
-    Deck(string countries[], int *size);
-    Card* draw();
+    Deck();
+    Deck(string countries[], int size);
+    explicit Deck(vector<Card> &cards);
+    ~Deck();
+    void shuffleDeck();
+    Card draw();
 
 private:
-    int *size;
-    Card *cards; // Array of cards
-    int *currentCardIndex;
-    void shuffleDeck();
-
-    void createCards(string *countries);
+    vector<Card> *cards;
+    void createCards(string &countries, int &size);
 };
 
 class Hand {
 public:
     Hand();
-    Card::Type *exchange();
+    ~Hand();
+    void insertCard(Card card);
+    int exchange();
+    int exchange(int cardIndices[]);
 
 private:
-    Card* cards;
+    vector<Card> *cards;
+    static bool sameCardCheck(const int handIndices[]);
+    bool cardsValidForExchange(const int handIndices[]);
 };
 
 
