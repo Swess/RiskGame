@@ -9,28 +9,31 @@
 
 using namespace std;
 
-extern int *totalSetsTraded = new int(0);
+namespace Cards {
+int *totalSetsTraded = new int(0);
 
-Card::Card() {
-
-}
+// Since we have pointers, you HAVE to init some things here...
+// Otherwise getCountry with give an error for example..
+// But this is not ideal... as it makes no sense to let anybody create a card without any param.
+// because you don't have any setters later...
+// The default constructor is used when calling : Card myCardName; ..
+// but this makes the country & type ptr as nullptr, make sure that its what you want
 
 Card::Card(string country, Card::Type type) {
     this->country = new string(std::move(country));
     this->type = new Card::Type(type);
 }
 
-//Card::~Card() {
-//    cout << "calling destructor";
-//    delete country;
-//    delete type;
-//
-//    country = nullptr;
-//    type = nullptr;
-//}
+Card::~Card() {
+    // This destructor is doing the right thing !
+    delete country;
+    delete type;
+
+    country = nullptr;
+    type = nullptr;
+}
 
 string Card::getCountry() {
-    cout << *country;
     return *country;
 }
 
@@ -55,7 +58,6 @@ Deck::~Deck() {
 
 
 Card Deck::draw() {
-
     Card card = Card(cards->back().getCountry(), cards->back().getType());
     cards->pop_back();
     return card;
@@ -75,7 +77,18 @@ Deck::Deck(string *countries, int size) {
     Card::Type type;
     int starting = rand() % 3;
     for (int i = 0; i < size; i++) {
-        cards->insert(cards->end(), Card(countries[i], Card::Type(starting + (i %3))));
+        // Replaced with push_back...
+
+        // This line is problematic because you create a Card on the stack
+        // but it will get deleted the moment it leave the scope.. meaning, the moment the line
+        // finishes, the card is actually destroyed...
+        // When it gets destroyed, it destroys the values it points to (in the destructor)
+        // During that call it creates a copy, but only of the ptr (country / type), but the other one destroys them
+        // This leads to an vector of Cards that points to undefined mem values...
+        // The reason why it crashes later...
+
+        cards->push_back(Card(countries[i], Card::Type(starting + (i %3))));
+
     }
 }
 
@@ -158,6 +171,4 @@ bool Hand::cardsValidForExchange(const int *handIndices){
     }
     return (!sameCardCheck(handIndices) & (count == 1 || count == 3));
 }
-
-
-
+}   // namespace

@@ -2,21 +2,21 @@
 // Created by Noah on 2019-09-26.
 //
 
-#ifndef TEAM12_DOMINATIONGAME_CARDS_H
-#define TEAM12_DOMINATIONGAME_CARDS_H
-
 #pragma once
 #include <string>
 #include <vector>
 
 using namespace std;
 
+namespace Cards {
+extern int *totalSetsTraded;
+
 class Card {
 public:
     enum Type {INFANTRY = 0, ARTILLERY = 1, CAVALRY = 2};
-    Card();
+
     Card(string country, Type type);
-//    ~Card();
+    ~Card();
     string getCountry();
     Card::Type getType();
 
@@ -35,8 +35,8 @@ public:
     void shuffleDeck();
     Card draw();
 
-private:
     vector<Card> *cards;
+private:
     void createCards(string &countries, int &size);
 };
 
@@ -54,6 +54,4 @@ private:
     bool cardsValidForExchange(const int handIndices[]);
 };
 
-
-
-#endif //TEAM12_DOMINATIONGAME_CARDS_H
+}// namespace

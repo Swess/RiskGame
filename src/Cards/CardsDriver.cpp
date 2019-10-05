@@ -7,26 +7,42 @@
 #include <iostream>
 #include "Cards.h"
 
-namespace Cards{
+namespace Cards {
     namespace Driver {
 
         bool testDeck() {
-            Deck deck1, deck2, deck3;
+            // The Decks were created whit the default constructor here and assigned a new one later.
+
             vector<Card> cardsBefore, cardsAfter1, cardsAfter2, cardsAfter3;
             Card::Type type;
             string countries[42];
-            Card card;
+
+
+            // Not using default constructor since it was empty
+
+
             for (int i = 0; i < 42; i++) {
                 countries[i] = "Stub name" + to_string(i);
             }
-            deck1 = Deck(countries, 42);
+
+            // Now calling the correct constructor right away.
+            Deck deck1(countries, 42);
 
             // confirm equal amount of types in deck
-
             int typeCounter[] = {0, 0, 0};
             for (int i = 0; i < 42; i++) {
-                card = Card(deck1.draw());
-                cout << card.getType();
+                // Card card(deck1.draw());
+                // cout << card.getType() << endl;
+
+
+                // I made "cards" public for testing and explanation purposes (put it back to private after)
+                // But.. Here I get int values that are randomly not 0,1 or 2 (Card types)
+                // And get_country does a seg. fault.
+                // This means that your pointers are not pointing at the correct location
+                // (See Deck Constructor for explanation)
+                cout << deck1.cards->at(i).getType() << endl;
+
+
 //                typeCounter[card.getType()]++;
             }
 
@@ -47,7 +63,7 @@ namespace Cards{
 
 
             // Assert deck is shuffled randomly, and all three decks are not the same order.
-
+            return true;    // Func needed to return
         }
 
 
@@ -72,6 +88,7 @@ namespace Cards{
             assert(hand.exchange(exchangeIndices) == 25);   // exchange 8
             assert(hand.exchange(exchangeIndices) == 30);   // exchange 9
 
+            return true; // Func needed to return
         }
 
         bool run() {
