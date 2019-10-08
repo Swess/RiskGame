@@ -28,6 +28,18 @@ namespace Map {
         this->index = new int(map->get_continents().size());
         this->size = new int(0);
         this->name = new string(name);
+        this->bonus = nullptr;
+        this->color = nullptr;
+        this->map = map;
+        map->add_continent(this);
+    }
+
+    Continent:: Continent(const string &name, const int &bonus, const string &color, Map *map) {
+        this->index = new int(map->get_continents().size());
+        this->size = new int(0);
+        this->name = new string(name);
+        this->bonus = new int(bonus);
+        this->color = new string(color);
         this->map = map;
         map->add_continent(this);
     }

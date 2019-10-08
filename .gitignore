@@ -10,6 +10,8 @@ out/
 # CMake
 cmake-build-debug/
 cmake-build-release/
+cmake-build-debug-visual-studio/
+cmake-build-debug-mingw/
 
-
+# macOS
 .DS_Store

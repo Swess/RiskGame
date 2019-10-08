@@ -4,7 +4,8 @@
 
 using namespace std;
 
-namespace Map::Driver {
+namespace Map {
+    namespace Driver {
     bool test_simple_graph() {
         Map map;
 
@@ -185,4 +186,4 @@ namespace Map::Driver {
         cout << "[TEST] -----" << endl;
         return true;
     };
-}
+} }
