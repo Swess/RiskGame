@@ -3,7 +3,6 @@
 //  DiceRoller
 //
 //  Created by Francesco Benzi on 2019-09-20.
-//  Copyright © 2019 Francesco Benzi. All rights reserved.
 //
 
 #include <iostream>
@@ -57,10 +56,10 @@ namespace DiceDriver {
 
         cout << "\nWelcome to DICE tester" << endl;
 
-        //This do-while cycle tests the requested amount of iterations of the diceRoller function
+        //This do-while cycle tests the requested amount of iterations of the roll() function
         do {
 
-            rollSorter_1 = object_1.diceRoller(number_of_dice_rolled);    //creates a rollsorter vector with the Dice value provided
+            rollSorter_1 = object_1.roll(number_of_dice_rolled);    //creates a rollsorter vector with the Dice value provided
             cout << "\nrollSorter values: ";
             printRollSorter(rollSorter_1);                                   //prints the values generated in rollSorter_1
             cout << "\nRolling percentages: " << endl;

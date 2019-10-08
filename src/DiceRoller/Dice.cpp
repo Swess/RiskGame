@@ -3,7 +3,6 @@
 //  DiceRoller
 //
 //  Created by Francesco Benzi on 2019-09-20.
-//  Copyright © 2019 Francesco Benzi. All rights reserved.
 //
 
 #include "Dice.hpp"
@@ -13,13 +12,22 @@
 using namespace std;
 
 Dice::Dice(){
-    
-    totalRolls = 0;
-    double rollPercentageArray[6];
+
+    this->totalRolls = new int(0);
+    this->rollPercentageArray = new double[6];
     initRollPercentArray();
 }
 
-vector<int> Dice::diceRoller(int diceNumber){
+Dice::~Dice(){
+    delete totalRolls;
+    delete rollPercentageArray;
+
+    //Removing dangling pointers
+    totalRolls = nullptr;
+    rollPercentageArray = nullptr;
+}
+
+vector<int> Dice::roll(int diceNumber){
     
     int rollValue;
     vector <int> rollSorter;
@@ -30,7 +38,7 @@ vector<int> Dice::diceRoller(int diceNumber){
      */
     for(int i=0; i<diceNumber; i++){
         //update total counter
-        totalRolls++;
+        (*totalRolls)++;
         
         //Calculate random die value
         rollValue = 1 + (rand() % 6);
@@ -67,14 +75,15 @@ void Dice::printRollPercentageArray(){
  * value for a specific dice value.
  */
 
-void Dice::getRollPercentage(int rollValue){
+double Dice::getRollPercentage(int rollValue){
     //Error case: print a message in case rollValue is out of bounds
     if(rollValue < 1 || rollValue > 6) {
         cout << "Error: 'rollValue' must be between 1 and 6 included." << endl;
         exit(1);
     }
-    //otherwise print % of a rollValue
-    cout << "The value '" << rollValue << "' was rolled " << rollPercentageArray[rollValue-1] << " % of the time." << endl;
+
+    //otherwise return the RollPercentage of the desired rollValue the desired RollPercentage value
+    return rollPercentageArray[rollValue-1];
 }
 
 /*
@@ -83,7 +92,7 @@ void Dice::getRollPercentage(int rollValue){
  */
 int Dice::getTotalRolls(){
     
-    return totalRolls;
+    return *totalRolls;
     
 }
 /*

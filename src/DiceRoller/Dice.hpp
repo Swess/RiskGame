@@ -3,7 +3,6 @@
 //  DiceRoller
 //
 //  Created by Francesco Benzi on 2019-09-20.
-//  Copyright © 2019 Francesco Benzi. All rights reserved.
 //
 
 #ifndef Dice_hpp
@@ -21,11 +20,11 @@ public:
     Dice();
     
     /*
-     * diceRoller() rolls one to three dice, registers the new %
+     * roll() rolls one to three dice, registers the new %
      * and returns a sorted container which holds the
      * values of the dice.
      */
-    std::vector<int> diceRoller(int numDice);
+    std::vector<int> roll(int numDice);
     
     /*
      * printRollPercentageArray() is a function that prints the current
@@ -36,23 +35,25 @@ public:
     
     /*
      * getRollPercentage() is a function that gathers the %
-     * value for a specific dice value.
+     * value for a specific dice value and returns it as a double.
      */
     
-    void getRollPercentage(int roll);
+    double getRollPercentage(int roll);
     
     /*
      * getTotalRolls() is a function that returns the total number
      * of dice that has been rolled
      */
     int getTotalRolls();
-    
+
+    ~Dice();
+
 private:
     
-    //Variables
-    int totalRolls;
-    double rollPercentageArray[6]; //stores a value for each dice face
-    
+    //Pointer Variables
+    int *totalRolls;
+    double *rollPercentageArray; //stores a value for each dice face [6]
+
     //Methods
     void initRollPercentArray();
     void addToRollPercentArray(int val);
