@@ -14,9 +14,11 @@ extern int *totalSetsTraded;
 class Card {
 public:
     enum Type {INFANTRY = 0, ARTILLERY = 1, CAVALRY = 2};
-
+//    Card operator =(const Card &otherCard) {
+//        return Card(otherCard);
+//    }
     Card();
-    Card(Card const &card);
+    Card(const Card &card);
     Card(string country, Type type);
     ~Card();
     string getCountry() const;
@@ -32,12 +34,12 @@ class Deck {
 public:
     Deck();
     Deck(string countries[], int size);
-    explicit Deck(vector<Card> &cards);
+    explicit Deck(vector<Card *> &cards);
     ~Deck();
     void shuffleDeck();
     Card draw();
 
-    vector<Card> *cards;
+    vector<Card *> *cards;
 private:
     void createCards(string &countries, int &size);
 };
@@ -47,11 +49,10 @@ public:
     Hand();
     ~Hand();
     void insertCard(Card card);
-    int exchange();
     int exchange(int cardIndices[]);
 
 private:
-    vector<Card> *cards;
+    vector<Card *> *cards;
     static bool sameCardCheck(const int handIndices[]);
     bool cardsValidForExchange(const int handIndices[]);
 };

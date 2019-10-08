@@ -5,7 +5,6 @@
 #include "Cards.h"
 #include <algorithm>
 #include <iostream>
-#include <utility>
 
 using namespace std;
 
@@ -30,8 +29,8 @@ Card::Card(string country, Card::Type type) {
 }
 
 Card::~Card() {
-    delete type;
     delete country;
+    delete type;
 
     country = nullptr;
     type = nullptr;
@@ -51,11 +50,18 @@ Card::Card(Card const &card) {
 }
 
 Deck::Deck() {
-    cards = new vector<Card>;
+    cards = new vector<Card *>;
 }
 
-Deck::Deck(vector<Card> &cards) {
-    this->cards = new vector<Card>(cards);
+Deck::Deck(vector<Card *> &cards) {
+    this->cards = new vector<Card *>(cards.size());
+    auto deckCardsIterator = this->cards->begin();
+    auto passedCardsIterator = cards.begin();
+    for (size_t i = 0; i < cards.size(); i++) {
+        *deckCardsIterator = new Card(**passedCardsIterator);
+        deckCardsIterator++;
+        passedCardsIterator++;
+    }
     shuffleDeck();
 }
 
@@ -67,23 +73,22 @@ Deck::~Deck() {
 
 
 Card Deck::draw() {
-    Card card = Card(cards->back().getCountry(), cards->back().getType());
+    Card card(*(cards->back()));
     cards->pop_back();
     return card;
 }
 
 void Deck::shuffleDeck() {
-    int random = 0;
-    for (int i = 0; i < cards->size(); i++) {
+    unsigned long random = 0;
+    const auto iter = cards->begin();
+    for (size_t i = 0; i < cards->size(); i++) {
         random = rand() % cards->size();
-        Card temp(cards->at(random));
-        cards->at(random) = cards->at(i);
-        cards->at(i) = temp;
+        iter_swap(iter, iter+random);
     }
 }
 
 Deck::Deck(string *countries, int size) {
-    cards = new vector<Card>;
+    cards = new vector<Card *>;
     Card::Type type;
     int starting = rand() % 3;
     for (int i = 0; i < size; i++) {
@@ -97,15 +102,15 @@ Deck::Deck(string *countries, int size) {
         // This leads to an vector of Cards that points to undefined mem values...
         // The reason why it crashes later...
         // PS: This means you need a copy constructor to copy the values also
-        cout << countries[i] << "\n";
+//        cout << countries[i] << "\n";
         // cards->push_back((Card(countries[i], Card::Type(starting + (i %3)))));
         Card card(countries[i], Card::Type((starting + i) % 3));
-        cards->push_back(card);
+        cards->push_back(new Card(card));
     }
 }
 
 Hand::Hand() {
-    cards = new vector<Card>;
+    cards = new vector<Card *>;
 }
 
 Hand::~Hand() {
@@ -117,53 +122,18 @@ Hand::~Hand() {
 
 
 void Hand::insertCard(Card card) {
-    cards->push_back(card);
-}
-
-int Hand::exchange() {
-    int exchangeIndices[3];
-    Card *currentCard;
-
-    cout << "these are your current cards";
-    for (int i = 0; i < cards->size(); i++) {
-        currentCard = &cards->at(i);
-        cout << (i+1) << ": (country: " << currentCard->getCountry() << ") (type: " << currentCard->getType() << ")";
-    }
-    string exchangeString;
-    do {
-        cout << "select 3 cards you would like to exchange";
-        cout << "First card: ";
-        cin >> exchangeIndices[0];
-        cout << "Second card: ";
-        cin >> exchangeIndices[0];
-        cout << "Third card: ";
-        cin >> exchangeIndices[0];
-    } while (cardsValidForExchange(exchangeIndices));
-
-    int numArmiesToReturn;
-    if (*totalSetsTraded < 7) {
-        numArmiesToReturn = 2 + *totalSetsTraded * 3;
-    } else {
-        numArmiesToReturn = 15 + 5 * (*totalSetsTraded - 6);
-    }
-    (*totalSetsTraded)++;
-    return numArmiesToReturn;
+    cards->push_back(new Card(card));
 }
 
 int Hand::exchange(int cardIndices[]) {
-//
-//    for (auto & card : *cards) {
-//        cout << "(country: " << card.getCountry() << ") type: " << card.getType() << ")" << endl;
-//    }
 
-    cout << cards->at(cardIndices[2]).getCountry() << endl;
-    cout << cards->at(cardIndices[1]).getCountry() << endl;
-    cout << cards->at(cardIndices[0]).getCountry() << endl;
-    sort(cardIndices, &cardIndices[2]);
+    for (auto & card : *cards) {
+        cout << card->getCountry() << ", ";
+    }
+    cout << endl;
+    sort(cardIndices, cardIndices+3);
+    cout << cardIndices[0] << " " << cardIndices[1] << " " << cardIndices[2] << endl;
     cards->erase(cards->begin() + cardIndices[2]);
-    cout << cards->at(cardIndices[2]).getCountry() << endl;
-    cout << cards->at(cardIndices[1]).getCountry() << endl;
-    cout << cards->at(cardIndices[0]).getCountry() << endl;
     cards->erase(cards->begin() + cardIndices[1]);
     cards->erase(cards->begin() + cardIndices[0]);
 
@@ -185,7 +155,7 @@ bool Hand::sameCardCheck(const int *handIndices) {
 bool Hand::cardsValidForExchange(const int *handIndices){
     bool typeFlags[3];
     for (int i = 0; i < 3; i++) {
-        typeFlags[cards->at(handIndices[i]).getType()] = true;
+        typeFlags[cards->at(handIndices[i])->getType()] = true;
     }
     int count = 0;
     for (bool typeFlag : typeFlags) {
