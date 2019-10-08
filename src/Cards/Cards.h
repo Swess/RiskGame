@@ -15,10 +15,12 @@ class Card {
 public:
     enum Type {INFANTRY = 0, ARTILLERY = 1, CAVALRY = 2};
 
+    Card();
+    Card(Card const &card);
     Card(string country, Type type);
     ~Card();
-    string getCountry();
-    Card::Type getType();
+    string getCountry() const;
+    Card::Type getType() const;
 
 private:
     string *country;
@@ -54,4 +56,4 @@ private:
     bool cardsValidForExchange(const int handIndices[]);
 };
 
-}// namespace
+}

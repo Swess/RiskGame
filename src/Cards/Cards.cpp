@@ -19,26 +19,35 @@ int *totalSetsTraded = new int(0);
 // The default constructor is used when calling : Card myCardName; ..
 // but this makes the country & type ptr as nullptr, make sure that its what you want
 
+Card::Card() {
+    this->country = new string;
+    this->type = new Card::Type;
+}
+
 Card::Card(string country, Card::Type type) {
-    this->country = new string(std::move(country));
+    this->country = new string(country);
     this->type = new Card::Type(type);
 }
 
 Card::~Card() {
-    // This destructor is doing the right thing !
-    delete country;
     delete type;
+    delete country;
 
     country = nullptr;
     type = nullptr;
 }
 
-string Card::getCountry() {
+string Card::getCountry() const {
     return *country;
 }
 
-Card::Type Card::getType() {
+Card::Type Card::getType() const {
     return *type;
+}
+
+Card::Card(Card const &card) {
+    this->country = new string(card.getCountry());
+    this->type = new Card::Type(card.getType());
 }
 
 Deck::Deck() {
@@ -65,10 +74,11 @@ Card Deck::draw() {
 
 void Deck::shuffleDeck() {
     int random = 0;
-    (*cards).begin();
     for (int i = 0; i < cards->size(); i++) {
         random = rand() % cards->size();
-//        iter_swap(cards->begin() + i, cards->begin() + random);
+        Card temp(cards->at(random));
+        cards->at(random) = cards->at(i);
+        cards->at(i) = temp;
     }
 }
 
@@ -87,9 +97,10 @@ Deck::Deck(string *countries, int size) {
         // This leads to an vector of Cards that points to undefined mem values...
         // The reason why it crashes later...
         // PS: This means you need a copy constructor to copy the values also
-
-        cards->push_back(Card(countries[i], Card::Type(starting + (i %3))));
-
+        cout << countries[i] << "\n";
+        // cards->push_back((Card(countries[i], Card::Type(starting + (i %3)))));
+        Card card(countries[i], Card::Type((starting + i) % 3));
+        cards->push_back(card);
     }
 }
 
@@ -106,8 +117,7 @@ Hand::~Hand() {
 
 
 void Hand::insertCard(Card card) {
-    Card copyCard(card);
-    cards->insert(cards->end(), Card(card));
+    cards->push_back(card);
 }
 
 int Hand::exchange() {
@@ -141,9 +151,22 @@ int Hand::exchange() {
 }
 
 int Hand::exchange(int cardIndices[]) {
-    cards->erase(cards->begin() + cardIndices[0]);
-    cards->erase(cards->begin() + cardIndices[1]);
+//
+//    for (auto & card : *cards) {
+//        cout << "(country: " << card.getCountry() << ") type: " << card.getType() << ")" << endl;
+//    }
+
+    cout << cards->at(cardIndices[2]).getCountry() << endl;
+    cout << cards->at(cardIndices[1]).getCountry() << endl;
+    cout << cards->at(cardIndices[0]).getCountry() << endl;
+    sort(cardIndices, &cardIndices[2]);
     cards->erase(cards->begin() + cardIndices[2]);
+    cout << cards->at(cardIndices[2]).getCountry() << endl;
+    cout << cards->at(cardIndices[1]).getCountry() << endl;
+    cout << cards->at(cardIndices[0]).getCountry() << endl;
+    cards->erase(cards->begin() + cardIndices[1]);
+    cards->erase(cards->begin() + cardIndices[0]);
+
     int numArmiesToReturn;
     if (*totalSetsTraded < 7) {
         numArmiesToReturn = 2 + *totalSetsTraded * 3;

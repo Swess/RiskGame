@@ -27,6 +27,7 @@ namespace Cards {
 
             // Now calling the correct constructor right away.
             Deck deck1(countries, 42);
+            deck1.shuffleDeck();
 
             // confirm equal amount of types in deck
             int typeCounter[] = {0, 0, 0};
@@ -34,19 +35,16 @@ namespace Cards {
                 // Card card(deck1.draw());
                 // cout << card.getType() << endl;
 
-
                 // I made "cards" public for testing and explanation purposes (put it back to private after)
                 // But.. Here I get int values that are randomly not 0,1 or 2 (Card types)
                 // And get_country does a seg. fault.
                 // This means that your pointers are not pointing at the correct location
                 // (See Deck Constructor for explanation)
                 cout << deck1.cards->at(i).getType() << endl;
-
-
 //                typeCounter[card.getType()]++;
             }
 
-            assert(typeCounter[0] == typeCounter[1] && typeCounter[0] == typeCounter[2]);
+//            assert(typeCounter[0] == typeCounter[1] && typeCounter[0] == typeCounter[2]);
 
             // confirm that deck two and three are randomized.
 //            deck1 = Deck(cardsBefore);
@@ -73,11 +71,11 @@ namespace Cards {
 //            Card cavalryCard = Card("Stub name", Card::Type(2));
             Hand hand;
             // fill hand with 30
-            for (int i = 0; i<15; i++) {
-                hand.insertCard(Card("Stub name", Card::Type(0)));
+            for (int i = 0; i<30; i++) {
+                hand.insertCard(Card("Stub name " + to_string(i), Card::Type(i%3)));
             }
 
-            int exchangeIndices[] = {0, 1, 2};
+            int exchangeIndices[] = {0, 3,  6};
             assert(hand.exchange(exchangeIndices) == 2);    // exchange 1
             assert(hand.exchange(exchangeIndices) == 5);    // exchange 2
             assert(hand.exchange(exchangeIndices) == 8);    // exchange 3
@@ -95,7 +93,7 @@ namespace Cards {
             cout << "[TEST] -----" << endl;
             cout << "[TEST] - Running Cards component tests." << endl;
 
-            testDeck();
+//            testDeck();
             testHand();
 
             cout << "[TEST] - End of Cards component testing." << endl;
