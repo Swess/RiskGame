@@ -43,11 +43,11 @@ public:
     ~Hand();
     void insertCard(Card card);
     int exchange(int cardIndices[]);
+    bool cardsValidForExchange(const int handIndices[]);
 
 private:
     vector<Card *> *cards;
     static bool sameCardCheck(const int handIndices[]);
-    bool cardsValidForExchange(const int handIndices[]);
 };
 
 }

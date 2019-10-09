@@ -138,6 +138,6 @@ bool Hand::cardsValidForExchange(const int *handIndices){
             count++;
         }
     }
-    return (!sameCardCheck(handIndices) & (count == 1 || count == 3));
+    return (!sameCardCheck(handIndices) && (count == 1 || count == 3));
 }
 }

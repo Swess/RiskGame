@@ -10,7 +10,7 @@
 namespace Cards {
     namespace Driver {
 
-        bool testDeck() {
+        bool testEqualShareOfTypeInDeck() {
 
             const int NUMBER_OF_CARDS = 43;
             string countries[NUMBER_OF_CARDS];
@@ -20,7 +20,6 @@ namespace Cards {
             }
 
             Deck deck(countries, NUMBER_OF_CARDS);
-            deck.shuffleDeck();
 
             // confirm equal amount of types in deck
             int typeCounter[] = {0, 0, 0};
@@ -30,14 +29,14 @@ namespace Cards {
                 typeCounter[card.getType()]++;
             }
 
-            // assert
+            // assert creation of deck given list of countries produces equal number of each type of card INFANTRY, ARTILLERY, CAVALRY
             assert(abs(typeCounter[0] - typeCounter[1]) < 2 && abs(typeCounter[0] - typeCounter[2]) < 2 && abs(typeCounter[1] - typeCounter[2]) < 2 );
 
             return true;    // Func needed to return
         }
 
 
-        bool testHand () {
+        bool testExchangeHand () {
 
             int expectedArmiesReturned[] = {4, 6, 8, 10, 12, 15, 20, 25, 30};
             Hand hand;
@@ -67,12 +66,45 @@ namespace Cards {
             return true;
         }
 
+        bool testHandValidForExchange() {
+
+
+            Hand handInvalid, handAllSameType, handOneOfEachType;
+
+            //fill handInvalid with 2 cavalry type cards and one infantry type card, making for an invalid combination
+            handInvalid.insertCard(Card("Stub name 1", Card::Type(0)));
+            handInvalid.insertCard(Card("Stub name 2", Card::Type(2)));
+            handInvalid.insertCard(Card("Stub name 3", Card::Type(2)));
+
+            //fill handOneOfEachType with 3 different cards, one of each type.
+            handOneOfEachType.insertCard(Card("Stub name 1", Card::Type(0)));
+            handOneOfEachType.insertCard(Card("Stub name 2", Card::Type(1)));
+            handOneOfEachType.insertCard(Card("Stub name 3", Card::Type(2)));
+
+            //fill handAllSameType with 3 different cards all of type infantry.
+            handAllSameType.insertCard(Card("Stub name 1", Card::Type(0)));
+            handAllSameType.insertCard(Card("Stub name 2", Card::Type(0)));
+            handAllSameType.insertCard(Card("Stub name 3", Card::Type(0)));
+
+            //indices of the cards previously added
+            int handIndices[] = {0, 1, 2};
+
+            //assert valid and invalid set request.
+            assert(!handInvalid.cardsValidForExchange(handIndices));        //invalid
+            assert(handOneOfEachType.cardsValidForExchange(handIndices));   //valid
+            assert(handAllSameType.cardsValidForExchange(handIndices));     //valid
+
+            return true;
+        }
+
         bool run() {
             cout << "[TEST] -----" << endl;
             cout << "[TEST] - Running Cards component tests." << endl;
 
-            testDeck();
-            testHand();
+            testEqualShareOfTypeInDeck();
+            testHandValidForExchange();
+            testExchangeHand();
+
 
             cout << "[TEST] - End of Cards component testing." << endl;
             cout << "[TEST] -----" << endl;
