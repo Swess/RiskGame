@@ -9,7 +9,6 @@
 using namespace std;
 
 namespace Cards {
-extern int *totalSetsTraded;
 
 class Card {
 public:
