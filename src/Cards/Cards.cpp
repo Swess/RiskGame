@@ -9,7 +9,6 @@
 using namespace std;
 
 namespace Cards {
-int *totalSetsTraded = new int(0);
 
 Card::Card() {
     this->country = new string;
@@ -108,7 +107,7 @@ void Hand::insertCard(Card card) {
 }
 
 int Hand::exchange(int cardIndices[]) {
-
+    static int *totalSetsTraded = new int(0);
     sort(cardIndices, cardIndices+3);
     cards->erase(cards->begin() + cardIndices[2]);
     cards->erase(cards->begin() + cardIndices[1]);

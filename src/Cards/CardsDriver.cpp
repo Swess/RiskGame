@@ -11,36 +11,28 @@ namespace Cards {
     namespace Driver {
 
         bool testDeck() {
-            // The Decks were created whit the default constructor here and assigned a new one later.
 
-            vector<Card> cardsBefore, cardsAfter1, cardsAfter2, cardsAfter3;
-            Card::Type type;
             const int NUMBER_OF_CARDS = 43;
             string countries[NUMBER_OF_CARDS];
-
-
-            // Not using default constructor since it was empty
-
 
             for (int i = 0; i < NUMBER_OF_CARDS; i++) {
                 countries[i] = "Stub name" + to_string(i);
             }
 
-            // Now calling the correct constructor right away.
-            Deck deck1(countries, NUMBER_OF_CARDS);
-            deck1.shuffleDeck();
+            Deck deck(countries, NUMBER_OF_CARDS);
+            deck.shuffleDeck();
 
             // confirm equal amount of types in deck
             int typeCounter[] = {0, 0, 0};
             for (int i = 0; i < NUMBER_OF_CARDS; i++) {
-                Card card(deck1.draw());
+                Card card(deck.draw());
 
                 typeCounter[card.getType()]++;
             }
 
+            // assert
             assert(abs(typeCounter[0] - typeCounter[1]) < 2 && abs(typeCounter[0] - typeCounter[2]) < 2 && abs(typeCounter[1] - typeCounter[2]) < 2 );
 
-            // Assert deck is shuffled randomly, and all three decks are not the same order.
             return true;    // Func needed to return
         }
 
@@ -51,7 +43,7 @@ namespace Cards {
             Hand hand;
             const int DECK_SIZE = 42;
             auto cards = vector<Card *>(DECK_SIZE);
-            // fill hand with 30
+            // fill hand with 42 cards
             for (int i = 0; i<DECK_SIZE; i++) {
                  cards.at(i) = new Card("Stub name " + to_string(i), Card::Type(i%3));
             }
@@ -72,7 +64,7 @@ namespace Cards {
                 i++;
             }
 
-            return true; // Func needed to return
+            return true;
         }
 
         bool run() {
