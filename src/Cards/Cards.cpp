@@ -11,13 +11,6 @@ using namespace std;
 namespace Cards {
 int *totalSetsTraded = new int(0);
 
-// Since we have pointers, you HAVE to init some things here...
-// Otherwise getCountry with give an error for example..
-// But this is not ideal... as it makes no sense to let anybody create a card without any param.
-// because you don't have any setters later...
-// The default constructor is used when calling : Card myCardName; ..
-// but this makes the country & type ptr as nullptr, make sure that its what you want
-
 Card::Card() {
     this->country = new string;
     this->type = new Card::Type;
@@ -36,15 +29,15 @@ Card::~Card() {
     type = nullptr;
 }
 
-string Card::getCountry() const {
+string Card::getCountry() {
     return *country;
 }
 
-Card::Type Card::getType() const {
+Card::Type Card::getType() {
     return *type;
 }
 
-Card::Card(Card const &card) {
+Card::Card(Card &card) {
     this->country = new string(card.getCountry());
     this->type = new Card::Type(card.getType());
 }
@@ -62,7 +55,6 @@ Deck::Deck(vector<Card *> &cards) {
         deckCardsIterator++;
         passedCardsIterator++;
     }
-    shuffleDeck();
 }
 
 Deck::~Deck() {
@@ -81,9 +73,10 @@ Card Deck::draw() {
 void Deck::shuffleDeck() {
     unsigned long random = 0;
     const auto iter = cards->begin();
+    srand (time(NULL));
     for (size_t i = 0; i < cards->size(); i++) {
         random = rand() % cards->size();
-        iter_swap(iter, iter+random);
+        iter_swap(iter + i, iter+random);
     }
 }
 
@@ -92,18 +85,7 @@ Deck::Deck(string *countries, int size) {
     Card::Type type;
     int starting = rand() % 3;
     for (int i = 0; i < size; i++) {
-        // Replaced with push_back...
 
-        // This line is problematic because you create a Card on the stack
-        // but it will get deleted the moment it leave the scope.. meaning, the moment the line
-        // finishes, the card is actually destroyed...
-        // When it gets destroyed, it destroys the values it points to (in the destructor)
-        // During that call it creates a copy, but only of the ptr (country / type), but the other one destroys them
-        // This leads to an vector of Cards that points to undefined mem values...
-        // The reason why it crashes later...
-        // PS: This means you need a copy constructor to copy the values also
-//        cout << countries[i] << "\n";
-        // cards->push_back((Card(countries[i], Card::Type(starting + (i %3)))));
         Card card(countries[i], Card::Type((starting + i) % 3));
         cards->push_back(new Card(card));
     }
@@ -127,23 +109,17 @@ void Hand::insertCard(Card card) {
 
 int Hand::exchange(int cardIndices[]) {
 
-    for (auto & card : *cards) {
-        cout << card->getCountry() << ", ";
-    }
-    cout << endl;
     sort(cardIndices, cardIndices+3);
-    cout << cardIndices[0] << " " << cardIndices[1] << " " << cardIndices[2] << endl;
     cards->erase(cards->begin() + cardIndices[2]);
     cards->erase(cards->begin() + cardIndices[1]);
     cards->erase(cards->begin() + cardIndices[0]);
 
     int numArmiesToReturn;
-    if (*totalSetsTraded < 7) {
-        numArmiesToReturn = 2 + *totalSetsTraded * 3;
+    if (*totalSetsTraded < 5) {
+        numArmiesToReturn = 4 + *totalSetsTraded * 2;
     } else {
-        numArmiesToReturn = 20 + 5 * (*totalSetsTraded - 6);
+        numArmiesToReturn = 15 + 5 * (*totalSetsTraded - 5);
     }
-    cout << to_string(numArmiesToReturn) << "\n";
     (*totalSetsTraded)++;
     return numArmiesToReturn;
 }
@@ -165,4 +141,4 @@ bool Hand::cardsValidForExchange(const int *handIndices){
     }
     return (!sameCardCheck(handIndices) & (count == 1 || count == 3));
 }
-}   // namespace
+}

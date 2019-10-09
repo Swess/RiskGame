@@ -14,15 +14,12 @@ extern int *totalSetsTraded;
 class Card {
 public:
     enum Type {INFANTRY = 0, ARTILLERY = 1, CAVALRY = 2};
-//    Card operator =(const Card &otherCard) {
-//        return Card(otherCard);
-//    }
     Card();
-    Card(const Card &card);
+    Card(Card &card);
     Card(string country, Type type);
     ~Card();
-    string getCountry() const;
-    Card::Type getType() const;
+    string getCountry();
+    Card::Type getType();
 
 private:
     string *country;
@@ -38,10 +35,7 @@ public:
     ~Deck();
     void shuffleDeck();
     Card draw();
-
     vector<Card *> *cards;
-private:
-    void createCards(string &countries, int &size);
 };
 
 class Hand {
