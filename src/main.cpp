@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Map/MapDriver.h"
+#include "DiceRoller/DiceDriver.h"
 #include "MapLoader/MapLoaderDriver.h"
 #include "Cards/CardsDriver.h"
 
@@ -11,6 +12,7 @@ int main() {
 
     MapLoader::Driver::run();
     Map::Driver::run();
+    DiceDriver::run();
     Cards::Driver::run();
 
     return 0;
