@@ -5,8 +5,10 @@
 #ifndef TEAM12_DOMINATIONGAME_DICEDRIVER_H
 #define TEAM12_DOMINATIONGAME_DICEDRIVER_H
 
-namespace DiceDriver {
-    int run();
+namespace Dice {
+    namespace Driver {
+        bool run();
+    }
 }
 
 #endif //TEAM12_DOMINATIONGAME_DICEDRIVER_H
