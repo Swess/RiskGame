@@ -5,6 +5,7 @@
 #include "Cards.h"
 #include <algorithm>
 #include <iostream>
+#include <ctime>
 
 using namespace std;
 
