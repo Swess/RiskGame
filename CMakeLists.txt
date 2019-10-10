@@ -6,9 +6,10 @@ set(CMAKE_CXX_STANDARD 17)
 # Include all subdirectories CMakeList here
 # They should append compilation to the SRC_FILES list
 include(src/Map/CMakeLists.txt)
-include(src/DiceRoller/CMakeLists.txt)
+include(src/Dice/CMakeLists.txt)
 include(src/MapLoader/CMakeLists.txt)
 include(src/Cards/CMakeLists.txt)
+include(src/Player/CMakeLists.txt)
 
 add_executable(Team12_DominationGame src/main.cpp src/exceptions.h ${SRC_FILES})
 

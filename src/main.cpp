@@ -1,8 +1,9 @@
 #include <iostream>
 #include "Map/MapDriver.h"
-#include "DiceRoller/DiceDriver.h"
+#include "Dice/DiceDriver.h"
 #include "MapLoader/MapLoaderDriver.h"
 #include "Cards/CardsDriver.h"
+#include "Player/PlayerDriver.h"
 
 using namespace std;
 
@@ -12,8 +13,8 @@ int main() {
 
     MapLoader::Driver::run();
     Map::Driver::run();
-    DiceDriver::run();
+    Dice::Driver::run();
     Cards::Driver::run();
-
+    Player::Driver::run();
     return 0;
 }

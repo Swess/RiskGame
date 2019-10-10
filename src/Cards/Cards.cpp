@@ -5,6 +5,7 @@
 #include "Cards.h"
 #include <algorithm>
 #include <iostream>
+#include <ctime>
 
 using namespace std;
 
@@ -140,4 +141,8 @@ bool Hand::cardsValidForExchange(const int *handIndices){
     }
     return (!sameCardCheck(handIndices) && (count == 1 || count == 3));
 }
+
+    int Hand::size() {
+        return cards->size();
+    }
 }

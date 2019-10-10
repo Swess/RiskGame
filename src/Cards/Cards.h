@@ -44,7 +44,7 @@ public:
     void insertCard(Card card);
     int exchange(int cardIndices[]);
     bool cardsValidForExchange(const int handIndices[]);
-
+    int size();
 private:
     vector<Card *> *cards;
     static bool sameCardCheck(const int handIndices[]);
