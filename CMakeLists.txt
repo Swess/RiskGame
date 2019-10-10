@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD 17)
 include(src/Map/CMakeLists.txt)
 include(src/DiceRoller/CMakeLists.txt)
 include(src/MapLoader/CMakeLists.txt)
+include(src/Cards/CMakeLists.txt)
 
 add_executable(Team12_DominationGame src/main.cpp src/exceptions.h ${SRC_FILES})
 
