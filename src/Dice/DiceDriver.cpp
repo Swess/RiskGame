@@ -45,24 +45,51 @@ namespace Dice {
              * The variable 'iterations' is used to select how many iterations to test (at least 3 in the assignment) but for instance 10
              * to 500 will show that the % for each dice face value will be approximately ~16% = 1/6 = fair dice / equal share
              */
-            int iterations = 100;
+            int iterations = 10000;
             int number_of_dice_rolled = 3;
 
-
-            cout << "\nWelcome to DICE tester" << endl;
+          
+            cout << "\n[TEST] -----" << endl;
+            cout << "[TEST] - Running Dice component testing." << endl;
 
             //This do-while cycle tests the requested amount of iterations of the roll() function
             do {
 
                 rollSorter_1 = object_1.roll(number_of_dice_rolled);
-                cout << "\nrollSorter values: ";
-                printRollSorter(rollSorter_1);
-                cout << "\nRolling percentages: " << endl;
-                object_1.printRollPercentageArray();
+
+                /*
+                 * Optional Console Utility that displays rollSorter values
+                 * and RollPercentageArray
+
+                     cout << "\nrollSorter values: ";
+                     printRollSorter(rollSorter_1);
+                     cout << "\nRolling percentages: " << endl;
+                     object_1.printRollPercentageArray();
+                 */
 
                 iterations--;
 
             } while (iterations > 0);
+
+            //Once all the dice have been rolled, the rollPercentage values are verified in order to check that the program
+            //generated rolls within 5% tolerance of the ideal percentage
+            // If a fair dice = ~16%; minValue = 16-tolerance and maxValue = 16+tolerance
+
+            double tolerance = 5;
+
+            //Gathering test results
+            bool test_face_1 = object_1.getRollPercentage(1) > 16.00 - tolerance && object_1.getRollPercentage(1) < 16.00 + tolerance;
+            bool test_face_2 = object_1.getRollPercentage(2) > 16.00 - tolerance && object_1.getRollPercentage(1) < 16.00 + tolerance;
+            bool test_face_3 = object_1.getRollPercentage(3) > 16.00 - tolerance && object_1.getRollPercentage(1) < 16.00 + tolerance;
+            bool test_face_4 = object_1.getRollPercentage(4) > 16.00 - tolerance && object_1.getRollPercentage(1) < 16.00 + tolerance;
+            bool test_face_5 = object_1.getRollPercentage(5) > 16.00 - tolerance && object_1.getRollPercentage(1) < 16.00 + tolerance;
+            bool test_face_6 = object_1.getRollPercentage(6) > 16.00 - tolerance && object_1.getRollPercentage(1) < 16.00 + tolerance;
+
+            //Asserting test results
+            assert(test_face_1 && test_face_2 && test_face_3 && test_face_4 && test_face_5 && test_face_6);
+
+            cout << "[TEST] - End of Dice component testing." << endl;
+            cout << "[TEST] -----" << endl << endl;
 
             return true;
         }
