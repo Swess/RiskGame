@@ -114,8 +114,8 @@ namespace MapLoader { namespace Driver {
 
 
     bool run() {
-
-        cout << "Starting MapLoader run..." << endl;
+        cout << "[TEST] -----" << endl;
+        cout << "[TEST] - Running MapLoader component tests." << endl;
 
         load_Risk_Europe();
         load_uk();
@@ -125,7 +125,8 @@ namespace MapLoader { namespace Driver {
         load_map_with_only_continent();
         load_undefined();
 
-        cout << "Done." << endl;
+        cout << "[TEST] - End of MapLoader component testing." << endl;
+        cout << "[TEST] -----" << endl;
 
         return true;
     }

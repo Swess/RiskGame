@@ -16,7 +16,8 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
-#include <time.h>
+#include <ctime>
+#include <cassert>
 #include "Dice.h"
 
 using namespace std;

@@ -47,15 +47,19 @@ namespace Player{
         }
 
         bool run (){
-            return (
-                test_attack() &&
-                test_fortify() &&
-                test_reinforce() &&
-                test_Dice() &&
-                test_countries()
-            );
+            cout << "[TEST] -----" << endl;
+            cout << "[TEST] - Running Player component tests." << endl;
 
+            bool passed = test_attack() &&
+                          test_fortify() &&
+                          test_reinforce() &&
+                          test_Dice() &&
+                          test_countries();
 
+            cout << "[TEST] - End of Player component testing." << endl;
+            cout << "[TEST] -----" << endl;
+
+            return passed;
         }
     }
 }
