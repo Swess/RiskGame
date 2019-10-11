@@ -48,7 +48,7 @@ namespace Dice {
             int iterations = 10000;
             int number_of_dice_rolled = 3;
 
-
+          
             cout << "\n[TEST] -----" << endl;
             cout << "[TEST] - Running Dice component testing." << endl;
 
