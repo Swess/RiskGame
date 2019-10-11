@@ -105,7 +105,6 @@ namespace Cards {
             testHandValidForExchange();
             testExchangeHand();
 
-
             cout << "[TEST] - End of Cards component testing." << endl;
             cout << "[TEST] -----" << endl;
             return true;

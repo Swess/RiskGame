@@ -82,10 +82,8 @@ void Deck::shuffleDeck() {
 
 Deck::Deck(string *countries, int size) {
     cards = new vector<Card *>;
-    Card::Type type;
     int starting = rand() % 3;
     for (int i = 0; i < size; i++) {
-
         Card card(countries[i], Card::Type((starting + i) % 3));
         cards->push_back(new Card(card));
     }
@@ -129,9 +127,12 @@ bool Hand::sameCardCheck(const int *handIndices) {
 }
 
 bool Hand::cardsValidForExchange(const int *handIndices){
-    bool typeFlags[3];
+    if (sameCardCheck(handIndices)) {
+        return false;
+    }
+    bool typeFlags[] = {false, false, false};
     for (int i = 0; i < 3; i++) {
-        typeFlags[cards->at(handIndices[i])->getType()] = true;
+        typeFlags[this->cards->at(handIndices[i])->getType()] = true;
     }
     int count = 0;
     for (bool typeFlag : typeFlags) {
@@ -139,7 +140,7 @@ bool Hand::cardsValidForExchange(const int *handIndices){
             count++;
         }
     }
-    return (!sameCardCheck(handIndices) && (count == 1 || count == 3));
+    return (count == 1 || count == 3);
 }
 
     int Hand::size() {
