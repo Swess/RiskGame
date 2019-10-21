@@ -67,8 +67,6 @@ namespace Cards {
         }
 
         bool testHandValidForExchange() {
-
-
             Hand handInvalid, handAllSameType, handOneOfEachType;
 
             //fill handInvalid with 2 cavalry type cards and one infantry type card, making for an invalid combination

@@ -24,6 +24,14 @@ namespace Map {
         nb_armies = nullptr;
     }
 
+    string Country::get_name() {
+        return *name;
+    }
+
+    int Country::get_armies() {
+        return *nb_armies;
+    }
+
     Continent::Continent(const string &name, Map *map) {
         this->index = new int(map->get_continents().size());
         this->size = new int(0);
@@ -99,6 +107,14 @@ namespace Map {
 
     int Continent::get_size() {
         return *size;
+    }
+
+    string Continent::get_name() {
+        return *name;
+    }
+
+    int Continent::get_bonus() {
+        return *bonus;
     }
 
 

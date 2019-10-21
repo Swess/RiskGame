@@ -20,8 +20,8 @@ namespace MapLoader { namespace Driver {
             cerr << e.what() << s.c_str() << endl;
         }
 
-        assert( *testMap->get_continents().at(8)->name == "East_Europe" );
-        assert( *testMap->get_countries().at(45)->name == "Ukraine" );
+        assert( testMap->get_continents().at(8)->get_name() == "East_Europe" );
+        assert( testMap->get_countries().at(45)->get_name() == "Ukraine" );
         delete mapLoader;
         return true;
     };
@@ -35,8 +35,8 @@ namespace MapLoader { namespace Driver {
         } catch (IOException &e) {
             cerr << e.what() << s.c_str() << endl;
         }
-        assert( *testMap->get_continents().at(5)->name == "South-England" );
-        assert( *testMap->get_countries().at(74)->name == "Kent" );
+        assert( testMap->get_continents().at(5)->get_name() == "South-England" );
+        assert( testMap->get_countries().at(74)->get_name() == "Kent" );
         return true;
     };
 
@@ -49,8 +49,8 @@ namespace MapLoader { namespace Driver {
         } catch (IOException &e) {
             cerr << e.what() << s.c_str() << endl;
         }
-        assert( *testMap->get_continents().at(5)->name == "Oceania" );
-        assert( *testMap->get_countries().at(41)->name == "Eastern-Australia" );
+        assert( testMap->get_continents().at(5)->get_name() == "Oceania" );
+        assert( testMap->get_countries().at(41)->get_name() == "Eastern-Australia" );
         return true;
     };
 

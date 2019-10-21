@@ -8,6 +8,7 @@ using namespace std;
 namespace Map {
 
     class Map;
+    class Continent;
 
     /**
      * Country class
@@ -15,16 +16,22 @@ namespace Map {
      * which continent index in the map it belongs to, etc
      */
     class Country {
-    public:
-        Country(const string &name);
+        friend Map;
+        friend Continent;
 
         int *index;
         string *name;
         int *continent_index;
         int *nb_armies;
+
+    public:
+        Country(const string &name);
         // TODO: Add the owner player of this country
 
         ~Country();
+
+        string get_name();
+        int get_armies();
     };
 
     /**
@@ -34,13 +41,16 @@ namespace Map {
      * themselves pointing to their corresponding continent.
      */
     class Continent {
-    public:
+        friend Map;
+
         int *size;
         int *index;
         string *name;
         int *bonus;
         string *color;
         Map *map;
+
+    public:
 
         Continent(const string &name, Map *map);
 
@@ -61,6 +71,18 @@ namespace Map {
         int get_size();
 
         /**
+         * Get the name property
+         * @return
+         */
+        string get_name();
+
+        /**
+         * Get the current Bonus
+         * @return
+         */
+        int get_bonus();
+
+        /**
          * Check with Breadth First Search the connections between the countries in the continent to check it
          * the continent constitute a valid connected subgraph.
          * @return
@@ -74,10 +96,12 @@ namespace Map {
      * The edges are implemented as an AdjacencyList with the corresponding object index to ensure O(1) seek & query.
      */
     class Map {
+        friend Continent;
+
         vector<Continent *> *continents;
         vector<Country *> *countries;
-    public:
         vector<vector<int>> *edges;
+    public:
 
         Map();
 
