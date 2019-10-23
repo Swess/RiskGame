@@ -6,7 +6,7 @@
 //
 
 #include "Dice.h"
-#include <iostream>
+#include "../Terminal/Terminal.h"
 #include <vector>
 #include <algorithm>
 
@@ -66,12 +66,10 @@ namespace Dice {
  */
 
     void Dice::printRollPercentageArray() {
-
         for (int i = 0; i < 6; i++) {
-            cout << "Number '" << i + 1 << "' has been rolled " << rollPercentageArray[i] << " % of the time." << endl;
+            Terminal::print("Number '" + std::to_string(i + 1) + "' has been rolled " + std::to_string(rollPercentageArray[i]) + " % of the time.");
         }
     }
-
 /*
  * getRollPercentage() is a function that gathers the %
  * value for a specific dice value.
@@ -80,7 +78,7 @@ namespace Dice {
     double Dice::getRollPercentage(int rollValue) {
         //Error case: print a message in case rollValue is out of bounds
         if (rollValue < 1 || rollValue > 6) {
-            cout << "Error: 'rollValue' must be between 1 and 6 included." << endl;
+            Terminal::error("'rollValue' must be between 1 and 6 included.");
             exit(1);
         }
 

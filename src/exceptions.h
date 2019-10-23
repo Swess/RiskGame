@@ -6,7 +6,8 @@
 
 // Exceptions
 struct IOException : public std::exception {
-    const char *what() const throw() {
-        return "Error opening given file: ";
+    const char *what(string s) const throw() {
+        string what = "Error opening given file: "  + s;
+        return what.c_str();
     }
 };

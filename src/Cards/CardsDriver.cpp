@@ -96,15 +96,10 @@ namespace Cards {
         }
 
         bool run() {
-            cout << "[TEST] -----" << endl;
-            cout << "[TEST] - Running Cards component tests." << endl;
-
             testEqualShareOfTypeInDeck();
             testHandValidForExchange();
             testExchangeHand();
 
-            cout << "[TEST] - End of Cards component testing." << endl;
-            cout << "[TEST] -----" << endl;
             return true;
         }
 
