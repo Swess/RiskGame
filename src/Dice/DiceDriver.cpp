@@ -13,24 +13,21 @@
 //  5) that every dice rolling facility object maintains a percentage of all individual values rolled up to now.
 //
 
-#include <iostream>
 #include <cstdlib>
 #include <vector>
 #include <ctime>
 #include <cassert>
 #include "Dice.h"
+#include "../Terminal/Terminal.h"
 
 using namespace std;
 
 namespace Dice {
 
     void printRollSorter(vector<int> &vec) {
-
-        for (unsigned int i = 0; i < vec.size(); ++i) {
-
-            cout << vec.at(i) << "  ";
-        }
-        cout << endl;
+        string result;
+        for (int i : vec) result.append(std::to_string(i) + "  ");
+        Terminal::print(result);
     }
 
     namespace Driver {
@@ -48,10 +45,6 @@ namespace Dice {
              */
             int iterations = 10000;
             int number_of_dice_rolled = 3;
-
-          
-            cout << "\n[TEST] -----" << endl;
-            cout << "[TEST] - Running Dice component testing." << endl;
 
             //This do-while cycle tests the requested amount of iterations of the roll() function
             do {
@@ -88,9 +81,6 @@ namespace Dice {
 
             //Asserting test results
             assert(test_face_1 && test_face_2 && test_face_3 && test_face_4 && test_face_5 && test_face_6);
-
-            cout << "[TEST] - End of Dice component testing." << endl;
-            cout << "[TEST] -----" << endl << endl;
 
             return true;
         }

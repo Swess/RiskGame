@@ -174,16 +174,11 @@ namespace Map {
     }
 
     bool run() {
-        cout << "[TEST] -----" << endl;
-        cout << "[TEST] - Running Map component tests." << endl;
-
         test_simple_graph();
         test_continent_graph();
         test_continent_country_exclusivity();
         test_composed_map();
 
-        cout << "[TEST] - End of Map component testing." << endl;
-        cout << "[TEST] -----" << endl;
         return true;
     };
 } }
