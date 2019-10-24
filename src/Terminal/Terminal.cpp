@@ -37,6 +37,15 @@ void Terminal::debug(const string& s){
     }
 }
 
+
+void Terminal::debug(const int &i) {
+    if (debug_mode) {
+        cout << "[DEBUG] ";
+        print(i);
+    }
+}
+
+
 void Terminal::error(const string &s) {
     std::cerr << "[ERROR] " << s << endl;
 }

@@ -19,10 +19,12 @@ namespace GameEngine {
         static GameEngine *instance();
         void start();
         void start_test(int map_index, int nb_player);
+        void startup_phase();
         void reset_test(); // ONLY USE FOR TESTS
         Map::Map * get_map();
         vector<Player::Player*> * get_players();
         Cards::Deck * get_deck();
+        vector<int> * get_player_order();
 
     private:
         GameEngine();
@@ -31,10 +33,14 @@ namespace GameEngine {
         void select_map();
         void select_player();
         void create_deck();
+        void assign_player_order_randomly();
+        void assign_country_to_player();
+        void assign_armies_into_country();
         static GameEngine *game_engine_instance;
         Map::Map *map;
         vector<Player::Player*> * players;
         Cards::Deck * deck;
+        vector<int> * player_order;
     };
 
 

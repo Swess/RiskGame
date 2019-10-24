@@ -107,7 +107,7 @@ namespace GameEngine {
         select_map();
         create_deck();
         select_player();
-        Terminal::debug("Game Engine Done.");
+        Terminal::debug("Game Engine Done with start part.");
     }
 
     void GameEngine::start_test(int map_index, int nb_player) {
@@ -125,12 +125,15 @@ namespace GameEngine {
         map = nullptr;
         deck = nullptr;
         players = new vector<Player::Player *>();
+        player_order = new vector<int>();
     }
 
     GameEngine::~GameEngine() {
         delete map;
         delete players;
         delete deck;
+        delete player_order;
+        player_order = nullptr;
         deck = nullptr;
         map = nullptr;
         players = nullptr;
@@ -152,9 +155,51 @@ namespace GameEngine {
         delete map;
         delete players;
         delete deck;
+        delete player_order;
         map = nullptr;
         deck = nullptr;
+        player_order = new vector<int>();
         players = new vector<Player::Player *>();
+    }
+
+    vector<int> *GameEngine::get_player_order() {
+        return player_order;
+    }
+
+    void GameEngine::assign_player_order_randomly() {
+        Terminal::debug("Determining player order");
+        for (auto player : *players){
+            bool unique = true;
+            int order = 0;
+            do {
+                order = rand() % players->size();
+                unique = true;
+                for (auto i : *player_order) {
+                    if (order == i) {
+                        unique = false;
+                        break;
+                    }
+                }
+            } while(!unique);
+            player_order->emplace_back(order);
+        }
+
+        Terminal::debug("The order is");
+        for (auto order : * player_order)
+            Terminal::debug("Player " + to_string(order+1));
+    }
+
+    void GameEngine::startup_phase() {
+        assign_player_order_randomly();
+
+    }
+
+    void GameEngine::assign_country_to_player() {
+
+    }
+
+    void GameEngine::assign_armies_into_country() {
+
     }
 
 
