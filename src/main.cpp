@@ -29,7 +29,10 @@ int main() {
 
     Terminal::test_mode_off();
     Terminal::debug_mode_on();
-    GameEngine::GameEngine::instance()->start();
+//    GameEngine::GameEngine::instance()->start();
+    Terminal::test_mode_on();
+    GameEngine::GameEngine::instance()->start_test(0,6);
+    GameEngine::GameEngine::instance()->startup_phase();
 
 
     return 0;

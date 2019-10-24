@@ -16,6 +16,7 @@ class Terminal {
     static void print(const string& s);
     static void print(const int& i);
     static void debug(const string& s);
+    static void debug(const int& i);
     static void print(const std::vector<string>& array_string);
     static bool print_select(const string& s);
     static int print_select(std::vector<string> s);
