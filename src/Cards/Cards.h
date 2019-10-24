@@ -29,11 +29,12 @@ private:
 class Deck {
 public:
     Deck();
-    Deck(string countries[], int size);
+    explicit Deck(const vector<string>& countries);
     explicit Deck(vector<Card *> &cards);
     ~Deck();
     void shuffleDeck();
     Card draw();
+    int get_size();
     vector<Card *> *cards;
 };
 

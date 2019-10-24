@@ -13,13 +13,14 @@ namespace Cards {
         bool testEqualShareOfTypeInDeck() {
 
             const int NUMBER_OF_CARDS = 43;
-            string countries[NUMBER_OF_CARDS];
+            vector<string> countries;
+            countries.reserve(NUMBER_OF_CARDS);
 
             for (int i = 0; i < NUMBER_OF_CARDS; i++) {
-                countries[i] = "Stub name" + to_string(i);
+                countries.emplace_back("Stub name " + to_string(i));
             }
 
-            Deck deck(countries, NUMBER_OF_CARDS);
+            Deck deck(countries);
 
             // confirm equal amount of types in deck
             int typeCounter[] = {0, 0, 0};

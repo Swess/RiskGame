@@ -5,10 +5,38 @@
 #ifndef TEAM12_DOMINATIONGAME_GAMEENGINE_H
 #define TEAM12_DOMINATIONGAME_GAMEENGINE_H
 
+#include <vector>
+#include <string>
+#include "../Map/Map.h"
+#include "../Player/Player.h"
+#include "../Cards/Cards.h"
 
-class GameEngine {
+using std::string;
+using std::vector;
+namespace GameEngine {
+    class GameEngine {
+    public:
+        static GameEngine *instance();
+        void start();
+        void start_test(int map_index, int nb_player);
+        void reset_test(); // ONLY USE FOR TESTS
+        Map::Map * get_map();
+        vector<Player::Player*> * get_players();
+        Cards::Deck * get_deck();
 
-};
+    private:
+        GameEngine();
+        virtual ~GameEngine();
+        vector<string> get_available_map();
+        void select_map();
+        void select_player();
+        void create_deck();
+        static GameEngine *game_engine_instance;
+        Map::Map *map;
+        vector<Player::Player*> * players;
+        Cards::Deck * deck;
+    };
 
 
+}
 #endif //TEAM12_DOMINATIONGAME_GAMEENGINE_H

@@ -8,6 +8,7 @@
 #include "../Map/Map.h"
 #include "../Cards/Cards.h"
 #include "../Dice/Dice.h"
+#include "../Terminal/Terminal.h"
 
 using namespace std;
 

@@ -80,16 +80,20 @@ void Deck::shuffleDeck() {
     }
 }
 
-Deck::Deck(string *countries, int size) {
+Deck::Deck(const vector<string>& countries) {
     cards = new vector<Card *>;
     int starting = rand() % 3;
-    for (int i = 0; i < size; i++) {
-        Card card(countries[i], Card::Type((starting + i) % 3));
+    for (int i = 0; i < countries.size(); i++) {
+        Card card(countries.at(i), Card::Type((starting + i) % 3));
         cards->push_back(new Card(card));
     }
 }
 
-Hand::Hand() {
+    int Deck::get_size() {
+        return this->cards->size();
+    }
+
+    Hand::Hand() {
     cards = new vector<Card *>;
 }
 

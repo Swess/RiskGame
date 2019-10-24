@@ -6,8 +6,13 @@
 #define TEAM12_DOMINATIONGAME_GAMEENGINEDRIVER_H
 
 
-class GameEngineDriver {
-
+namespace GameEngine {
+    namespace Driver {
+        bool map_loaded();
+        bool right_amount_of_player();
+        bool right_amount_of_card_in_deck();
+        bool run();
+    }
 };
 
 
