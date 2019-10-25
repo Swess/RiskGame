@@ -4,6 +4,9 @@
 
 #include "GameEngine.h"
 #include <windows.h>
+#include <ctime>
+#include <algorithm>
+#include <random>
 #include "../Map/Map.h"
 #include "../MapLoader/MapLoader.h"
 #include "../Terminal/Terminal.h"
@@ -112,6 +115,9 @@ namespace GameEngine {
         for (int i = 1; i < answer ; ++i) {
             Player::Player * p = new Player::Player;
             players->emplace_back(p);
+
+            // Place player pointers in the registry also
+            map_registry->add_player(p);
         }
 
         Terminal::debug("Players all defined in GameEngine");
@@ -141,6 +147,7 @@ namespace GameEngine {
         deck = nullptr;
         players = new vector<Player::Player *>();
         player_order = new vector<int>();
+        map_registry = new Map::MapRegistry();
     }
 
     GameEngine::~GameEngine() {
@@ -148,6 +155,9 @@ namespace GameEngine {
         delete players;
         delete deck;
         delete player_order;
+        delete map_registry;
+
+        map_registry = nullptr;
         player_order = nullptr;
         deck = nullptr;
         map = nullptr;
@@ -181,8 +191,18 @@ namespace GameEngine {
         return player_order;
     }
 
+    void GameEngine::startup_phase() {
+        assign_player_order_randomly();
+        assign_country_to_player();
+        assign_armies_into_country();
+    }
+
     void GameEngine::assign_player_order_randomly() {
         Terminal::debug("Determining player order");
+
+        // Seeding random function for unpredictable results
+        srand(time(0));
+
         for (auto player : *players){
             bool unique = true;
             int order = 0;
@@ -204,13 +224,19 @@ namespace GameEngine {
             Terminal::debug("Player " + to_string(order+1));
     }
 
-    void GameEngine::startup_phase() {
-        assign_player_order_randomly();
-
-    }
-
     void GameEngine::assign_country_to_player() {
+        // Loop countries with player index increasing
+        vector<Map::Country *> countries = map->get_countries();
 
+        shuffle( countries.begin(), countries.end(), default_random_engine(time(0)));
+
+        int owner_index = 0;
+        for(auto & countrie : countries){
+            // Giving in Round-Robin
+            map_registry->gain_control(players->at(owner_index), countrie);
+            Terminal::debug("Gave control of country '"+countrie->get_name()+"' to player "+to_string(owner_index) );
+            owner_index = ++owner_index % (int)players->size();
+        }
     }
 
     void GameEngine::assign_armies_into_country() {

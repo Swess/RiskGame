@@ -33,11 +33,11 @@ namespace Player{
             return true;
         }
 
-        bool test_countries(){
-            Player p1;
-            assert(p1.countries->size() == 0 );
-            return true;
-        }
+//        bool test_countries(){
+//            Player p1;
+//            assert(p1.countries->size() == 0 );
+//            return true;
+//        }
 
         bool test_hand(){
             Player p1;
@@ -49,8 +49,7 @@ namespace Player{
             bool passed = test_attack() &&
                           test_fortify() &&
                           test_reinforce() &&
-                          test_Dice() &&
-                          test_countries();
+                          test_Dice();
 
             return passed;
         }

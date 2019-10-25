@@ -70,6 +70,8 @@ namespace MapLoader {
             // Index out of bound
             FindClose(h_find);
         }
+
+        return nullptr;
     }
 
     MapLoader * MapLoader::readFile() {
