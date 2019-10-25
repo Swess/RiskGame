@@ -2,6 +2,8 @@
 
 #include <vector>
 #include <string>
+#include <map>
+#include "../Player/Player.h"
 
 using namespace std;
 
@@ -9,6 +11,7 @@ namespace Map {
 
     class Map;
     class Continent;
+    class MapRegistry;
 
     /**
      * Country class
@@ -18,20 +21,24 @@ namespace Map {
     class Country {
         friend Map;
         friend Continent;
+        friend MapRegistry;
 
         int *index;
         string *name;
         int *continent_index;
         int *nb_armies;
+        Player::Player *owner;
 
     public:
         Country(const string &name);
-        // TODO: Add the owner player of this country
 
         ~Country();
 
         string get_name();
+
         int get_armies();
+
+        Player::Player *get_owner();
     };
 
     /**
@@ -91,6 +98,42 @@ namespace Map {
     };
 
     /**
+     * Will contain the player's country mapping and some methods to help get
+     * information out of the map topology with better complexity.
+     */
+    class MapRegistry {
+        map<Player::Player *, vector<Country *>*> *reg;
+
+    public:
+        MapRegistry();
+        virtual ~MapRegistry();
+
+        /**
+         * Add a player to the current registry for the game.
+         * @param p
+         */
+        void add_player(Player::Player* p);
+
+        /**
+         * Will assign the country as it belongs to the specified player,
+         * removing control from the previous one if necessary.
+         * @param p
+         * @param country
+         */
+        void gain_control(Player::Player* p, Country* country);
+
+        vector<Country *> get_reachable_by(Player::Player p) const;
+
+        /**
+         * Returns all the countries that belongs to that player
+         * @param p
+         * @return
+         */
+        vector<Country *> get_owned_by(Player::Player* p) const;
+    };
+
+
+    /**
      * Map Class
      * The Map is the complete graph of all countries (Nodes). It also contains the continents and manages them.
      * The edges are implemented as an AdjacencyList with the corresponding object index to ensure O(1) seek & query.
@@ -101,6 +144,7 @@ namespace Map {
         vector<Continent *> *continents;
         vector<Country *> *countries;
         vector<vector<int>> *edges;
+
     public:
 
         Map();

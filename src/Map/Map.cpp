@@ -1,5 +1,4 @@
 #include "Map.h"
-#include <iostream>
 #include <list>
 
 namespace Map {
@@ -9,6 +8,7 @@ namespace Map {
         this->index = new int(-1);
         this->continent_index = new int(-1);
         this->nb_armies = new int(0);
+        this->owner = nullptr;
     }
 
     Country::~Country() {
@@ -22,6 +22,7 @@ namespace Map {
         name = nullptr;
         continent_index = nullptr;
         nb_armies = nullptr;
+        owner = nullptr;
     }
 
     string Country::get_name() {
@@ -30,6 +31,10 @@ namespace Map {
 
     int Country::get_armies() {
         return *nb_armies;
+    }
+
+    Player::Player *Country::get_owner() {
+        return owner;
     }
 
     Continent::Continent(const string &name, Map *map) {
@@ -225,4 +230,49 @@ namespace Map {
     }
 
 
+    MapRegistry::MapRegistry() {
+        reg = new map<Player::Player *, vector<Country *>*>();
+    }
+
+    MapRegistry::~MapRegistry() {
+        delete reg;
+        reg = nullptr;
+    }
+
+    void MapRegistry::add_player(Player::Player* p) {
+        // Will add an entry if player pointer not already present
+        reg->emplace(p, new vector<Country*>());
+    }
+
+    vector<Country *> MapRegistry::get_owned_by(Player::Player* p) const {
+        map<Player::Player*, vector<Country*>*>::iterator it;
+        it = reg->find(p);
+
+        // If found
+        if(it != reg->end())
+            return *it->second;
+
+        return vector<Country *>();
+    }
+
+    void MapRegistry::gain_control(Player::Player *p, Country *country) {
+        // Remove control of previous owner
+        if(country->owner != nullptr){
+            vector<Country *> prev_player_countries = get_owned_by(country->owner);
+            vector<Country *>::iterator it;
+            for(it = prev_player_countries.begin(); it < prev_player_countries.end(); it++){
+                if((*it) == country)
+                    prev_player_countries.erase(it);
+            }
+
+            // Replace with the new sequence of countries
+            reg->at(country->owner)->swap(prev_player_countries);
+        }
+
+        // Add to registry
+        reg->at(p)->push_back(country);
+
+        // Modify country so it matches the registry
+        country->owner = p;
+    }
 }

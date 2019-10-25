@@ -14,9 +14,18 @@
 using std::string;
 using std::vector;
 namespace GameEngine {
+
     class GameEngine {
     public:
+        /**
+         * Gets the Singleton instance
+         * @return
+         */
         static GameEngine *instance();
+
+        /**
+         * Starting point of the engine/game
+         */
         void start();
         void start_test(int map_index, int nb_player);
         void startup_phase();
@@ -29,7 +38,17 @@ namespace GameEngine {
     private:
         GameEngine();
         virtual ~GameEngine();
+
+        /**
+         * Returns the list of all .map files available for loading.
+         * @return
+         */
         vector<string> get_available_map();
+
+        /**
+         * Let's the player select the map tha the game will be on.
+         * Load the resources accordingly, and create objects.
+         */
         void select_map();
         void select_player();
         void create_deck();
@@ -38,6 +57,7 @@ namespace GameEngine {
         void assign_armies_into_country();
         static GameEngine *game_engine_instance;
         Map::Map *map;
+        Map::MapRegistry* map_registry;
         vector<Player::Player*> * players;
         Cards::Deck * deck;
         vector<int> * player_order;
