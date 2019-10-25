@@ -8,14 +8,11 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
-#include <stdexcept>
 #include <windows.h>
+#include <stdexcept>
 #include "../Map/Map.h"
 #include "../exceptions.h"
 #include "../Terminal/Terminal.h"
-
-
-using namespace std;
 
 namespace MapLoader {
 
