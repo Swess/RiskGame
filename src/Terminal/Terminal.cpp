@@ -18,11 +18,13 @@ int Terminal::input;
 
 void Terminal::print(const string& s) {
     cout << s << endl;
+    std::flush(cout);
 }
 
 
 void Terminal::print(const int &i) {
     cout << i << endl;
+    std::flush(cout);
 }
 
 
@@ -48,6 +50,7 @@ void Terminal::debug(const int &i) {
 
 void Terminal::error(const string &s) {
     std::cerr << "[ERROR] " << s << endl;
+    std::flush(std::cerr);
 }
 
 /*
@@ -90,6 +93,7 @@ int Terminal::print_select(std::vector<string> array_string) {
             cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         }
     }
+    std::flush(cout);
     return (a-1);
 }
 

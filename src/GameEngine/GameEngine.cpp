@@ -52,16 +52,31 @@ namespace GameEngine {
         MapLoader::MapLoader mapLoader;
         Terminal::print("Select the map you want to play in.");
         vector<string> maps = get_available_map();
-        int map_selection = Terminal::print_select(maps);
-        try {
-            map = mapLoader.load(map_selection)->build();
-        } catch (IOException &e ) {
-            string error = e.what(maps[map_selection]);
-            Terminal::error(error);
-        } catch(exception &e){
-            string error = e.what();
-            Terminal::error(error);
+
+        int map_selection;
+        bool found_valid = false;
+
+        while(!found_valid){
+            try {
+                map_selection = Terminal::print_select(maps);
+                map = mapLoader.load(map_selection)->build();
+
+                if(!map->is_connected()){
+                    Terminal::print("The selected does not represent a valid connected graph and playable map.");
+                    Terminal::print("Please select another one.");
+                    continue;
+                }
+
+                found_valid = true;
+            } catch (IOException &e) {
+                string error = e.what(maps[map_selection]);
+                Terminal::error(error);
+            } catch(exception &e){
+                string error = e.what();
+                Terminal::error(error);
+            }
         }
+
         Terminal::debug("Map defined in GameEngine");
     }
 
@@ -201,6 +216,5 @@ namespace GameEngine {
     void GameEngine::assign_armies_into_country() {
 
     }
-
 
 }
