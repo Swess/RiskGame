@@ -19,7 +19,7 @@ using namespace std;
 
 namespace MapLoader {
 
-    string map_path = "ressources/maps/";
+    const string map_path = "ressources/maps/";
 
     // Constructors
     MapLoader::MapLoader() {
