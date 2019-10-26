@@ -11,6 +11,7 @@ include(src/MapLoader/CMakeLists.txt)
 include(src/Cards/CMakeLists.txt)
 include(src/Player/CMakeLists.txt)
 include(src/Terminal/CMakeLists.txt)
+include(src/GameEngine/CMakeLists.txt)
 
 add_executable(Team12_DominationGame src/main.cpp src/exceptions.h ${SRC_FILES})
 

@@ -50,14 +50,10 @@ namespace MapLoader {
 
         Sections() = default;
 
-        Sections(Value s);
-
+        explicit Sections(Value s);
         explicit operator bool() = delete;
-
         void strategy(const string &line, MapLoader &mapLoader);
-
         static Sections::Value getSectionFromString(const string &s);
-
         static bool isStringAValidSection(const string &s);
 
     private:
@@ -75,6 +71,7 @@ namespace MapLoader {
         vector<_border> *borders_temp;
 
         MapLoader * openFile(const string &path);
+        MapLoader * openFile(const int &index);
         MapLoader * readFile();
         MapLoader * closeFile();
 
@@ -84,14 +81,11 @@ namespace MapLoader {
         MapLoader();
         virtual ~MapLoader();
         void addContinentToMemory(const _continent &continent);
-
         void addCountryToMemory(const _country &country);
-
         void addBorderToMemory(const _border &border);
-
         MapLoader * load(const string &path);
-
+        MapLoader * load(const int &index);
         Map::Map * build();
 
     };
-}
+};

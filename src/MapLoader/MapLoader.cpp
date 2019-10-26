@@ -9,13 +9,17 @@
 #include <cstring>
 #include <vector>
 #include <stdexcept>
+#include <windows.h>
 #include "../Map/Map.h"
 #include "../exceptions.h"
+#include "../Terminal/Terminal.h"
 
 
 using namespace std;
 
 namespace MapLoader {
+
+    const string map_path = "ressources/maps/";
 
     // Constructors
     MapLoader::MapLoader() {
@@ -41,11 +45,34 @@ namespace MapLoader {
 
     //Methods
     MapLoader * MapLoader::openFile(const string &path) {
-        input_stream->open("ressources/maps/" + path);
+        Terminal::debug("Opening file." + path);
+        input_stream->open(map_path + path);
         if (!input_stream->is_open()) {
             throw IOException();
         }
         return this;
+    }
+
+    MapLoader * MapLoader::openFile(const int &index) {
+        Terminal::debug("Finding file...");
+        int curr_index = 0;
+        string search_path = map_path + "/*.*";
+        WIN32_FIND_DATA fd;
+        HANDLE h_find = FindFirstFile(search_path.c_str(), &fd);
+        if(h_find != INVALID_HANDLE_VALUE) {
+            do {
+                if(! (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ) {
+                    if (index == curr_index++) {
+                        Terminal::debug("File found.");
+                        FindClose(h_find);
+                        Terminal::debug(fd.cFileName);
+                        return openFile(fd.cFileName);
+                    }
+                }
+            } while(FindNextFile(h_find, &fd) );
+            // Index out of bound
+            FindClose(h_find);
+        }
     }
 
     MapLoader * MapLoader::readFile() {
@@ -70,6 +97,10 @@ namespace MapLoader {
 
     MapLoader * MapLoader::load(const string &path) {
         return openFile(path)->readFile()->closeFile();
+    }
+
+    MapLoader * MapLoader::load(const int &index) {
+        return openFile(index)->readFile()->closeFile();
     }
 
     void MapLoader::addContinentToMemory(const _continent &continent) {
@@ -117,19 +148,19 @@ namespace MapLoader {
     void Sections::strategy(const string &line, MapLoader &mapLoader) {
         char *line_c_str = const_cast<char *>(line.c_str());
         char *token = strtok(line_c_str, " ");
-        string ERROR = "Invalid file format";
-        if (token == nullptr) throw invalid_argument( ERROR );
+        const string FILE_ERROR = "Invalid file format";
+        if (token == nullptr) throw invalid_argument( FILE_ERROR );
         switch ((*section)) {
             case continent: {
                 _continent continent{nullptr, nullptr, nullptr};
                 continent.name = new string(token);
                 token = strtok(nullptr, " ");
 
-                if (token == nullptr) throw invalid_argument( ERROR );
+                if (token == nullptr) throw invalid_argument( FILE_ERROR );
 
                 continent.bonus = new int(strtol(token, nullptr, 10));
                 token = strtok(nullptr, " ");
-                if (token == nullptr) throw invalid_argument( ERROR );
+                if (token == nullptr) throw invalid_argument( FILE_ERROR );
 
                 continent.color = new string(token);
                 mapLoader.addContinentToMemory(continent);
@@ -139,19 +170,19 @@ namespace MapLoader {
                 _country country{nullptr, nullptr, nullptr, nullptr, nullptr};
                 country.index = new int(strtol(token, nullptr, 10));
                 token = strtok(nullptr, " ");
-                if (token == nullptr) throw invalid_argument( ERROR );
+                if (token == nullptr) throw invalid_argument( FILE_ERROR );
 
                 country.name = new string(token);
                 token = strtok(nullptr, " ");
-                if (token == nullptr) throw invalid_argument( ERROR );
+                if (token == nullptr) throw invalid_argument( FILE_ERROR );
 
                 country.continentIndex = new int(strtol(token, nullptr, 10));
                 token = strtok(nullptr, " ");
-                if (token == nullptr) throw invalid_argument( ERROR );
+                if (token == nullptr) throw invalid_argument( FILE_ERROR );
 
                 country.x = new int(strtol(token, nullptr, 10));
                 token = strtok(nullptr, " ");
-                if (token == nullptr) throw invalid_argument( ERROR );
+                if (token == nullptr) throw invalid_argument( FILE_ERROR );
 
                 country.y = new int(strtol(token, nullptr, 10));
                 mapLoader.addCountryToMemory(country);
@@ -162,7 +193,7 @@ namespace MapLoader {
                 border.countryIndex = new int(strtol(token, nullptr, 10));
 
                 token = strtok(nullptr, " ");
-                if (token == nullptr) throw invalid_argument( ERROR );
+                if (token == nullptr) throw invalid_argument( FILE_ERROR );
                 while (token != nullptr) {
                     border.values->push_back(strtol(token, nullptr, 10));
                     token = strtok(nullptr, " ");
