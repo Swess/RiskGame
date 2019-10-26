@@ -75,7 +75,7 @@ namespace MapLoader {
         MapLoader * readFile();
         MapLoader * closeFile();
 
-        Map::Map *map;
+        Board::Map *map;
 
     public:
         MapLoader();
@@ -85,7 +85,7 @@ namespace MapLoader {
         void addBorderToMemory(const _border &border);
         MapLoader * load(const string &path);
         MapLoader * load(const int &index);
-        Map::Map * build();
+        Board::Map * build();
 
     };
 };

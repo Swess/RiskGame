@@ -4,7 +4,7 @@
 
 using namespace std;
 
-namespace Map {
+namespace Board {
     namespace Driver {
     bool test_simple_graph() {
         Map map;

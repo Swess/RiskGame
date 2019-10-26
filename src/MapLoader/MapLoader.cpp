@@ -24,7 +24,7 @@ namespace MapLoader {
         continents_temp = new vector<_continent>(0);
         countries_temp = new vector<_country>(0);
         borders_temp = new vector<_border>(0);
-        map = new Map::Map();
+        map = new Board::Map();
     }
 
     //Deconstructors
@@ -114,7 +114,7 @@ namespace MapLoader {
         this->borders_temp->push_back(border);
     }
 
-    Map::Map * MapLoader::build() {
+    Board::Map * MapLoader::build() {
         if ( continents_temp->empty() ){
             string msg = "There is no continents in the provided file";
             throw runtime_error(msg);
@@ -128,15 +128,15 @@ namespace MapLoader {
             throw runtime_error(msg);
         }
         for ( _continent continent : *continents_temp) {
-            new Map::Continent(*continent.name, *continent.bonus, *continent.color, map);
+            new Board::Continent(*continent.name, *continent.bonus, *continent.color, map);
         }
         for (_country country : *countries_temp) {
-            Map::Country * new_country = new Map::Country(*country.name);
-            Map::Continent * continent = map->get_continents().at( (*country.continentIndex) - 1 ); // Indexing in files start at 1
+            Board::Country * new_country = new Board::Country(*country.name);
+            Board::Continent * continent = map->get_continents().at((*country.continentIndex) - 1 ); // Indexing in files start at 1
             continent->insert_country(*new_country);
         }
         for (_border border : *borders_temp) {
-            Map::Country * country = map->get_countries().at( (*border.countryIndex) -1 );
+            Board::Country * country = map->get_countries().at((*border.countryIndex) - 1 );
             for (int value : *border.values){
                 map->connect( *country,  *map->get_countries().at( (value - 1) )); // Indexing in files start at 1
             }
