@@ -20,7 +20,7 @@ int main() {
     if (test) {
         Terminal::test_mode_on();
         Terminal::run_test("MapLoader", MapLoader::Driver::run);
-        Terminal::run_test("Map", Map::Driver::run);
+        Terminal::run_test("Map", Board::Driver::run);
         Terminal::run_test("Dice", Dice::Driver::run);
         Terminal::run_test("Cards", Cards::Driver::run);
         Terminal::run_test("Player", Player::Driver::run);

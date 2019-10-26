@@ -1,7 +1,7 @@
 #include "Map.h"
 #include <list>
 
-namespace Map {
+namespace Board {
 
     Country::Country(const string &name) {
         this->name = new string(name);
@@ -40,6 +40,10 @@ namespace Map {
 
     Player::Player *Country::get_owner() {
         return owner;
+    }
+
+    void Country::set_owner(Player::Player *p) {
+        owner = p;
     }
 
     Continent::Continent(const string &name, Map *map) {
@@ -232,52 +236,5 @@ namespace Map {
 
     void Map::add_continent(Continent *continent) {
         continents->push_back(continent);
-    }
-
-
-    MapRegistry::MapRegistry() {
-        reg = new map<Player::Player *, vector<Country *>*>();
-    }
-
-    MapRegistry::~MapRegistry() {
-        delete reg;
-        reg = nullptr;
-    }
-
-    void MapRegistry::add_player(Player::Player* p) {
-        // Will add an entry if player pointer not already present
-        reg->emplace(p, new vector<Country*>());
-    }
-
-    vector<Country *> MapRegistry::get_owned_by(Player::Player* p) const {
-        map<Player::Player*, vector<Country*>*>::iterator it;
-        it = reg->find(p);
-
-        // If found
-        if(it != reg->end())
-            return *it->second;
-
-        return vector<Country *>();
-    }
-
-    void MapRegistry::gain_control(Player::Player *p, Country *country) {
-        // Remove control of previous owner
-        if(country->owner != nullptr){
-            vector<Country *> prev_player_countries = get_owned_by(country->owner);
-            vector<Country *>::iterator it;
-            for(it = prev_player_countries.begin(); it < prev_player_countries.end(); it++){
-                if((*it) == country)
-                    prev_player_countries.erase(it);
-            }
-
-            // Replace with the new sequence of countries
-            reg->at(country->owner)->swap(prev_player_countries);
-        }
-
-        // Add to registry
-        reg->at(p)->push_back(country);
-
-        // Modify country so it matches the registry
-        country->owner = p;
     }
 }

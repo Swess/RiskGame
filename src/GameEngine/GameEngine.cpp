@@ -7,7 +7,6 @@
 #include <ctime>
 #include <algorithm>
 #include <random>
-#include "../Map/Map.h"
 #include "../MapLoader/MapLoader.h"
 #include "../Terminal/Terminal.h"
 #include "../exceptions.h"
@@ -115,9 +114,6 @@ namespace GameEngine {
         for (int i = 1; i < answer ; ++i) {
             Player::Player * p = new Player::Player;
             players->emplace_back(p);
-
-            // Place player pointers in the registry also
-            map_registry->add_player(p);
         }
 
         Terminal::debug("Players all defined in GameEngine");
@@ -147,7 +143,7 @@ namespace GameEngine {
         deck = nullptr;
         players = new vector<Player::Player *>();
         player_order = new vector<int>();
-        map_registry = new Map::MapRegistry();
+        // map_registry = new Map::MapRegistry();
     }
 
     GameEngine::~GameEngine() {
@@ -155,16 +151,13 @@ namespace GameEngine {
         delete players;
         delete deck;
         delete player_order;
-        delete map_registry;
-
-        map_registry = nullptr;
         player_order = nullptr;
         deck = nullptr;
         map = nullptr;
         players = nullptr;
     }
 
-    Map::Map * GameEngine::get_map() {
+    Map * GameEngine::get_map() {
         return map;
     }
 
@@ -226,14 +219,15 @@ namespace GameEngine {
 
     void GameEngine::assign_country_to_player() {
         // Loop countries with player index increasing
-        vector<Map::Country *> countries = map->get_countries();
+        vector<Country *> countries = map->get_countries();
 
         shuffle( countries.begin(), countries.end(), default_random_engine(time(0)));
 
         int owner_index = 0;
         for(auto & countrie : countries){
             // Giving in Round-Robin
-            map_registry->gain_control(players->at(owner_index), countrie);
+            players->at(owner_index)->gain_control(countrie);
+
             Terminal::debug("Gave control of country '"+countrie->get_name()+"' to player "+to_string(owner_index) );
             owner_index = ++owner_index % (int)players->size();
         }
@@ -250,9 +244,8 @@ namespace GameEngine {
 
         // Auto place 1 army to every country
         for(int player_index : *player_order){
-            vector<Map::Country *> countries = map_registry->get_owned_by(players->at(player_index));
-
-            for (Map::Country *c : countries) {
+            vector<Country *> countries = players->at(player_index)->get_countries();
+            for (Country *c : countries) {
                 c->set_armies(c->get_armies() + 1);
                 remaining[player_index]--;
                 total_placed++;
@@ -271,7 +264,7 @@ namespace GameEngine {
                 Terminal::print("Now player #"+to_string(player_index+1)+" turns.");
 
                 // Build list of choices with current amount of armies for display
-                vector<Map::Country *> countries = map_registry->get_owned_by(players->at(player_index));
+                vector<Country *> countries = players->at(player_index)->get_countries();
                 vector<string> options;
                 for(auto c_ptr : countries)
                     options.emplace_back(c_ptr->get_name() + " ("+to_string(c_ptr->get_armies())+" armies present)");

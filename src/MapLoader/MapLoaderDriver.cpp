@@ -13,7 +13,7 @@ namespace MapLoader { namespace Driver {
     bool load_Risk_Europe(){
         MapLoader * mapLoader = new MapLoader();
         string s = "RiskEurope.map";
-        Map::Map * testMap = nullptr;
+        Board::Map * testMap = nullptr;
         try {
             testMap = mapLoader->load(s)->build();
         } catch (IOException &e) {
@@ -30,7 +30,7 @@ namespace MapLoader { namespace Driver {
     bool load_uk(){
         MapLoader mapLoader;
         string s = "uk.map";
-        Map::Map * testMap = nullptr;
+        Board::Map * testMap = nullptr;
         try {
             testMap = mapLoader.load(s)->build();
         } catch (IOException &e) {
@@ -45,7 +45,7 @@ namespace MapLoader { namespace Driver {
     bool load_original_risk_map(){
         MapLoader mapLoader;
         string s = "risk.map";
-        Map::Map * testMap = nullptr;
+        Board::Map * testMap = nullptr;
         try {
             testMap = mapLoader.load(s)->build();
         } catch (IOException &e) {
@@ -60,7 +60,7 @@ namespace MapLoader { namespace Driver {
     bool load_a_not_correct_mapfile(){
         MapLoader mapLoader;
         string s = "garbage.map";
-        Map::Map * testMap = nullptr;
+        Board::Map * testMap = nullptr;
         try {
             testMap = mapLoader.load(s)->build();
         } catch (IOException &e) {
@@ -76,7 +76,7 @@ namespace MapLoader { namespace Driver {
     bool load_empty_file(){
         MapLoader mapLoader;
         string s = "undefined.map";
-        Map::Map * testMap = nullptr;
+        Board::Map * testMap = nullptr;
         try {
             testMap = mapLoader.load(s)->build();
         } catch (IOException &e ) {
@@ -92,7 +92,7 @@ namespace MapLoader { namespace Driver {
     bool load_map_with_only_continent(){
         MapLoader mapLoader;
         string s = "onlyContinents.map";
-        Map::Map * testMap = nullptr;
+        Board::Map * testMap = nullptr;
         try {
             testMap = mapLoader.load(s)->build();
         } catch (IOException &e ) {
@@ -108,7 +108,7 @@ namespace MapLoader { namespace Driver {
     bool load_undefined(){
         MapLoader mapLoader;
         const string s = "longer_name_break_exception";
-        Map::Map * testMap = nullptr;
+        Board::Map * testMap = nullptr;
         try {
             testMap = mapLoader.load(s)->build();
         } catch (IOException &e ) {

@@ -3,15 +3,17 @@
 #include <vector>
 #include <string>
 #include <map>
-#include "../Player/Player.h"
+// #include "../Player/Player.h"
 
 using namespace std;
 
-namespace Map {
+// Some Fwd declarations
+namespace Player { class Player; }
+
+namespace Board {
 
     class Map;
     class Continent;
-    class MapRegistry;
 
     /**
      * Country class
@@ -21,7 +23,6 @@ namespace Map {
     class Country {
         friend Map;
         friend Continent;
-        friend MapRegistry;
 
         int *index;
         string *name;
@@ -41,6 +42,7 @@ namespace Map {
         void set_armies(int num);
 
         Player::Player *get_owner();
+        void set_owner(Player::Player* p);
     };
 
     /**
@@ -98,42 +100,6 @@ namespace Map {
          */
         bool is_connected();
     };
-
-    /**
-     * Will contain the player's country mapping and some methods to help get
-     * information out of the map topology with better complexity.
-     */
-    class MapRegistry {
-        map<Player::Player *, vector<Country *>*> *reg;
-
-    public:
-        MapRegistry();
-        virtual ~MapRegistry();
-
-        /**
-         * Add a player to the current registry for the game.
-         * @param p
-         */
-        void add_player(Player::Player* p);
-
-        /**
-         * Will assign the country as it belongs to the specified player,
-         * removing control from the previous one if necessary.
-         * @param p
-         * @param country
-         */
-        void gain_control(Player::Player* p, Country* country);
-
-        vector<Country *> get_reachable_by(Player::Player p) const;
-
-        /**
-         * Returns all the countries that belongs to that player
-         * @param p
-         * @return
-         */
-        vector<Country *> get_owned_by(Player::Player* p) const;
-    };
-
 
     /**
      * Map Class

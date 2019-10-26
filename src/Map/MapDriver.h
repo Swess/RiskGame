@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Map {
+namespace Board {
     namespace Driver {
         bool run();
     }
