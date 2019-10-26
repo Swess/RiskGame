@@ -143,7 +143,6 @@ namespace GameEngine {
         deck = nullptr;
         players = new vector<Player::Player *>();
         player_order = new vector<int>();
-        // map_registry = new Map::MapRegistry();
     }
 
     GameEngine::~GameEngine() {
