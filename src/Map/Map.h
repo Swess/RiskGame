@@ -38,6 +38,8 @@ namespace Map {
 
         int get_armies();
 
+        void set_armies(int num);
+
         Player::Player *get_owner();
     };
 

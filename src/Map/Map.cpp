@@ -33,6 +33,11 @@ namespace Map {
         return *nb_armies;
     }
 
+    void Country::set_armies(int num) {
+        *nb_armies = num;
+    }
+
+
     Player::Player *Country::get_owner() {
         return owner;
     }
