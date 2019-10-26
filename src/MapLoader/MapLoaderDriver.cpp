@@ -111,9 +111,9 @@ namespace MapLoader { namespace Driver {
         Board::Map * testMap = nullptr;
         try {
             testMap = mapLoader.load(s)->build();
+            assert(false);
         } catch (IOException &e ) {
             string message = e.what(s);
-            assert(message == "Error opening given file: " + s);
         }
         return true;
     };
