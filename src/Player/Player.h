@@ -17,6 +17,7 @@ namespace Player {
 
     class Player {
         vector<Country *> *countries;
+        string *name;
     public:
         // TODO: These need to be private
         Dice::Dice *dice;

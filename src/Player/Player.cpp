@@ -29,6 +29,20 @@ namespace Player {
     }
 
     string Player::fortify() {
+        vector<Country> neighbors();
+        for (auto country: *countries){
+            //print country
+
+        }
+        //TODO 1: List owned countries
+
+            //TODO 1.2: List neighbors
+        //TODO 2: List owned countries' neighbors
+        //TODO 3: Select source country
+        //TODO 4: List source country valid neighbors
+
+
+
         return "fortify";
     }
 

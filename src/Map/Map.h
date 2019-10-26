@@ -40,9 +40,10 @@ namespace Board {
         int get_armies();
 
         void set_armies(int num);
-
         Player::Player *get_owner();
         void set_owner(Player::Player* p);
+        int get_index();
+        string toString();
     };
 
     /**
@@ -175,6 +176,13 @@ namespace Board {
         bool are_adjacent(int &a, int &b);
 
         /**
+         * finds all neighboring countries given a country.
+         * @param county
+         * @return vector of neighboring countries
+         */
+        vector<Country *> get_neighbors(Country country);
+
+        /**
          * Get a vector of pointers to all countries present in the map.
          * @return
          */
@@ -192,6 +200,11 @@ namespace Board {
          * @return
          */
         bool is_connected();
+
+
+    private:
+        Country *get_country_from_index(int index);
     };
+
 
 }

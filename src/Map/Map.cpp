@@ -1,5 +1,6 @@
 #include "Map.h"
 #include <list>
+#include <sstream>
 
 namespace Board {
 
@@ -44,6 +45,16 @@ namespace Board {
 
     void Country::set_owner(Player::Player *p) {
         owner = p;
+    }
+
+    string Country::toString() {
+        ostringstream os;
+        os << "name: " << *name << ", owner: " << owner << ", number of armies: " << *nb_armies;
+        return os.str();
+    }
+
+    int Country::get_index() {
+        return *index;
     }
 
     Continent::Continent(const string &name, Map *map) {
@@ -236,5 +247,23 @@ namespace Board {
 
     void Map::add_continent(Continent *continent) {
         continents->push_back(continent);
+    }
+
+    vector<Country *> Map::get_neighbors(Country country) {
+        vector<int> country_edges = edges->at(country.get_index());
+        vector<Country *> neighbors(edges->size());
+        for (int edge: country_edges) {
+            neighbors.push_back(get_country_from_index(edge));
+        }
+
+        return neighbors;
+    }
+
+    Country *Map::get_country_from_index(int index) {
+        for(Country *country: *countries) {
+            if (country->get_index() == index) {
+                return country;
+            }
+        }
     }
 }
