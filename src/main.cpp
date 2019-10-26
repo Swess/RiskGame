@@ -27,11 +27,10 @@ int main() {
         Terminal::run_test("GameEngine", GameEngine::Driver::run);
     }
 
-    Terminal::test_mode_off();
     Terminal::debug_mode_on();
-    // GameEngine::GameEngine::instance()->start();
-    Terminal::test_mode_on();
-    GameEngine::GameEngine::instance()->start_test(0,6);
+    GameEngine::GameEngine::instance()->start();
+    // Terminal::test_mode_on();
+    // GameEngine::GameEngine::instance()->start_test(0,6);
     GameEngine::GameEngine::instance()->startup_phase();
 
 

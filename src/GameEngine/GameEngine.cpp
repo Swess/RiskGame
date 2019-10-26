@@ -240,6 +240,51 @@ namespace GameEngine {
     }
 
     void GameEngine::assign_armies_into_country() {
+        int total_placed = 0;
+        int armies_allowed = 40 - (players->size()-2)*5;
+
+        // Init players specific counter
+        int remaining[players->size()];
+        for(int i=0; i < players->size(); i++)
+            remaining[i] = armies_allowed;
+
+        // Auto place 1 army to every country
+        for(int player_index : *player_order){
+            vector<Map::Country *> countries = map_registry->get_owned_by(players->at(player_index));
+
+            for (Map::Country *c : countries) {
+                c->set_armies(c->get_armies() + 1);
+                remaining[player_index]--;
+                total_placed++;
+            }
+        }
+
+        Terminal::print("An single army have been placed on all of your countries.");
+
+        // Let players place their remaining armies one at the time.
+        while(total_placed < players->size()*armies_allowed){
+            for(int player_index : *player_order){
+                // Player may have placed all his armies already
+                if(remaining[player_index] <= 0) continue;
+
+                Terminal::print("");
+                Terminal::print("Now player #"+to_string(player_index+1)+" turns.");
+
+                // Build list of choices with current amount of armies for display
+                vector<Map::Country *> countries = map_registry->get_owned_by(players->at(player_index));
+                vector<string> options;
+                for(auto c_ptr : countries)
+                    options.emplace_back(c_ptr->get_name() + " ("+to_string(c_ptr->get_armies())+" armies present)");
+
+                // Actually ask player
+                int answer = Terminal::print_select(options);
+
+                // Process
+                countries.at(answer)->set_armies(countries.at(answer)->get_armies()+1);
+                remaining[player_index]--;
+                total_placed++;
+            }
+        }
 
     }
 
