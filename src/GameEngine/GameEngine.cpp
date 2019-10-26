@@ -223,11 +223,11 @@ namespace GameEngine {
         shuffle( countries.begin(), countries.end(), default_random_engine(time(0)));
 
         int owner_index = 0;
-        for(auto & countrie : countries){
+        for(auto & country : countries){
             // Giving in Round-Robin
-            players->at(owner_index)->gain_control(countrie);
+            players->at(owner_index)->gain_control(country);
 
-            Terminal::debug("Gave control of country '"+countrie->get_name()+"' to player "+to_string(owner_index) );
+            Terminal::debug("Gave control of country '"+country->get_name()+"' to player "+to_string(owner_index) );
             owner_index = ++owner_index % (int)players->size();
         }
     }
