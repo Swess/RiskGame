@@ -141,6 +141,8 @@ namespace MapLoader {
                 map->connect( *country,  *map->get_countries().at( (value - 1) )); // Indexing in files start at 1
             }
         }
+        map->set_country_neighbors();
+
         return map;
     }
 

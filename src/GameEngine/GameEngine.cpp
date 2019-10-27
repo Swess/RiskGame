@@ -112,7 +112,7 @@ namespace GameEngine {
         Terminal::debug("Initializing " + to_string(answer) + " players.");
 
         for (int i = 1; i < answer ; ++i) {
-            Player::Player * p = new Player::Player;
+            Player::Player * p = new Player::Player(to_string(i));
             players->emplace_back(p);
         }
 

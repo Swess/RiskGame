@@ -24,6 +24,7 @@ namespace Player {
         Cards::Hand *hand;
 
         Player();
+        explicit Player(string name);
 
         virtual ~Player();
 
