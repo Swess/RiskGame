@@ -111,7 +111,7 @@ namespace GameEngine {
 
         Terminal::debug("Initializing " + to_string(answer) + " players.");
 
-        for (int i = 1; i < answer ; ++i) {
+        for (int i = 1; i <= answer ; ++i) {
             Player::Player * p = new Player::Player;
             players->emplace_back(p);
         }
@@ -128,7 +128,7 @@ namespace GameEngine {
     }
 
     void GameEngine::start_test(int map_index, int nb_player) {
-        nb_player -= 1; // needed since 3 players = choice nb 2;
+        nb_player -= 2;
         Terminal::debug("Game Engine Starting...");
         Terminal::set_input(map_index);
         select_map();
