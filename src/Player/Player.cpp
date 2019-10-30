@@ -13,7 +13,11 @@ using namespace std;
 using namespace Board;
 
 namespace Player {
+
+    int Player::player_count = 0;
+
     Player::Player() {
+        color = static_cast<player_color > (player_count++) ;
         hand = new Cards::Hand();
         dice = new Dice::Dice();
         countries = new vector<Country *>();
@@ -28,16 +32,16 @@ namespace Player {
         dice = nullptr;
     }
 
-    string Player::fortify() {
-        return "fortify";
+    void Player::fortify() {
+        Terminal::debug("Player fortify");
     }
 
-    string Player::reinforce() {
-        return "reinforce";
+    void Player::reinforce() {
+        //TODO
     }
 
-    string Player::attack() {
-        return "attack";
+    void Player::attack() {
+        //TODO
     }
 
     void Player::gain_control(Country *country) {
@@ -57,5 +61,37 @@ namespace Player {
 
     vector<Country *> Player::get_countries() {
         return *countries;
+    }
+
+    void Player::turn() {
+        Terminal::debug("Player has started their turn");
+
+        this->fortify();
+        this->attack();
+        this->reinforce();
+
+        Terminal::debug("Player has ended their turn");
+    }
+
+    void Player::gain_control(vector<Country *> f_countries) {
+        for (auto & country : f_countries) {
+            gain_control(country);
+        }
+    }
+
+    string Player::get_color() {
+        switch (color) {
+            case RED: return "Red";
+            case BLUE: return "Blue";
+            case GREEN: return "Green";
+            case BLACK: return "Black";
+            case GRAY: return "Gray";
+            case WHITE: return "White";
+            default: return "ERROR";
+        }
+    }
+
+    bool Player::is_player_dead() {
+        return get_countries().empty();
     }
 }

@@ -6,6 +6,7 @@
 #include <vector>
 #include <iostream>
 
+
 using std::cout;
 using std::cin;
 using std::endl;
@@ -82,7 +83,7 @@ int Terminal::print_select(std::vector<string> array_string) {
         cout << i << ". " << array_string.at(i-1) << endl;
     }
     if (test_mode) {
-        Terminal::test(input);
+        Terminal::test(input+1);
         return input;
     }
     while (true) {
@@ -116,7 +117,6 @@ void Terminal::test_mode_on() {
 void Terminal::test_mode_off() {
     test_mode = false;
 }
-
 
 void Terminal::test(const string& s){
     if (test_mode) {
