@@ -64,13 +64,13 @@ namespace Player {
     }
 
     void Player::turn() {
-        Terminal::debug("Player starting it's turn");
+        Terminal::debug("Player has started their turn");
 
         this->fortify();
         this->attack();
         this->reinforce();
 
-        Terminal::debug("Player ended it's turn");
+        Terminal::debug("Player has ended their turn");
     }
 
     void Player::gain_control(vector<Country *> f_countries) {
