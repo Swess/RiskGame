@@ -261,7 +261,7 @@ namespace GameEngine {
                 Player::Player * current_player = players->at(player_index);
 
                 Terminal::print("");
-                Terminal::print("Player "+ current_player->get_color() + " turns.");
+                Terminal::print("It is now the turn of Player "+ current_player->get_color());
 
                 // Build list of choices with current amount of armies for display
                 vector<Country *> countries = current_player->get_countries();
