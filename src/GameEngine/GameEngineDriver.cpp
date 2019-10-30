@@ -14,11 +14,13 @@ namespace GameEngine {
     namespace Driver {
 
         bool run() {
-            bool passed = map_loaded() &&
-                          right_amount_of_player() &&
-                          right_amount_of_card_in_deck() &&
-                          mutex_country_to_players() &&
-                          correct_country_players_assignation_count();
+            bool passed = (
+                 map_loaded() &&
+                  right_amount_of_player() &&
+                  right_amount_of_card_in_deck() &&
+                  mutex_country_to_players() &&
+                  correct_country_players_assignation_count()
+            );
 
             return passed;
         }
@@ -87,8 +89,8 @@ namespace GameEngine {
             // Check mutex
             // Simple simple would test if it's working since each player has their list of countries
             int assigned_count = 0;
-            for (int i = 0; i < loaded_players->size(); i++) {
-                vector<Country *> player_countries = loaded_players->at(i)->get_countries();
+            for (auto & loaded_player : *loaded_players) {
+                vector<Country *> player_countries = loaded_player->get_countries();
                 assigned_count += player_countries.size();
             }
 
@@ -113,11 +115,11 @@ namespace GameEngine {
             Terminal::set_input(3);
             GameEngine::instance()->assign_armies_into_country();
 
-            for (int i = 0; i < loaded_players->size(); i++) {
-                vector<Country *> countries = loaded_players->at(i)->get_countries();
+            for (auto & loaded_player : *loaded_players) {
+                vector<Country *> countries = loaded_player->get_countries();
                 int armies_count = 0;
-                for (int j = 0; j < countries.size(); j++)
-                    armies_count += countries.at(j)->get_armies();
+                for (auto & country : countries)
+                    armies_count += country->get_armies();
 
                 assert(armies_count == 30);
             }
