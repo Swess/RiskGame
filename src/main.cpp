@@ -17,6 +17,7 @@ int main() {
 
     bool test = false; // Maybe add a way to read sys args?
 
+    Terminal::debug_mode_on();
     if (test) {
         Terminal::test_mode_on();
         Terminal::run_test("MapLoader", MapLoader::Driver::run);
@@ -27,12 +28,12 @@ int main() {
         Terminal::run_test("GameEngine", GameEngine::Driver::run);
     }
 
-    Terminal::debug_mode_on();
-    GameEngine::GameEngine::instance()->start();
-    // Terminal::test_mode_on();
-    // GameEngine::GameEngine::instance()->start_test(0,6);
+    //    GameEngine::GameEngine::instance()->start_test(0,6);
+//
+    Terminal::test_mode_on();
+    GameEngine::GameEngine::instance()->start_test(0,2);
     GameEngine::GameEngine::instance()->startup_phase();
-
+//    GameEngine::GameEngine::instance()->game_loop();
 
     return 0;
 }

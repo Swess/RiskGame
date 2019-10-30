@@ -15,11 +15,13 @@ namespace GameEngine {
 
         bool run() {
             bool passed = (
-                 map_loaded() &&
-                  right_amount_of_player() &&
-                  right_amount_of_card_in_deck() &&
-                  mutex_country_to_players() &&
-                  correct_country_players_assignation_count()
+                    map_loaded() &&
+                    right_amount_of_player() &&
+                    right_amount_of_card_in_deck() &&
+                    mutex_country_to_players() &&
+                    correct_country_players_assignation_count() &&
+                    test_game_done() &&
+                    test_game_loop()
             );
 
             return passed;
@@ -125,6 +127,23 @@ namespace GameEngine {
             }
 
             GameEngine::instance()->reset_test();
+            return true;
+        }
+
+        bool test_game_done() {
+            int nb_of_players = 2;
+            GameEngine::instance()->start_test(0, nb_of_players);
+            GameEngine::instance()->startup_phase();
+            vector<Country *> countries = GameEngine::instance()->get_map()->get_countries();
+            GameEngine::instance()->get_players()->at(0)->gain_control(countries);
+            GameEngine::instance()->game_loop();
+            assert( GameEngine::instance()->is_game_done());
+            GameEngine::instance()->reset_test();
+            return true;
+        }
+
+        bool test_game_loop() {
+            // TODO ?
             return true;
         }
 
