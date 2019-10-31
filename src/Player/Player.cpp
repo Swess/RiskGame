@@ -43,7 +43,7 @@ namespace Player {
         Terminal::debug(" -------------------- Reinforcement phase -------------------");
         //Terminal::debug("Reinforcement phase");
 
-        int army_country, army_continent=0, army_exchange, army_total;
+        int army_country=0, army_continent=0, army_exchange=0, army_total=0;
 
         /*
             By definition, Player gets number of armies A, where A depends on the following:
@@ -52,7 +52,9 @@ namespace Player {
                - armies resulting in card exchange, if possible. if a player owns more than 5 cards, must exchange cards (done in exchange method)
          */
 
-        // First, we check if the player in question actually has any countries to reinforce
+        /*
+         * First, we check if the player in question actually has any countries to reinforce
+         */
             if(this->get_countries().empty()){
                 Terminal::error("You currently have no countries to reinforce!");
             } else {
@@ -65,7 +67,9 @@ namespace Player {
                 }
             }
 
-        //Second, we need to consider the owned continents by the current player
+        /*
+         * Second, we need to consider the owned continents by the current player
+         */
             //Gather countries owned
             vector<Country *> countries_owned = this->get_countries();
 
@@ -99,19 +103,81 @@ namespace Player {
             }
 
         /*
-         * Then player places all armies on some of the countries it owns as it sees fit
-         * (in the reinforce method).
+         * Third, we consider the armies resulting from a card exchange (if applicable).
+         * If player owns more than 5 cards, then it must exchange cards
          */
+        string exchange_desired;
 
-        //Terminal::print("test" army_country+army_continent);
+            if(this->hand->size() >= 5 ){
+                Terminal::print("Player [Color] has more than 5 cards in their hand! Exchange required.");
+
+                while(this->hand->size() >= 5){
+                    army_exchange += this->hand->exchange( /*  INDICES */ );
+                }
+            }
+            if(this->hand->cardsValidForExchange(/* IS VALID FOR EXCHANGE */)){
+                Terminal::print("Player [Color] has cards that are valid for exchange, would you like to proceed now? (y/n)");
+                /* INPUT >>*/ exchange_desired;
+                if(exchange_desired.compare("y")==0 || exchange_desired.compare("Y")==0){
+                    army_exchange += this->hand->exchange(/*  INDICES */ );
+                }
+            }
+
+        //Therefore, the total armies available (A) to Player are
+        army_total = army_country + army_continent + army_exchange;
+
+        /*
+         * Then player places all armies on some of the countries it owns as they see fit.
+         */
+        string desired_index;
+        int desired_armies_to_place;
+        do{
+
+            //Display available options
+            Terminal::print("The armies available for positioning are: ");
+            Terminal::print(army_total);
+            /*INDEX = */
+
+            /* PRINTOUT LIST OF COUNTRIES & ARMIES */
+
+            Terminal::print("Specify the index of the country where you desire to position armies: ");
+            do{
+                /*INPUT */ desired_index;
+                if(desired_index > /*MAP INDEX*/ || desired_index < 1){
+                    Terminal::error("Index must be greater tan zero and less than " /*VALUE */ "Please enter another value: ");
+                }
+            }while(desired_index > /*MAP_INDEX*/ || desired_index < 1);
+            /*MAPINDEX=0*/
+
+            //Then, Player decides how many armies they want to place
+            do{
+                /*INPUT */ desired_armies_to_place;
+                if(desired_armies_to_place < 1 || desired_armies_to_place > army_total){
+                    Terminal::error("The number of armies to place must be greater than zero and less than " /*total armies + 1*/ "Please enter another value: ");
+                }
+            }while(desired_armies_to_place < 1 || desired_armies_to_place > army_total);
+
+            //Finally, we can add the armies
+            for(/*ITERATE COUNTRY*/){
+                if((desired_index-1) == /* INDEX */){
+                    GameEngine::GameEngine::get_map()->get_countries().at(/*iterate*/).set_armies(desired_armies_to_place);
+                    break;
+                }
+                /*INDEX++*/
+            }
+
+            army_total -= desired_armies_to_place;
+        }while(army_total !=0);
+
+        //Display Updated Countries & Armies??
+        Terminal::print("Armies have been positioned successfully!");
+
 
         //Finally, driver demonstrates that
         //1) if a player receives the right number of armies in the reinforcement phase (different cases)
         //2) the player has effectively placed this exact number of new armies somewhere on the map by the end of the reinforcement phase
 
-        //army_exchange =
-
-        //army_total =
+        //TODO
 
     }
 
