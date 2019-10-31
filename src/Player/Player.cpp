@@ -55,51 +55,50 @@ namespace Player {
         /*
          * First, we check if the player in question actually has any countries to reinforce
          */
-            if(this->get_countries().empty()){
-                Terminal::error("You currently have no countries to reinforce!");
+
+         vector<Country *> countries_owned = this->get_countries();
+
+
+            //In case the player owns countries, to calculate the number of armies A we first consider the number of countries owned on the map
+            //divided by 3 (rounded down), with a minimum of 3.
+            if ((countries_owned.size() / 3) <= 3) {
+                army_country = 3;
             } else {
-                //In case the player owns countries, to calculate the number of armies A we first consider the number of countries owned on the map
-                //divided by 3 (rounded down), with a minimum of 3.
-                if ((this->get_countries().size() / 3) <= 3) {
-                    army_country = 3;
-                } else {
-                    army_country = (this->get_countries().size()) / 3; //conversion to int will automatically just keep the integer part effectively rounding down the calculation
-                }
+                army_country = (countries_owned.size()) / 3; //round-down
             }
 
         /*
          * Second, we need to consider the owned continents by the current player
          */
             //Gather countries owned
-            vector<Country *> countries_owned = this->get_countries();
 
             //Gather continents and cycling through them
             vector<Continent *> continents_in_map = GameEngine::GameEngine::instance()->get_map()->get_continents();
             vector<Country *> countries_in_map = GameEngine::GameEngine::instance()->get_map()->get_countries();
 
-            vector<int> continent_IDs_map (continents_in_map.size(), 0);
-            vector<int> continent_IDs_owned (continents_in_map.size(), 0);
+            vector<int> continent_index_map (continents_in_map.size(), 0);
+            vector<int> continent_index_owned (continents_in_map.size(), 0);
             int continents_owned = 0;
 
             //Counting how many countries are in each continent by ID
             for(int a=0;  a<countries_in_map.size(); a++){
-                continent_IDs_map.at(countries_in_map.at(a)->get_continent_index())++;
+                continent_index_map.at(countries_in_map.at(a)->get_continent_index())++;
             }
             //Counting how many countries are owned by player based on their continent
             for(int b=0;  b<countries_owned.size(); b++){
-                continent_IDs_owned.at(countries_owned.at(b)->get_continent_index())++;
+                continent_index_owned.at(countries_owned.at(b)->get_continent_index())++;
             }
-            //Therefore, if continent_IDs_map equals continent_IDs_owned at a certain index, it means that
+            //Therefore, if continent_index_map equals continent_index_owned at a certain index, it means that
             //Player owns all countries in that specific continent (since a country can only be defined in a single continent).
             for(int c=0; c<continents_in_map.size(); c++){
-                if(continent_IDs_map.at(c) == continent_IDs_owned.at(c)){
+                if(continent_index_map.at(c) == continent_index_owned.at(c)){
                     continents_owned++;
                 }
             }
 
             //Determine total control value of owned Continents
             for(int d=0; d<continents_owned; d++){
-                army_continent = army_continent /* CONTINENT CONTROL VALUE ?? */;
+                army_continent += continents_in_map.at( /* c */ );
             }
 
         /*
@@ -138,18 +137,55 @@ namespace Player {
             Terminal::print(army_total);
             /*INDEX = */
 
-            /* PRINTOUT LIST OF COUNTRIES & ARMIES */
+            /* PRINTOUT LIST OF COUNTRIES & ARMIES
+             *
+                     Terminal::print("Choose your source country");
+                    vector<string> selections_source;
+                 //FILTER NOT NEEDED just do get_countries  vector<Country* > countries_source = get_countries_attack_source();
+                    selections_source.reserve(countries_source.size());
+                    for (auto country : countries_source){
+                        selections_source.emplace_back(country->to_string());
+                    }
+                  //NO  selections_source.emplace_back("Restart the process.");
+                    int answer_source = Terminal::print_select(selections_source);
+                  //NO  if (answer_source == selections_source.size()-1) { continue; }
+             *
+             * */
 
             Terminal::print("Specify the index of the country where you desire to position armies: ");
             do{
                 /*INPUT */ desired_index;
-                if(desired_index > /*MAP INDEX*/ || desired_index < 1){
+              //ALREADY DONE IN TERMINAL - REDUNDANT  if(desired_index > /*MAP INDEX*/ || desired_index < 1){
                     Terminal::error("Index must be greater tan zero and less than " /*VALUE */ "Please enter another value: ");
                 }
             }while(desired_index > /*MAP_INDEX*/ || desired_index < 1);
+
             /*MAPINDEX=0*/
 
+            /*
+
+              static bool print_select(const string& s);        (YES OR NO)
+                static int print_select(std::vector<string> s); (INDEX returned) like country selection
+
+                int Terminal::print_select(const int &minimum, const int &maximum, const string &s) //useful when user selects a country
+
+                while(army remaine
+
+             */
+
             //Then, Player decides how many armies they want to place
+
+            /*
+
+             while(Terminal::print_select("Player " + get_color() + ": Do you want to attack this round?")){
+            if (!is_able_to_attack()) {
+                Terminal::print("Player " + get_color() + " don't have any country he can attack from." );
+                return false;
+            }
+
+
+             */
+
             do{
                 /*INPUT */ desired_armies_to_place;
                 if(desired_armies_to_place < 1 || desired_armies_to_place > army_total){
@@ -171,13 +207,6 @@ namespace Player {
 
         //Display Updated Countries & Armies??
         Terminal::print("Armies have been positioned successfully!");
-
-
-        //Finally, driver demonstrates that
-        //1) if a player receives the right number of armies in the reinforcement phase (different cases)
-        //2) the player has effectively placed this exact number of new armies somewhere on the map by the end of the reinforcement phase
-
-        //TODO
 
     }
 
