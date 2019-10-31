@@ -41,6 +41,8 @@ namespace Board {
 
         void set_armies(int num);
 
+        int get_continent_index();
+
         Player::Player *get_owner();
         void set_owner(Player::Player* p);
     };
@@ -70,7 +72,7 @@ namespace Board {
         ~Continent();
 
         /**
-         * Adds a country to the map contining this continent, and make it belong to this Continent.
+         * Adds a country to the map containing this continent, and make it belong to this Continent.
          * @param country
          */
         void insert_country(Country &country);

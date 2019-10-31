@@ -33,6 +33,10 @@ namespace Board {
         return *nb_armies;
     }
 
+    int Country::get_continent_index(){
+        return *continent_index;
+    }
+
     void Country::set_armies(int num) {
         *nb_armies = num;
     }
