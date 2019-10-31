@@ -111,8 +111,8 @@ namespace GameEngine {
 
         Terminal::debug("Initializing " + to_string(answer) + " players.");
 
-        for (int i = 1; i < answer ; ++i) {
-            Player::Player * p = new Player::Player(to_string(i));
+        for (int i = 1; i <= answer ; ++i) {
+            Player::Player * p = new Player::Player;
             players->emplace_back(p);
         }
 
@@ -128,7 +128,7 @@ namespace GameEngine {
     }
 
     void GameEngine::start_test(int map_index, int nb_player) {
-        nb_player -= 1; // needed since 3 players = choice nb 2;
+        nb_player -= 2;
         Terminal::debug("Game Engine Starting...");
         Terminal::set_input(map_index);
         select_map();
@@ -213,7 +213,7 @@ namespace GameEngine {
 
         Terminal::debug("The order is");
         for (auto order : * player_order)
-            Terminal::debug("Player " + to_string(order+1));
+            Terminal::debug("Player " + players->at(order)->get_color());
     }
 
     void GameEngine::assign_country_to_player() {
@@ -227,7 +227,7 @@ namespace GameEngine {
             // Giving in Round-Robin
             players->at(owner_index)->gain_control(country);
 
-            Terminal::debug("Gave control of country '"+country->get_name()+"' to player "+to_string(owner_index) );
+            Terminal::debug("Gave control of country '" + country->get_name()+ "' to player " + players->at(owner_index)->get_color() );
             owner_index = ++owner_index % (int)players->size();
         }
     }
@@ -258,12 +258,13 @@ namespace GameEngine {
             for(int player_index : *player_order){
                 // Player may have placed all his armies already
                 if(remaining[player_index] <= 0) continue;
+                Player::Player * current_player = players->at(player_index);
 
                 Terminal::print("");
-                Terminal::print("Now player #"+to_string(player_index+1)+" turns.");
+                Terminal::print("It is now the turn of Player "+ current_player->get_color());
 
                 // Build list of choices with current amount of armies for display
-                vector<Country *> countries = players->at(player_index)->get_countries();
+                vector<Country *> countries = current_player->get_countries();
                 vector<string> options;
                 for(auto c_ptr : countries)
                     options.emplace_back(c_ptr->get_name() + " ("+to_string(c_ptr->get_armies())+" armies present)");
@@ -278,6 +279,32 @@ namespace GameEngine {
             }
         }
 
+    }
+
+    void GameEngine::game_loop() {
+        Terminal::debug("Starting game loop.");
+        while (!game_done()) {
+            for(int player_index : *player_order){
+                if (game_done()) continue;
+                Player::Player * current_player = players->at(player_index);
+                if (current_player->is_player_dead()) continue;
+                current_player->turn();
+            }
+        }
+    }
+
+    bool GameEngine::game_done() {
+        for(int player_index : *player_order){
+            if (players->at(player_index)->get_countries().size() == map->get_countries().size()) {
+                Terminal::debug("There is a winner.");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool GameEngine::is_game_done() {
+        return game_done();
     }
 
 }
