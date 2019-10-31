@@ -35,7 +35,6 @@ namespace Player {
 
     void Player::fortify() {
         Terminal::debug("Player fortify");
-    string Player::fortify() {
         Terminal::print("Fortification phase");
         vector<string> selections(countries->size());
         bool validChoice = false;
@@ -104,8 +103,6 @@ namespace Player {
 
         source_country->set_armies(source_country->get_armies() - selected_num_armies);
         target_country->set_armies(target_country->get_armies() + selected_num_armies);
-
-        return "fortify";
     }
 
     void Player::reinforce() {
