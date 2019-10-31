@@ -85,7 +85,7 @@ namespace Player {
             for(int b=0;  b<countries_owned.size(); b++){
                 continent_IDs_owned.at(countries_owned.at(b)->get_continent_index())++;
             }
-            //Therefor, if continent_IDs_map equals continent_IDs_owned at a certain index, it means that
+            //Therefore, if continent_IDs_map equals continent_IDs_owned at a certain index, it means that
             //Player owns all countries in that specific continent (since a country can only be defined in a single continent).
             for(int c=0; c<continents_in_map.size(); c++){
                 if(continent_IDs_map.at(c) == continent_IDs_owned.at(c)){
