@@ -58,15 +58,14 @@ namespace Player {
         if (!can_fortify) {
             Terminal::print("Fortification is not possible, you do not own two valid neighboring countries");
             return;
-        } else {
-            Terminal::print("Fortification is possible, would you like to fortify?");
-            vector<string> fortify;
-            fortify.emplace_back("Yes");
-            fortify.emplace_back("No");
-            int response = Terminal::print_select(fortify);
-            if (response == 1) {
-                return;
-            }
+        }
+        Terminal::print("Fortification is possible, would you like to fortify?");
+        vector<string> fortify;
+        fortify.emplace_back("Yes");
+        fortify.emplace_back("No");
+        int response = Terminal::print_select(fortify);
+        if (response == 1) {
+            return;
         }
 
 
