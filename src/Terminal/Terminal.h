@@ -15,10 +15,13 @@ class Terminal {
 
     static void print(const string& s);
     static void print(const int& i);
+    static void print_on_same_line(const std::vector<string>& array_string);
+    static void print_on_same_line(const std::vector<int>& array_int);
     static void debug(const string& s);
     static void debug(const int& i);
     static void print(const std::vector<string>& array_string);
     static bool print_select(const string& s);
+    static int print_select(const int &minimum, const int &maximum, const string &s);
     static int print_select(std::vector<string> s);
     static void debug_mode_on();
     static void debug_mode_off();
@@ -33,7 +36,6 @@ private:
     static bool debug_mode;
     static bool test_mode;
     static int input;
-
 };
 
 

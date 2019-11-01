@@ -1,5 +1,7 @@
 #include "Map.h"
+#include "../Player/Player.h"
 #include <list>
+#include <sstream>
 
 namespace Board {
 
@@ -37,6 +39,14 @@ namespace Board {
         *nb_armies = num;
     }
 
+    void Country::decrement_army() {
+        *nb_armies = *nb_armies - 1;
+    }
+
+    void Country::increment_army() {
+        *nb_armies = *nb_armies + 1;
+    }
+
 
     Player::Player *Country::get_owner() {
         return owner;
@@ -45,6 +55,34 @@ namespace Board {
     void Country::set_owner(Player::Player *p) {
         owner = p;
     }
+
+    string Country::to_string() {
+        ostringstream os;
+                os << "name: " << *name << ", owner: " << owner->get_color() << ", number of armies: " << *nb_armies;
+        return os.str();
+    }
+
+    int Country::get_index() {
+        return *index;
+    }
+
+    void Country::set_neighboring_countries(vector<Country *> neighbors) {
+        neighboring_countries = new vector<Country *>(std::move(neighbors));
+    }
+
+    vector<Country *> *Country::get_neighbors() const {
+        return neighboring_countries;
+    }
+
+    string Country::to_string_with_neighbors() {
+        ostringstream os;
+        os << "name: " << *name << ", owner: " << owner << ", number of armies: " << *nb_armies << "\n";
+        for (Country *neighbor: *neighboring_countries) {
+            os << "\t" << neighbor->to_string() << "\n";
+        }
+        return os.str();
+    }
+
 
     Continent::Continent(const string &name, Map *map) {
         this->index = new int(map->get_continents().size());
@@ -237,4 +275,24 @@ namespace Board {
     void Map::add_continent(Continent *continent) {
         continents->push_back(continent);
     }
+
+    void Map::set_country_neighbors() {
+        for (size_t i = 0; i < countries->size(); i++) {
+            vector<Country *> neighbors;
+            for (int country_index : edges->at(i)) {
+                neighbors.push_back(get_country_from_index(country_index));
+            }
+            countries->at(i)->set_neighboring_countries(neighbors);
+        }
+    }
+
+    Country *Map::get_country_from_index(int index) {
+        for(Country *country: *countries) {
+            if (country->get_index() == index) {
+                return country;
+            }
+        }
+        return nullptr;
+    }
+
 }
