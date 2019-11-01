@@ -20,6 +20,8 @@ namespace Player{
             return true;
         }
         bool test_fortify(){
+
+            // Prepare map
             Player p1;
             auto * mapLoader = new MapLoader::MapLoader();
             string s = "RiskEurope.map";
@@ -32,9 +34,9 @@ namespace Player{
                 exit(1);
             }
 
-            //TODO 2: create two players
-            auto * playerRed = new Player();
+            // create two players
             auto * playerBlue = new Player();
+            auto * playerGreen = new Player();
 
             // some adjacent countries:
             /**
@@ -45,25 +47,41 @@ namespace Player{
              * 4 3 5
              * 5 4 6 7
              */
-            //TODO 3: give player one 5 countries, 3 adjacent, 1 adjacent to one, and one alone
+            // assign playerGreen 3 countries, country 1 is in between the other two
             vector<Country * > countries = testMap->get_countries();
-            countries.at(0)->set_owner(playerRed);
-            countries.at(1)->set_owner(playerRed);
-            countries.at(2)->set_owner(playerRed);
-            //TODO 4: give player 2 some countries beside player one
-            countries.at(3)->set_owner(playerBlue);
-            countries.at(4)->set_owner(playerBlue);
+            playerGreen->gain_control(countries.at(0));
+            playerGreen->gain_control(countries.at(1));
+            playerGreen->gain_control(countries.at(2));
 
-            //TODO 5: give players armies, and distribute, ensure C3 get's only one army
+            // Assign playerBlue two countries
+            playerBlue->gain_control(countries.at(3));
+            playerBlue->gain_control(countries.at(4));
+
+
+            // First test: ensure that if no valid countries, then return
+            playerGreen->turn();
+
+
+            // Assign armies to each country
             countries.at(0)->set_armies(2);
             countries.at(1)->set_armies(5);
             countries.at(2)->set_armies(1);
             countries.at(3)->set_armies(3);
             countries.at(4)->set_armies(1);
 
-            //TODO 6: try to fortify from C1, to C2
+            // Set inputs (fortify: yes, choose country 2 as source, choose neighbor 3 of country 2 as target, transfer 2 armies)
+            int input_array[] = {0, 1, 2, 1};
+            vector<int> input_vector;
+            input_vector.assign(input_array, input_array+4);
+            Terminal::set_input_vector(input_vector);
+            playerGreen->turn();
 
-            //TODO 7: try to fortify from C3 to C2
+            Terminal::clear_terminal_input_counter();
+            // assert armies have been moved
+            assert(playerGreen->get_countries().at(1)->get_armies() == 3);
+            assert(playerGreen->get_countries().at(2)->get_armies() == 3);
+
+
             return true;
         }
         bool test_Dice(){

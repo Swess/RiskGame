@@ -1,4 +1,5 @@
 #include "Map.h"
+#include "../Player/Player.h"
 #include <list>
 #include <sstream>
 
@@ -49,7 +50,11 @@ namespace Board {
 
     string Country::to_string() {
         ostringstream os;
-        os << "name: " << *name << ", owner: " << owner << ", number of armies: " << *nb_armies;
+        if (owner) {
+            os << "name: " << *name << ", owner: " << owner->get_color() << ", number of armies: " << *nb_armies;
+        } else {
+            os << "name: " << *name << ", owner: " << "unclaimed" << ", number of armies: " << *nb_armies;
+        }
         return os.str();
     }
 
@@ -67,7 +72,12 @@ namespace Board {
 
     string Country::to_string_with_neighbors() {
         ostringstream os;
-        os << "name: " << *name << ", owner: " << owner << ", number of armies: " << *nb_armies << "\n";
+        if (owner) {
+            os << "name: " << *name << ", owner: " << owner->get_color() << ", number of armies: " << *nb_armies << "\n";
+        } else {
+            os << "name: " << *name << ", owner: " << "unclaimed" << ", number of armies: " << *nb_armies << "\n";
+
+        }
         for (Country *neighbor: *neighboring_countries) {
             os << "\t" << neighbor->to_string() << "\n";
         }

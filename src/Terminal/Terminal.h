@@ -9,6 +9,7 @@
 #include <vector>
 
 using std::string;
+using std::vector;
 
 class Terminal {
     public:
@@ -28,11 +29,15 @@ class Terminal {
     static void test(const string &s);
     static void test(const int &i);
     static void set_input(const int &s);
+    static void set_input_vector(const vector<int> &vector);
+    static void clear_terminal_input_counter();
     static void run_test( const string& s,  bool (*f)() );
 private:
     static bool debug_mode;
     static bool test_mode;
     static int input;
+    static vector<int> input_vector;
+    static int terminal_input_counter;
 
 };
 

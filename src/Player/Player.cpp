@@ -36,18 +36,45 @@ namespace Player {
     void Player::fortify() {
         Terminal::debug("Player fortify");
         Terminal::print("Fortification phase");
-        vector<string> selections(countries->size());
+        vector<string> selections;
         bool validChoice = false;
-
         int source_country_index;
         Country * source_country;
-        while (!validChoice) {
-            Terminal::print("Select source country");
-            for (auto & country : *countries) {
-                if (country->get_armies()) {
-                    selections.push_back(country->to_string_with_neighbors());
+
+        bool can_fortify = false;
+        // confirm fortification is possible
+        for (auto & country : *countries) {
+            for (auto & neighbor : *country->get_neighbors()) {
+                if (this == neighbor->get_owner() && country->get_armies() > 1) {
+                    can_fortify = true;
+                    break;
                 }
             }
+            if (can_fortify) {
+                break;
+            }
+        }
+
+        if (!can_fortify) {
+            Terminal::print("Fortification is not possible, you do not own two valid neighboring countries");
+            return;
+        } else {
+            Terminal::print("Fortification is possible, would you like to fortify?");
+            vector<string> fortify;
+            fortify.emplace_back("Yes");
+            fortify.emplace_back("No");
+            int response = Terminal::print_select(fortify);
+            if (response == 1) {
+                return;
+            }
+        }
+
+
+        Terminal::print("Select source country");
+        for (auto & country : *countries) {
+            selections.push_back(country->to_string_with_neighbors());
+        }
+        while (!validChoice) {
             source_country_index = Terminal::print_select(selections);
             source_country = countries->at(source_country_index);
             if (source_country->get_armies() > 1) {
@@ -65,18 +92,17 @@ namespace Player {
             }
         }
 
-
         selections.clear();
         selections.shrink_to_fit();
         vector<Country *> * source_country_neighbors = source_country->get_neighbors();
         int target_country_index;
         Country * target_country;
         validChoice = false;
+        Terminal::print("Select target country");
+        for (Country * neighbor: *source_country_neighbors) {
+            selections.push_back(neighbor->to_string_with_neighbors());
+        }
         while (!validChoice) {
-            Terminal::print("Select target country");
-            for (Country * neighbor: *source_country_neighbors) {
-                selections.push_back(neighbor->to_string_with_neighbors());
-            }
             target_country_index = Terminal::print_select(selections);
             target_country = source_country_neighbors->at(target_country_index);
             if (this != target_country->get_owner()) {
@@ -88,21 +114,32 @@ namespace Player {
         }
 
         Terminal::print("Select number of armies to move");
-        vector<string> num_of_armies(source_country->get_armies());
-        for (int i = 1; i < source_country->get_armies(); i++) {
+        vector<string> num_of_armies(source_country->get_armies() - 1);
+        for (int i = 0; i < (source_country->get_armies() - 1); i++) {
             ostringstream os;
-            if (i == 1) {
+            if (i == 0) {
                 os << "1 army";
             } else {
-                os << i << " armies";
+                os << i + 1 << " armies";
             }
             num_of_armies.at(i) = os.str();
         }
+        num_of_armies.shrink_to_fit();
         int selected_num_armies = Terminal::print_select(num_of_armies);
         selected_num_armies++;
 
+        ostringstream os;
+        os << selected_num_armies << " armies have been transferred from " << source_country->get_name() << " to " << target_country->get_name();
+        Terminal::print(os.str());
+
         source_country->set_armies(source_country->get_armies() - selected_num_armies);
         target_country->set_armies(target_country->get_armies() + selected_num_armies);
+        os.str("");
+        os.clear();
+        os << "countries following fortification: \n";
+        os << "source country: " << source_country->to_string() << "\n";
+        os << "target country: " << target_country->to_string();
+        Terminal::print(os.str());
     }
 
     void Player::reinforce() {
