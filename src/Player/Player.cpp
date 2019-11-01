@@ -40,51 +40,48 @@ namespace Player {
 
     void Player::reinforce() {
 
-        Terminal::debug(" -------------------- Reinforcement phase -------------------");
-        //Terminal::debug("Reinforcement phase");
-
-        int army_country=0, army_continent=0, army_exchange=0, army_total=0;
-
+        Terminal::debug("Reinforcement phase");
+        
         /*
             By definition, Player gets number of armies A, where A depends on the following:
                - number of countries owned on the map, divided by 3 (rounded down), with a min of 3.
                - continent-control value of all continents totally control value of all continents totally controlled by that player
                - armies resulting in card exchange, if possible. if a player owns more than 5 cards, must exchange cards (done in exchange method)
          */
+        //Armies declaration
+        int army_country=0, army_continent=0, army_exchange=0, army_total=0;
 
         /*
          * First, we check if the player in question actually has any countries to reinforce
          */
-
-         vector<Country *> countries_owned = this->get_countries();
-
+            //Gather countries owned
+            vector<Country *> countries_owned = this->get_countries()
 
             //In case the player owns countries, to calculate the number of armies A we first consider the number of countries owned on the map
             //divided by 3 (rounded down), with a minimum of 3.
             if ((countries_owned.size() / 3) <= 3) {
                 army_country = 3;
             } else {
-                army_country = (countries_owned.size()) / 3; //round-down
+                army_country = (countries_owned.size()) / 3; //rounded-down
             }
 
         /*
          * Second, we need to consider the owned continents by the current player
          */
-            //Gather countries owned
 
-            //Gather continents and cycling through them
+            //Gather continents and countries from the GameEngine
             vector<Continent *> continents_in_map = GameEngine::GameEngine::instance()->get_map()->get_continents();
             vector<Country *> countries_in_map = GameEngine::GameEngine::instance()->get_map()->get_countries();
-
+            //Declaring vectors of integers that act as counters
             vector<int> continent_index_map (continents_in_map.size(), 0);
             vector<int> continent_index_owned (continents_in_map.size(), 0);
             int continents_owned = 0;
 
-            //Counting how many countries are in each continent by ID
+            //Counting how many countries are found in each continent of the map
             for(int a=0;  a<countries_in_map.size(); a++){
                 continent_index_map.at(countries_in_map.at(a)->get_continent_index())++;
             }
-            //Counting how many countries are owned by player based on their continent
+            //Counting how many player-owned countries are found in each continent of the map
             for(int b=0;  b<countries_owned.size(); b++){
                 continent_index_owned.at(countries_owned.at(b)->get_continent_index())++;
             }
@@ -92,13 +89,11 @@ namespace Player {
             //Player owns all countries in that specific continent (since a country can only be defined in a single continent).
             for(int c=0; c<continents_in_map.size(); c++){
                 if(continent_index_map.at(c) == continent_index_owned.at(c)){
+                    //Found a continent that is owned by player
                     continents_owned++;
+                    //Update army_continent
+                    army_continent += continents_in_map.at(c)->get_bonus();
                 }
-            }
-
-            //Determine total control value of owned Continents
-            for(int d=0; d<continents_owned; d++){
-                army_continent += continents_in_map.at( /* c */ );
             }
 
         /*
