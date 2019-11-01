@@ -41,7 +41,7 @@ namespace Player {
     void Player::reinforce() {
 
         Terminal::debug("Reinforcement phase");
-        
+
         /*
             By definition, Player gets number of armies A, where A depends on the following:
                - number of countries owned on the map, divided by 3 (rounded down), with a min of 3.
@@ -55,7 +55,7 @@ namespace Player {
          * First, we check if the player in question actually has any countries to reinforce
          */
             //Gather countries owned
-            vector<Country *> countries_owned = this->get_countries()
+            vector<Country *> countries_owned = this->get_countries();
 
             //In case the player owns countries, to calculate the number of armies A we first consider the number of countries owned on the map
             //divided by 3 (rounded down), with a minimum of 3.
@@ -146,14 +146,17 @@ namespace Player {
                   //NO  if (answer_source == selections_source.size()-1) { continue; }
              *
              * */
+            Terminal::print("Here is the list of countries available: ");
+           // vector<string> selection_source;
+           // vector<Country *> countries_source =
 
-            Terminal::print("Specify the index of the country where you desire to position armies: ");
+            Terminal::print("Please specify the index of the country where you desire to position armies: ");
             do{
                 /*INPUT */ desired_index;
               //ALREADY DONE IN TERMINAL - REDUNDANT  if(desired_index > /*MAP INDEX*/ || desired_index < 1){
                     Terminal::error("Index must be greater tan zero and less than " /*VALUE */ "Please enter another value: ");
                 }
-            }while(desired_index > /*MAP_INDEX*/ || desired_index < 1);
+            } while(desired_index > /*MAP_INDEX*/ || desired_index < 1);
 
             /*MAPINDEX=0*/
 
@@ -163,8 +166,6 @@ namespace Player {
                 static int print_select(std::vector<string> s); (INDEX returned) like country selection
 
                 int Terminal::print_select(const int &minimum, const int &maximum, const string &s) //useful when user selects a country
-
-                while(army remaine
 
              */
 
@@ -177,7 +178,6 @@ namespace Player {
                 Terminal::print("Player " + get_color() + " don't have any country he can attack from." );
                 return false;
             }
-
 
              */
 
