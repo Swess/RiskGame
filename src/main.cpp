@@ -28,12 +28,15 @@ int main() {
         Terminal::run_test("GameEngine", GameEngine::Driver::run);
     }
 
-    //    GameEngine::GameEngine::instance()->start_test(0,6);
-//
+
+//    GameEngine::GameEngine::instance()->start();
+
+    Terminal::debug_mode_on();
     Terminal::test_mode_on();
-    GameEngine::GameEngine::instance()->start_test(0,2);
+    GameEngine::GameEngine::instance()->start_test(7,6); // map index 7  is regular risk
     GameEngine::GameEngine::instance()->startup_phase();
-//    GameEngine::GameEngine::instance()->game_loop();
+    Terminal::test_mode_off();
+    GameEngine::GameEngine::instance()->game_loop();
 
     return 0;
 }

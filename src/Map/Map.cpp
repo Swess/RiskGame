@@ -39,6 +39,14 @@ namespace Board {
         *nb_armies = num;
     }
 
+    void Country::decrement_army() {
+        *nb_armies = *nb_armies - 1;
+    }
+
+    void Country::increment_army() {
+        *nb_armies = *nb_armies + 1;
+    }
+
 
     Player::Player *Country::get_owner() {
         return owner;
@@ -83,7 +91,7 @@ namespace Board {
         }
         return os.str();
     }
-
+  
     Continent::Continent(const string &name, Map *map) {
         this->index = new int(map->get_continents().size());
         this->size = new int(0);
@@ -292,5 +300,6 @@ namespace Board {
                 return country;
             }
         }
+        return nullptr;
     }
 }

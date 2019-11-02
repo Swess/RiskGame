@@ -31,7 +31,7 @@ namespace Board {
         Player::Player *owner;
 
     public:
-        Country(const string &name);
+        explicit Country(const string &name);
 
         ~Country();
 
@@ -47,6 +47,11 @@ namespace Board {
         string to_string_with_neighbors();
         vector<Country *> *get_neighbors() const;
         void set_neighboring_countries(vector<Country *>  neighbors);
+
+        void decrement_army();
+
+        void increment_army();
+
     };
 
     /**
@@ -111,12 +116,6 @@ namespace Board {
      * The edges are implemented as an AdjacencyList with the corresponding object index to ensure O(1) seek & query.
      */
     class Map {
-        friend Continent;
-
-        vector<Continent *> *continents;
-        vector<Country *> *countries;
-        vector<vector<int>> *edges;
-
     public:
 
         Map();
@@ -203,9 +202,11 @@ namespace Board {
          * @return
          */
         bool is_connected();
-
-
     private:
+        friend Continent;
+        vector<Continent *> *continents;
+        vector<Country *> *countries;
+        vector<vector<int>> *edges;
         Country *get_country_from_index(int index);
     };
 
