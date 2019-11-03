@@ -51,7 +51,6 @@ namespace GameEngine {
     }
 
     void GameEngine::select_map() {
-        MapLoader::MapLoader mapLoader;
         Terminal::print("Select the map you want to play in.");
         vector<string> maps = get_available_map();
 
@@ -60,6 +59,7 @@ namespace GameEngine {
 
         while(!found_valid){
             try {
+                MapLoader::MapLoader mapLoader;
                 map_selection = Terminal::print_select(maps);
                 map = mapLoader.load(map_selection)->build();
 
@@ -72,6 +72,9 @@ namespace GameEngine {
                 found_valid = true;
             } catch (IOException &e) {
                 string error = e.what(maps[map_selection]);
+                Terminal::error(error);
+            } catch(runtime_error &e) {
+                string error = e.what();
                 Terminal::error(error);
             } catch(exception &e){
                 string error = e.what();

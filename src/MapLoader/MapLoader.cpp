@@ -83,7 +83,11 @@ namespace MapLoader {
                 continue; // jump to the next line
             }
             if (section != nullptr && !line.empty()) {
-                section->strategy(line, *this);
+                try {
+                    section->strategy(line, *this);
+                } catch (invalid_argument &e){
+                    throw e;
+                }
             }
         }
         return this;
