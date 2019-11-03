@@ -47,6 +47,8 @@ public:
     bool cardsValidForExchange(const int handIndices[]);
     int size();
     vector<Card *> get_cards();
+    vector<string> to_string();
+
 private:
     vector<Card *> *cards;
     static bool sameCardCheck(const int handIndices[]);

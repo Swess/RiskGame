@@ -105,27 +105,34 @@ namespace Player {
         vector<string> print_exchange_required;
         print_exchange_required.emplace_back("Player [" + this->get_color() + "] has more than 5 cards in their hand! Exchange required. \n Following are the cards available in their hand: ");
         vector<string> print_hand;
-        vector<int> answer_cards;
+        int answer_cards_indices[3];
 
-            if(this->hand->size() >= 5){
+            if(this->hand->size() >= 5) {
                 //Displaying warning message
                 Terminal::print(print_exchange_required);
 
                 //Displaying available cards to Player
-                for(int i=0; i<this->hand->size(); i++){
-                    print_hand.emplace_back("Card " + to_string(i) + " : Type = " + this->hand->get_cards().at(i)->getType_to_string() + ", Country: " + this->hand->get_cards().at(i)->getCountry() + ".");
+                for (int i = 0; i < this->hand->size(); i++) {
+                    print_hand.emplace_back(
+                            "Card " + to_string(i) + " : Type = " + this->hand->get_cards().at(i)->getType_to_string() +
+                            ", Country: " + this->hand->get_cards().at(i)->getCountry() + ".");
                 }
+                Terminal::print(print_exchange_required);
 
                 //Prompt the user to choose three cards
-                answer_cards.emplace_back() = Terminal::print_select("Please input your desired [3] cards: "); /* Verify if user can actually input 3 values */
+                Terminal::print("Please input your desired [3] cards: ");
+                answer_cards_indices[0] = Terminal::print_select(this->hand->to_string());
+                answer_cards_indices[1] = Terminal::print_select(this->hand->to_string());
+                answer_cards_indices[2] = Terminal::print_select(this->hand->to_string());
+
 
                 //Checking if cards are valid
-               /* if(this->hand->cardsValidForExchange(*//* IS VALID FOR EXCHANGE *//*)){
+                if(this->hand->cardsValidForExchange(answer_cards_indices)){
                     exchange_desired = Terminal::print_select("Player [Color] has cards that are valid for exchange, would you like to proceed now?");
                     if(exchange_desired){
-                        army_exchange += this->hand->exchange(*//*  INDICES *//* );
+                        army_exchange += this->hand->exchange(answer_cards_indices);
                     }
-                }*/
+                }
 
                 //Exchanging cards
                 while(this->hand->size() >= 5){

@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <iostream>
 #include <ctime>
+#include <string>
 
 using namespace std;
 
@@ -155,7 +156,17 @@ bool Hand::cardsValidForExchange(const int *handIndices){
     return (count == 1 || count == 3);
 }
 
-    int Hand::size() {
-        return cards->size();
+int Hand::size() {
+    return cards->size();
+}
+
+vector<string> Hand::to_string(){
+    vector<string> hand_str;
+    for(int i=0; i<size(); i++){
+        hand_str.emplace_back("Card " + std::to_string(i) + ", Type = " + get_cards().at(i)->getType_to_string() + ", Country: " + get_cards().at(i)->getCountry() + ".");
     }
+
+    return hand_str;
+}
+
 }

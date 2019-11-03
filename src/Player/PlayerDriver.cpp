@@ -5,6 +5,8 @@
 #include <cassert>
 #include "PlayerDriver.h"
 #include "Player.h"
+#include "../MapLoader/MapLoader.h"
+#include "../Terminal/Terminal.h"
 
 namespace Player{
     namespace Driver {
@@ -15,12 +17,14 @@ namespace Player{
         bool test_reinforce(){
             Player p1;
 
-            //test 1
-            //test 2
-
-            //Finally, driver demonstrates that
+            //The test_reinforce() method demonstrates that
             //1) if a player receives the right number of armies in the reinforcement phase (different cases)
             //2) the player has effectively placed this exact number of new armies somewhere on the map by the end of the reinforcement phase
+
+            //test 1)
+
+
+            //test 2)
 
             return true;
         }
