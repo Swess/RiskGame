@@ -142,6 +142,7 @@ namespace MapLoader {
             }
         }
         map->set_country_neighbors();
+      
         return map;
     }
 

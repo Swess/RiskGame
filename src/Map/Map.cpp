@@ -58,7 +58,11 @@ namespace Board {
 
     string Country::to_string() {
         ostringstream os;
-                os << "name: " << *name << ", owner: " << owner->get_color() << ", number of armies: " << *nb_armies;
+        if (owner) {
+            os << "name: " << *name << ", owner: " << owner->get_color() << ", number of armies: " << *nb_armies;
+        } else {
+            os << "name: " << *name << ", owner: " << "unclaimed" << ", number of armies: " << *nb_armies;
+        }
         return os.str();
     }
 
@@ -76,14 +80,18 @@ namespace Board {
 
     string Country::to_string_with_neighbors() {
         ostringstream os;
-        os << "name: " << *name << ", owner: " << owner << ", number of armies: " << *nb_armies << "\n";
+        if (owner) {
+            os << "name: " << *name << ", owner: " << owner->get_color() << ", number of armies: " << *nb_armies << "\n";
+        } else {
+            os << "name: " << *name << ", owner: " << "unclaimed" << ", number of armies: " << *nb_armies << "\n";
+
+        }
         for (Country *neighbor: *neighboring_countries) {
             os << "\t" << neighbor->to_string() << "\n";
         }
         return os.str();
     }
-
-
+  
     Continent::Continent(const string &name, Map *map) {
         this->index = new int(map->get_continents().size());
         this->size = new int(0);
@@ -94,7 +102,7 @@ namespace Board {
         map->add_continent(this);
     }
 
-    Continent:: Continent(const string &name, const int &bonus, const string &color, Map *map) {
+    Continent::Continent(const string &name, const int &bonus, const string &color, Map *map) {
         this->index = new int(map->get_continents().size());
         this->size = new int(0);
         this->name = new string(name);
@@ -294,5 +302,4 @@ namespace Board {
         }
         return nullptr;
     }
-
 }

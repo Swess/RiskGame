@@ -16,6 +16,8 @@ using std::to_string;
 bool Terminal::debug_mode = false;
 bool Terminal::test_mode = false;
 int Terminal::input;
+vector<int> Terminal::input_vector;
+int Terminal::terminal_input_counter;
 
 void Terminal::print(const string& s) {
     cout << s << endl;
@@ -107,7 +109,11 @@ int Terminal::print_select(std::vector<string> array_string) {
         cout << i << ". " << array_string.at(i-1) << endl;
     }
     if (test_mode) {
-        Terminal::test(input+1);
+        if (terminal_input_counter != -1) {
+            input = input_vector.at(terminal_input_counter);
+            terminal_input_counter++;
+        }
+        Terminal::test(input + 1);
         return input;
     }
     while (true) {
@@ -124,6 +130,15 @@ int Terminal::print_select(std::vector<string> array_string) {
 
 void Terminal::set_input(const int &s){
     input = s;
+}
+
+void Terminal::set_input_vector(const vector<int> & vector) {
+    terminal_input_counter = 0;
+    input_vector = vector;
+}
+
+void Terminal::clear_terminal_input_counter() {
+    terminal_input_counter = -1;
 }
 
 void Terminal::debug_mode_on() {

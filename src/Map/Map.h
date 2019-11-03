@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 #include <map>
-// #include "../Player/Player.h"
 
 using namespace std;
 
@@ -52,6 +51,7 @@ namespace Board {
         void decrement_army();
 
         void increment_army();
+
     };
 
     /**
@@ -202,7 +202,6 @@ namespace Board {
          * @return
          */
         bool is_connected();
-
     private:
         friend Continent;
         vector<Continent *> *continents;
@@ -210,5 +209,6 @@ namespace Board {
         vector<vector<int>> *edges;
         Country *get_country_from_index(int index);
     };
+
 
 }
