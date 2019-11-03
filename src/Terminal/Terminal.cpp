@@ -17,7 +17,7 @@ bool Terminal::debug_mode = false;
 bool Terminal::test_mode = false;
 int Terminal::input;
 vector<int> Terminal::input_vector;
-int Terminal::terminal_input_counter;
+int Terminal::terminal_input_counter = -1;
 
 void Terminal::print(const string& s) {
     cout << s << endl;
