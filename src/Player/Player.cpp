@@ -122,87 +122,46 @@ namespace Player {
         /*
          * Then player places all armies on some of the countries it owns as they see fit.
          */
-        string desired_index;
-        int desired_armies_to_place;
-        do{
 
-            //Display available options
-            Terminal::print("The armies available for positioning and the available countries are: ");
-            Terminal::print(army_total);
+        //Looping around the number of armies available to place
+        do{
+            //Display available options (armies available + countries for positioning)
+            Terminal::print("You are now able to place your reinforcement armies. The total armies and countries available for positioning are the following: ");
+                vector<string> armies_print;
+                armies_print.emplace_back(army_total + " total armies available");
+                Terminal::print(armies_print);
             /*INDEX = */
 
-            // vector<string> selection_source;
-            vector<Country *> countries_available = get_countries();
-
-            /* PRINTOUT LIST OF COUNTRIES & ARMIES
-             *
-                     Terminal::print("Choose your source country");
-                    vector<string> selections_source;
-                 //FILTER NOT NEEDED just do get_countries  vector<Country* > countries_source = get_countries_attack_source();
-                    selections_source.reserve(countries_source.size());
-                    for (auto country : countries_source){
-                        selections_source.emplace_back(country->to_string());
-                    }
-                  //NO  selections_source.emplace_back("Restart the process.");
-                    int answer_source = Terminal::print_select(selections_source);
-                  //NO  if (answer_source == selections_source.size()-1) { continue; }
-             *
-             * */
-
-
-            Terminal::print("Please specify the index of the country where you desire to position armies: ");
-            do{
-                /*INPUT */ desired_index;
-              //ALREADY DONE IN TERMINAL - REDUNDANT  if(desired_index > /*MAP INDEX*/ || desired_index < 1){
-                    Terminal::error("Index must be greater tan zero and less than " /*VALUE */ "Please enter another value: ");
+                //Gathering countries owned by player and in map
+                    //vector<Countries *> countries_owned ~ already declared above
+                    //vector<Countries *> countries_in_map ~ already declared above
+                //Printing Utility
+                vector<string> options;
+                for(auto c : countries_owned) {
+                    options.emplace_back(c->get_name() + " (which has" + to_string(c->get_armies()) + " armies present).");
                 }
-            } while(desired_index > /*MAP_INDEX*/ || desired_index < 1);
+                //Asking player to input data
+                options.emplace_back("\nPlease enter the country [#] to which you would like to place armies: ");
+                int answer_country = Terminal::print_select(options);
 
-            /*MAPINDEX=0*/
+                vector<string> options_number;
+                options_number.emplace_back("Enter how many armies you would like to place on " + countries_in_map.at(placement_answer)->get_name());
+                int answer_number = Terminal::print_select(options_number);
 
-            /*
+                //Adding 'answer_number' armies to 'answer_country'
+                countries_in_map.at(answer_country)->set_armies(countries_in_map.at(answer_country)->get_armies() + answer_number);
 
-              static bool print_select(const string& s);        (YES OR NO)
-                static int print_select(std::vector<string> s); (INDEX returned) like country selection
-
-                int Terminal::print_select(const int &minimum, const int &maximum, const string &s) //useful when user selects a country
-
-             */
-
-            //Then, Player decides how many armies they want to place
-
-            /*
-
-             while(Terminal::print_select("Player " + get_color() + ": Do you want to attack this round?")){
-            if (!is_able_to_attack()) {
-                Terminal::print("Player " + get_color() + " don't have any country he can attack from." );
-                return false;
-            }
-
-             */
-
-            do{
-                /*INPUT */ desired_armies_to_place;
-                if(desired_armies_to_place < 1 || desired_armies_to_place > army_total){
-                    Terminal::error("The number of armies to place must be greater than zero and less than " /*total armies + 1*/ "Please enter another value: ");
-                }
-            }while(desired_armies_to_place < 1 || desired_armies_to_place > army_total);
-
-            //Finally, we can add the armies
-            for(/*ITERATE COUNTRY*/){
-                if((desired_index-1) == /* INDEX */){
-                    GameEngine::GameEngine::get_map()->get_countries().at(/*iterate*/).set_armies(desired_armies_to_place);
-                    break;
-                }
-                /*INDEX++*/
-            }
-
-            army_total -= desired_armies_to_place;
+            //Reducing the # of armies available
+            army_total -= answer_number;
         }while(army_total !=0);
 
-        //Display Updated Countries & Armies??
-        Terminal::print("Armies have been positioned successfully!");
-
+        //Printing success message
+        vector<string> print_reinforcement_success;
+        print_reinforcement_success.emplace_back("Armies have been positioned successfully!\n" + "Your countries are now equipped with the following number of armies: ");
+        for(auto c : countries_owned){
+            print_reinforcement_success.emplace_back(c->get_name() + " has" + to_string(c->get_armies()) + " armies present.");
+        }
+        Terminal::print(print_reinforcement_success);
     }
 
     void Player::attack() {

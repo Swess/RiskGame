@@ -251,7 +251,7 @@ namespace GameEngine {
             }
         }
 
-        Terminal::print("An single army have been placed on all of your countries.");
+        Terminal::print("A single army has been placed on all of your countries.");
 
         // Let players place their remaining armies one at the time.
         while(total_placed < players->size()*armies_allowed){
