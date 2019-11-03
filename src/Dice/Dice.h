@@ -23,7 +23,7 @@ namespace Dice {
          * and returns a sorted container which holds the
          * values of the dice.
          */
-        std::vector<int> roll(int numDice);
+        virtual std::vector<int> roll(int numDice);
 
         /*
          * printRollPercentageArray() is a function that prints the current
@@ -45,7 +45,7 @@ namespace Dice {
          */
         int getTotalRolls();
 
-        ~Dice();
+        virtual ~Dice();
 
     private:
 
@@ -59,6 +59,19 @@ namespace Dice {
         void addToRollPercentArray(int val);
 
 
+    };
+
+    /**
+     * Used to substitute the values returned by a Dice to always return the subtituted value
+     */
+    class TestDice : public Dice {
+        int* subtitute_val;
+    public:
+        explicit TestDice(int value);
+
+        virtual ~TestDice() override;
+
+        std::vector<int> roll(int numDice) override;
     };
 }
 #endif /* Dice_hpp */

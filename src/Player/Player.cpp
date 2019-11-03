@@ -226,6 +226,7 @@ namespace Player {
                 string defender_question = "How many dice Player " + target->get_owner()->get_color() + " want to defend with?";
                 nb_of_dice_defender = Terminal::print_select(1, available_dice_defender, defender_question);
             }
+
             vector<int> roll_attacker = source->get_owner()->dice->roll(nb_of_dice_attacker);
             vector<int> roll_defender = target->get_owner()->dice->roll(nb_of_dice_defender);
 
@@ -234,8 +235,9 @@ namespace Player {
             Terminal::print("Player " + target->get_owner()->get_color() + " rolled: ");
             Terminal::print_on_same_line(roll_defender);
 
-            int how_many_unit_will_die = available_dice_defender < available_dice_attacker ? available_dice_defender
-                                                                                           : available_dice_attacker;
+            // Remove no more then lower nb of dices
+            int how_many_unit_will_die = nb_of_dice_attacker < nb_of_dice_defender ? nb_of_dice_attacker
+                                                                                   : nb_of_dice_defender;
 
             for (int i = 0; i < how_many_unit_will_die; i++) {
                 roll_attacker[i] > roll_defender[i] ? target->decrement_army() : source->decrement_army();
@@ -338,4 +340,5 @@ namespace Player {
     void Player::reset_player_count() {
         player_count = 0;
     }
+
 }

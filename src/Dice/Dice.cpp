@@ -129,4 +129,17 @@ namespace Dice {
 
     }
 
+    vector<int> TestDice::roll(int numDice) {
+        vector<int> sub(numDice, *subtitute_val);
+        return sub;
+    }
+
+    TestDice::TestDice(int value) {
+        subtitute_val = new int(value);
+    }
+
+    TestDice::~TestDice() {
+        delete subtitute_val;
+    }
+
 }

@@ -63,6 +63,11 @@ bool Terminal::print_select(const string& s) {
     string in;
     cout << s << " (Y/N)";
     if (test_mode) {
+        if (terminal_input_counter != -1) {
+            input = input_vector.at(terminal_input_counter);
+            terminal_input_counter++;
+        }
+
         if (input == 0) {
             in = "N";
         } else if (input == 1){
@@ -82,6 +87,10 @@ int Terminal::print_select(const int &minimum, const int &maximum, const string 
     Terminal::print(s);
 
     if (test_mode) {
+        if (terminal_input_counter != -1) {
+            input = input_vector.at(terminal_input_counter);
+            terminal_input_counter++;
+        }
         Terminal::test(input);
         if ( !(input <= maximum && input >= minimum )) {
             std::cerr << "TEST INPUT WAS NOT WELL DEFINE IN THE RANGE [" << minimum << "," << maximum << "]" << endl;

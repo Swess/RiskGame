@@ -28,6 +28,7 @@ int main() {
 //        Terminal::run_test("GameEngine", GameEngine::Driver::run);
     }
 
+    Terminal::test_mode_off();
 
 //    GameEngine::GameEngine::instance()->start();
 
