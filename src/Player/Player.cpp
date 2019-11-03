@@ -101,18 +101,34 @@ namespace Player {
          * If player owns more than 5 cards, then it must exchange cards
          */
         bool exchange_desired;
+        vector<string> print_exchange_required;
+        print_exchange_required.emplace_back("Player [" + this->get_color() + "] has more than 5 cards in their hand! Exchange required. \n Following are the cards available in their hand: ");
+        vector<string> print_hand;
+        vector<int> answer_cards;
 
-            if(this->hand->size() >= 5 ){
-                Terminal::print("Player [Color] has more than 5 cards in their hand! Exchange required.");
+            if(this->hand->size() >= 5){
+                //Displaying warning message
+                Terminal::print(print_exchange_required);
 
-                while(this->hand->size() >= 5){
-                    army_exchange += this->hand->exchange(/* INDICES */);
+                //Displaying available cards to Player
+                for(auto i : this->hand->size()){
+                    print_hand.emplace_back(this->hand);  /* ?????????? */
                 }
-            }
-            if(this->hand->cardsValidForExchange(/* IS VALID FOR EXCHANGE */)){
-                exchange_desired = Terminal::print_select("Player [Color] has cards that are valid for exchange, would you like to proceed now?");
-                if(exchange_desired){
-                    army_exchange += this->hand->exchange(/*  INDICES */ );
+
+                //Prompt the user to choose three cards
+                answer_cards = Terminal::print_select("Please input your desired [3] cards: ");
+
+                //Checking if cards are valid
+               /* if(this->hand->cardsValidForExchange(*//* IS VALID FOR EXCHANGE *//*)){
+                    exchange_desired = Terminal::print_select("Player [Color] has cards that are valid for exchange, would you like to proceed now?");
+                    if(exchange_desired){
+                        army_exchange += this->hand->exchange(*//*  INDICES *//* );
+                    }
+                }*/
+
+                //Exchanging cards
+                while(this->hand->size() >= 5){
+                    army_exchange += this->hand->exchange(&answer_cards[0]); /* ??????? check if conversion is correct */
                 }
             }
 
