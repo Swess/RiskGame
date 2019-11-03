@@ -176,12 +176,11 @@ namespace Player{
         }
 
         bool run (){
-            bool passed = test_fortify();
-//
-//                    test_attack() &&
-//                    test_fortify() &&
-//                    test_reinforce() &&
-//                    test_Dice();
+            bool passed = test_fortify() &&
+                    test_attack() &&
+                    test_fortify() &&
+                    test_reinforce() &&
+                    test_Dice();
 
             return passed;
         }

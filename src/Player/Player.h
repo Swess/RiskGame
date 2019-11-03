@@ -36,6 +36,7 @@ namespace Player {
          * one that has control.
          */
         void gain_control(Country* country);
+        static void reset_player_count();
 
         /**
          * Take control of multiple country and handle logic for making sure the player is the only

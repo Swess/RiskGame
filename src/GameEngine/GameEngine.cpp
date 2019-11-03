@@ -176,6 +176,7 @@ namespace GameEngine {
         map = nullptr;
         deck = nullptr;
         player_order = new vector<int>();
+        Player::Player::reset_player_count();
         players = new vector<Player::Player *>();
     }
 

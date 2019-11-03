@@ -334,4 +334,8 @@ namespace Player {
         }
         return avail_countries;
     }
+
+    void Player::reset_player_count() {
+        player_count = 0;
+    }
 }
