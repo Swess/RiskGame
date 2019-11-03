@@ -100,19 +100,18 @@ namespace Player {
          * Third, we consider the armies resulting from a card exchange (if applicable).
          * If player owns more than 5 cards, then it must exchange cards
          */
-        string exchange_desired;
+        bool exchange_desired;
 
             if(this->hand->size() >= 5 ){
                 Terminal::print("Player [Color] has more than 5 cards in their hand! Exchange required.");
 
                 while(this->hand->size() >= 5){
-                    army_exchange += this->hand->exchange( /*  INDICES */ );
+                    army_exchange += this->hand->exchange(/* INDICES */);
                 }
             }
             if(this->hand->cardsValidForExchange(/* IS VALID FOR EXCHANGE */)){
-                Terminal::print("Player [Color] has cards that are valid for exchange, would you like to proceed now? (y/n)");
-                /* INPUT >>*/ exchange_desired;
-                if(exchange_desired.compare("y")==0 || exchange_desired.compare("Y")==0){
+                exchange_desired = Terminal::print_select("Player [Color] has cards that are valid for exchange, would you like to proceed now?");
+                if(exchange_desired){
                     army_exchange += this->hand->exchange(/*  INDICES */ );
                 }
             }
@@ -128,9 +127,12 @@ namespace Player {
         do{
 
             //Display available options
-            Terminal::print("The armies available for positioning are: ");
+            Terminal::print("The armies available for positioning and the available countries are: ");
             Terminal::print(army_total);
             /*INDEX = */
+
+            // vector<string> selection_source;
+            vector<Country *> countries_available = get_countries();
 
             /* PRINTOUT LIST OF COUNTRIES & ARMIES
              *
@@ -146,9 +148,7 @@ namespace Player {
                   //NO  if (answer_source == selections_source.size()-1) { continue; }
              *
              * */
-            Terminal::print("Here is the list of countries available: ");
-           // vector<string> selection_source;
-           // vector<Country *> countries_source =
+
 
             Terminal::print("Please specify the index of the country where you desire to position armies: ");
             do{
