@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <vector>
+#include <string>
 #include "Player.h"
 #include "../Map/Map.h"
 #include "../GameEngine/GameEngine.h"
@@ -111,8 +112,8 @@ namespace Player {
                 Terminal::print(print_exchange_required);
 
                 //Displaying available cards to Player
-                for(auto i : this->hand->size()){
-                    print_hand.emplace_back(this->hand);  /* ?????????? */
+                for(int i=0; i<this->hand->size(); i++){
+                    print_hand.emplace_back("Card " + to_string(i) + " : Type = " + this->hand->get_cards().at(i)->getType() + ", Country: " + this->hand->get_cards().at(i)->getCountry() + "."); /* TO DO CONVERT ENUM TO STRING  */
                 }
 
                 //Prompt the user to choose three cards

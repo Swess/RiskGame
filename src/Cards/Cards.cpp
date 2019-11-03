@@ -103,7 +103,9 @@ Hand::~Hand() {
     cards = nullptr;
 }
 
-
+vector<Card *> Hand::get_cards(){
+    return *cards;
+}
 
 void Hand::insertCard(Card card) {
     cards->push_back(new Card(card));

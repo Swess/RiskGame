@@ -25,7 +25,6 @@ private:
     Type *type;
 };
 
-
 class Deck {
 public:
     Deck();
@@ -46,6 +45,7 @@ public:
     int exchange(int cardIndices[]);
     bool cardsValidForExchange(const int handIndices[]);
     int size();
+    vector<Card *> get_cards();
 private:
     vector<Card *> *cards;
     static bool sameCardCheck(const int handIndices[]);
