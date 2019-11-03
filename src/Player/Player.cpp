@@ -117,7 +117,7 @@ namespace Player {
                 }
 
                 //Prompt the user to choose three cards
-                answer_cards = Terminal::print_select("Please input your desired [3] cards: ");
+                answer_cards.emplace_back() = Terminal::print_select("Please input your desired [3] cards: "); /* Verify if user can actually input 3 values */
 
                 //Checking if cards are valid
                /* if(this->hand->cardsValidForExchange(*//* IS VALID FOR EXCHANGE *//*)){
