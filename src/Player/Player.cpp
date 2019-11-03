@@ -113,7 +113,7 @@ namespace Player {
 
                 //Displaying available cards to Player
                 for(int i=0; i<this->hand->size(); i++){
-                    print_hand.emplace_back("Card " + to_string(i) + " : Type = " + this->hand->get_cards().at(i)->getType() + ", Country: " + this->hand->get_cards().at(i)->getCountry() + "."); /* TO DO CONVERT ENUM TO STRING  */
+                    print_hand.emplace_back("Card " + to_string(i) + " : Type = " + this->hand->get_cards().at(i)->getType_to_string() + ", Country: " + this->hand->get_cards().at(i)->getCountry() + ".");
                 }
 
                 //Prompt the user to choose three cards

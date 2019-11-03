@@ -37,9 +37,15 @@ Card::Type Card::getType() {
     return *type;
 }
 
-Card::Card(Card &card) {
-    this->country = new string(card.getCountry());
-    this->type = new Card::Type(card.getType());
+string Card::getType_to_string(){
+    switch(this->getType()){
+        case 0: return "Infantry";
+            break;
+        case 1: return "Artillery";
+            break;
+        case 2: return "Cavalry";
+            break;
+    }
 }
 
 Deck::Deck() {
