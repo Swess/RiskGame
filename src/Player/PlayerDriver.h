@@ -8,6 +8,7 @@
 
 namespace Player {
     namespace Driver {
+        bool test_attacking_and_attacked_country_validity();
         bool test_attack();
         bool test_fortify();
         bool test_reinforce();

@@ -3,18 +3,87 @@
 //
 
 #include <cassert>
+#define private public
 #include "PlayerDriver.h"
 #include "Player.h"
 #include "../MapLoader/MapLoader.h"
 #include "../Terminal/Terminal.h"
 #include "../exceptions.h"
+#include "../GameEngine/GameEngine.h"
 
 namespace Player{
     namespace Driver {
+
+        bool test_amount_of_dice();
+
         bool test_attack(){
-            Player p1;
+
+            test_attacking_and_attacked_country_validity();
+            test_amount_of_dice();
+
+            // 3) given known dice values, that the right number of armies are deducted on the attacker/defender;
+
+
+
+            return true;
+
+
+            // 4) the attacker is allowed to initiate multiple attacks, until it declares that it does not want to attack anymore.
             return true;
         }
+
+
+
+        bool test_amount_of_dice() {
+            // 2) only valid number of dice can be chosen by the attacker/defender;
+            auto gameInstance = GameEngine::GameEngine::instance();
+            gameInstance->start_test(1, 3);
+            gameInstance->startup_phase();
+
+            auto player = gameInstance->get_players()->at(0);
+            auto countries = player->get_countries_attack_source();
+
+            Country * source= countries.at(0);
+
+            int amount_of_dice = player->get_attacker_amount_of_dice(source);
+
+            if (source->get_armies() > 3 ){
+                assert(amount_of_dice == 3);
+            } else {
+                assert(amount_of_dice-1 == source->get_armies());
+            }
+
+
+            gameInstance->reset_test();
+            return true;
+        }
+
+        bool test_attacking_and_attacked_country_validity() {
+            auto gameInstance = GameEngine::GameEngine::instance();
+            //1) only valid attacks can be declared (i.e. valid attacker/attacked country);
+            gameInstance->start_test(1, 3);
+            gameInstance->startup_phase();
+
+            auto player = gameInstance->get_players()->at(0);
+            auto countries = player->get_countries_attack_source();
+
+            // verify that my country are all owned by me, and has more than one army
+            for (auto country : countries){
+                assert(country->get_owner() == player);
+                assert(country->get_armies() > 1);
+            }
+
+            // verify that the country has enemy neighbor
+            for (auto country : * countries.at(0)->get_neighbors()){
+                if (country->get_owner() == player) continue;
+                assert(country->get_owner() != player);
+            }
+
+
+            gameInstance->reset_test();
+            return true;
+        }
+
         bool test_reinforce(){
             Player p1;
             return true;
@@ -59,7 +128,7 @@ namespace Player{
 
 
             // First test: ensure that if no valid countries, then return
-            playerGreen->turn();
+            playerGreen->fortify();
 
 
             // Assign armies to each country
@@ -74,7 +143,7 @@ namespace Player{
             vector<int> input_vector;
             input_vector.assign(input_array, input_array+4);
             Terminal::set_input_vector(input_vector);
-            playerGreen->turn();
+            playerGreen->fortify();
 
             Terminal::clear_terminal_input_counter();
             // assert armies have been moved

@@ -83,6 +83,9 @@ int Terminal::print_select(const int &minimum, const int &maximum, const string 
 
     if (test_mode) {
         Terminal::test(input);
+        if ( !(input <= maximum && input >= minimum )) {
+            std::cerr << "TEST INPUT WAS NOT WELL DEFINE IN THE RANGE [" << minimum << "," << maximum << "]" << endl;
+        }
         return input;
     }
 
@@ -139,6 +142,10 @@ void Terminal::set_input_vector(const vector<int> & vector) {
 
 void Terminal::clear_terminal_input_counter() {
     terminal_input_counter = -1;
+}
+
+int Terminal::get_input(){
+    return input;
 }
 
 void Terminal::debug_mode_on() {

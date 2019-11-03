@@ -22,7 +22,6 @@ namespace Player {
         void reinforce();
         bool attack();
         bool is_able_to_attack();
-        vector<Country *> get_countries_attack_source();
         player_color color;
         static int player_count;
     public:
@@ -50,9 +49,15 @@ namespace Player {
          */
         vector<Country *> get_countries();
 
+        vector<Country *> get_countries_attack_source();
+
         bool is_player_dead();
 
         string get_color();
         void turn();
+
+        int battle_and_get_last_roll_amount(Country *source, Country *target) const;
+
+        int get_attacker_amount_of_dice(Country *source) const;
     };
 }
