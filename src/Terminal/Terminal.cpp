@@ -17,7 +17,7 @@ bool Terminal::debug_mode = false;
 bool Terminal::test_mode = false;
 int Terminal::input;
 vector<int> Terminal::input_vector;
-int Terminal::terminal_input_counter;
+int Terminal::terminal_input_counter = -1;
 
 void Terminal::print(const string& s) {
     cout << s << endl;
@@ -63,6 +63,11 @@ bool Terminal::print_select(const string& s) {
     string in;
     cout << s << " (Y/N)";
     if (test_mode) {
+        if (terminal_input_counter != -1) {
+            input = input_vector.at(terminal_input_counter);
+            terminal_input_counter++;
+        }
+
         if (input == 0) {
             in = "N";
         } else if (input == 1){
@@ -82,7 +87,14 @@ int Terminal::print_select(const int &minimum, const int &maximum, const string 
     Terminal::print(s);
 
     if (test_mode) {
+        if (terminal_input_counter != -1) {
+            input = input_vector.at(terminal_input_counter);
+            terminal_input_counter++;
+        }
         Terminal::test(input);
+        if ( !(input <= maximum && input >= minimum )) {
+            std::cerr << "TEST INPUT WAS NOT WELL DEFINE IN THE RANGE [" << minimum << "," << maximum << "]" << endl;
+        }
         return input;
     }
 
@@ -139,6 +151,10 @@ void Terminal::set_input_vector(const vector<int> & vector) {
 
 void Terminal::clear_terminal_input_counter() {
     terminal_input_counter = -1;
+}
+
+int Terminal::get_input(){
+    return input;
 }
 
 void Terminal::debug_mode_on() {
