@@ -38,7 +38,7 @@ Card::Type Card::getType() {
     return *type;
 }
 
-string Card::getType_to_string(){
+string Card::get_type_to_string(){
     switch(this->getType()){
         case 0: return "Infantry";
             break;
@@ -163,7 +163,7 @@ int Hand::size() {
 vector<string> Hand::to_string(){
     vector<string> hand_str;
     for(int i=0; i<size(); i++){
-        hand_str.emplace_back("Card " + std::to_string(i) + ", Type = " + get_cards().at(i)->getType_to_string() + ", Country: " + get_cards().at(i)->getCountry() + ".");
+        hand_str.emplace_back("Card " + std::to_string(i) + ", Type = " + get_cards().at(i)->get_type_to_string() + ", Country: " + get_cards().at(i)->getCountry() + ".");
     }
 
     return hand_str;

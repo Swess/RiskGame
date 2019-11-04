@@ -19,7 +19,7 @@ public:
     ~Card();
     string getCountry();
     Card::Type getType();
-    string getType_to_string();
+    string get_type_to_string();
 
 private:
     string *country;
