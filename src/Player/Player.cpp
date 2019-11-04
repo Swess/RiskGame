@@ -119,9 +119,9 @@ namespace Player {
 
                 //Prompt the user to choose three cards
                 Terminal::print("Please input your desired [3] cards: [1" + std::to_string(this->hand->size()) + "].");
-                answer_cards_indices[0] = Terminal::print_select(this->hand->to_string()) -1;
-                answer_cards_indices[1] = Terminal::print_select(this->hand->to_string()) -1;
-                answer_cards_indices[2] = Terminal::print_select(this->hand->to_string()) -1;
+                answer_cards_indices[0] = Terminal::print_select(this->hand->to_string());
+                answer_cards_indices[1] = Terminal::print_select(this->hand->to_string());
+                answer_cards_indices[2] = Terminal::print_select(this->hand->to_string());
 
 
                 //Checking if cards are valid
@@ -152,7 +152,6 @@ namespace Player {
                 vector<string> armies_print;
                 armies_print.emplace_back(army_total + " total armies available");
                 Terminal::print(armies_print);
-            /*INDEX = */
 
                 //Gathering countries owned by player and in map
                     //vector<Countries *> countries_owned ~ already declared above
