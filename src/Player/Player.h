@@ -25,6 +25,8 @@ namespace Player {
         vector<Country *> get_countries_attack_source();
         player_color color;
         static int player_count;
+        // The variables below are used for testing
+        int armies_assigned;
     public:
         // TODO: These need to be private
         Dice::Dice *dice;
@@ -51,12 +53,12 @@ namespace Player {
         vector<Country *> get_countries();
 
         bool is_player_dead();
-
         string get_color();
         void turn();
-
         void reinforce();
-
         vector<string> player_to_string();
+        void set_armies_assigned(int a);
+        //The methods below are used for testing
+        int get_armies_assigned();
     };
 }

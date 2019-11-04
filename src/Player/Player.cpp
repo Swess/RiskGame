@@ -25,6 +25,7 @@ namespace Player {
         hand = new Cards::Hand();
         dice = new Dice::Dice();
         countries = new vector<Country *>();
+        int armies_assigned; //used for testing of reinforce()
     };
 
     Player::~Player() {
@@ -34,6 +35,29 @@ namespace Player {
         countries = nullptr;
         hand = nullptr;
         dice = nullptr;
+    }
+
+    vector<string> Player::player_to_string() {
+
+        vector<string> p;
+        p.emplace_back("Player " + this->get_color() + ": \n -Countries:\n ");
+        if(this->get_countries().size() == 0){
+            p.emplace_back("Player" + this->get_countries() + " has no countries!");
+            Terminal::print(p);
+        }else{
+            for(int c=0; c<this->get_countries().size(); c++){
+                p.emplace_back(this->get_countries().at(c)->get_name() +"\n");
+            }
+            p.emplace_back("- Hand: \n" + this->hand->to_string());
+        }
+
+        return p;
+    }
+    void Player::set_armies_assigned(int a){
+        armies_assigned = a;
+    }
+    int Player::get_armies_assigned(){
+        return armies_assigned;
     }
 
     void Player::fortify() {
@@ -228,6 +252,7 @@ namespace Player {
                 answer_cards_indices[1] = Terminal::print_select(this->hand->to_string());
                 answer_cards_indices[2] = Terminal::print_select(this->hand->to_string());
 
+                this->set_card_indices_for_exchange(answer_cards_indices);
 
                 //Checking if cards are valid
                 if(this->hand->cardsValidForExchange(answer_cards_indices)){
@@ -247,6 +272,9 @@ namespace Player {
 
         //Therefore, the total armies available (A) to Player are
         army_total = army_country + army_continent + army_exchange;
+
+        //Assigning the value to player to use it for testing
+        this->set_armies_assigned(army_total);
 
         /*
          * Then player places all armies on some of the countries it owns as they see fit.
@@ -469,20 +497,5 @@ namespace Player {
         return avail_countries;
     }
 
-    vector<string> Player::player_to_string() {
 
-        vector<string> p;
-        p.emplace_back("Player " + this->get_color() + ": \n -Countries:\n ");
-        if(this->get_countries().size() == 0){
-            p.emplace_back("Player" + this->get_countries() + " has no countries!");
-            Terminal::print(p);
-        }else{
-            for(int c=0; c<this->get_countries().size(); c++){
-                p.emplace_back(this->get_countries().at(c)->get_name() +"\n");
-            }
-            p.emplace_back("- Hand: \n" + this->hand->to_string());
-        }
-
-        return p;
-    }
 }

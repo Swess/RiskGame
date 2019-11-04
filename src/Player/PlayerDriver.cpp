@@ -35,7 +35,7 @@ namespace Player{
             }
 
             //Creating players
-            Player * player_red = new Player();
+            auto * player_red = new Player();
             auto * player_green = new Player();
             auto * player_blue = new Player();
             auto * player_black = new Player();
@@ -60,6 +60,12 @@ namespace Player{
                     Terminal::print(p_red);
 
                     player_red->reinforce();
+
+                    //This player should only get 3 armies by the rules.
+                    int rules_armies_red = 3;
+                    //Hence
+                    assert(player_red->get_armies_assigned() == rules_armies_red);
+
                     delete player_red; //to avoid conflicts
 
                 //Case 2: Player_green with 3 countries and no cards
@@ -72,7 +78,10 @@ namespace Player{
 
                     player_green->reinforce();
 
-                    //This should 
+                    //This player should only get 3 armies by the rules.
+                    int rules_armies_green = 3;
+                    //Hence
+                    assert(player_green->get_armies_assigned() == rules_armies_green);
 
                     delete player_green; //to avoid conflicts
 
@@ -91,6 +100,12 @@ namespace Player{
                     Terminal::print(p_blue);
 
                     player_blue->reinforce();
+
+                    //This player should only get 3 armies by the rules.
+                    int rules_armies_blue = 3;
+                    //Hence
+                    assert(player_blue->get_armies_assigned() == rules_armies_blue);
+
                     delete player_blue; //to avoid conflicts
 
                 //Case 4: Player_black with 1 continent and 4 cards
@@ -109,7 +124,13 @@ namespace Player{
                     vector<string> p_black = player_black->player_to_string();
                     Terminal::print(p_black);
 
-                    player_blue->reinforce();
+                    player_black->reinforce();
+
+                    //This player should get 3 armies for the countries owned and 3 for the continent owned (Great Britain)
+                    int rules_armies_black = 6;
+                    //Hence
+                    assert(player_black->get_armies_assigned() == rules_armies_black);
+
                     delete player_black; //to avoid conflicts
 
                 //Case 5: Player_white with 2 continents and 7 cards
@@ -124,8 +145,24 @@ namespace Player{
                     player_white->gain_control(map_countries.at(5)); // Spain
                     player_white->gain_control(map_countries.at(6)); // Portugal
 
+                    player_white->hand->insertCard(game_deck->draw());
+                    player_white->hand->insertCard(game_deck->draw());
+                    player_white->hand->insertCard(game_deck->draw());
+                    player_white->hand->insertCard(game_deck->draw());
+                    player_white->hand->insertCard(game_deck->draw());
+                    player_white->hand->insertCard(game_deck->draw());
+                    player_white->hand->insertCard(game_deck->draw());
+
                     vector<string> p_white = player_white->player_to_string();
                     Terminal::print(p_white);
+
+                    player_white->reinforce();
+
+                    //This player should get 3 armies for the countries owned + 4 armies for the continents owned (Scandinavia = 3 + Iberia = 1) + x armies from card exchange
+                    int rules_armies_white = 7 + player_white->hand->exchange(/* answer_cards_indices */);;
+                    //Hence
+                    assert(player_white->get_armies_assigned() == rules_armies_white);
+
                     delete player_white; // to avoid conflicts
 
 
