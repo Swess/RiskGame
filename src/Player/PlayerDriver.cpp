@@ -156,12 +156,14 @@ namespace Player {
                                       battle_actions_pattern.end());
             battle_actions.push_back(0);
 
+            Country *source = player->get_countries_attack_source().at(0);
+            Country *target_country = source->get_neighbors()->at(0);
+            // Make sure the target is not ours
+            gameInstance->get_players()->at(1)->gain_control(target_country);
+
             Terminal::set_input_vector(battle_actions);
             player->attack();
             Terminal::clear_terminal_input_counter();
-
-            Country *source = player->get_countries_attack_source().at(0);
-            Country *target_country = source->get_neighbors()->at(0);
 
             // Check that battles are successfully executed and won
             assert(source->get_armies() == 100);
@@ -172,6 +174,28 @@ namespace Player {
         }
 
         bool test_reinforce() {
+            // T 1: a player receives the right number of armies in the reinforcement phase (showing different cases)
+            auto gameInstance = GameEngine::GameEngine::instance();
+
+            gameInstance->start_test(1, 3);
+            gameInstance->startup_phase();
+
+            auto player = gameInstance->get_players()->at(0);
+
+            for (auto card : * gameInstance->get_deck()->cards){
+                player->hand->insertCard(*card);
+            }
+
+            int owned_army = 0;
+            for (auto country : player->get_countries()){
+                owned_army += country->get_armies();
+            }
+
+            Terminal::test_mode_off();
+            player->reinforce();
+            Terminal::test_mode_on();
+
+            // T 2: the player has effectively placed this exact number of new armies somewhere on the map by the end of the reinforcement phase.
             return true;
         }
 
