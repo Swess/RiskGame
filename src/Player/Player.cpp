@@ -136,7 +136,7 @@ namespace Player {
 
                 //Exchanging cards
                 while(this->hand->size() >= 5){
-                    army_exchange += this->hand->exchange(&answer_cards[0]); /* ??????? check if conversion is correct */
+                    army_exchange += this->hand->exchange(answer_cards_indices);
                 }
             }
 
@@ -169,7 +169,7 @@ namespace Player {
                 int answer_country = Terminal::print_select(options);
 
                 vector<string> options_number;
-                options_number.emplace_back("Enter how many armies you would like to place on " + countries_in_map.at(placement_answer)->get_name());
+                options_number.emplace_back("Enter how many armies you would like to place on your chosen country: ");
                 int answer_number = Terminal::print_select(options_number);
 
                 //Adding 'answer_number' armies to 'answer_country'
@@ -181,7 +181,7 @@ namespace Player {
 
         //Printing success message
         vector<string> print_reinforcement_success;
-        print_reinforcement_success.emplace_back("Armies have been positioned successfully!\n" + "Your countries are now equipped with the following number of armies: ");
+        print_reinforcement_success.emplace_back("Armies have been positioned successfully! Your countries are now equipped with the following number of armies: ");
         for(auto c : countries_owned){
             print_reinforcement_success.emplace_back(c->get_name() + " has" + to_string(c->get_armies()) + " armies present.");
         }
