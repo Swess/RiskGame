@@ -164,7 +164,7 @@ namespace Player {
                     options.emplace_back(c->get_name() + " (which has" + to_string(c->get_armies()) + " armies present).");
                 }
                 //Asking player to input data
-                options.emplace_back("\nPlease enter the country [#] to which you would like to place armies: ");
+                Terminal::print("Please enter the country [#] to which you would like to place armies: ");
                 int answer_country = Terminal::print_select(options);
 
                 vector<string> options_number;

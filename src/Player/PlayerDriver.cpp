@@ -48,10 +48,16 @@ namespace Player{
             playerBlue->gain_control(countries.at(3));
             playerBlue->gain_control(countries.at(4));
 
-            //test 1)
+            //TEST (1): check if player receives the right number of armies during reinforcement
+
+                //Case 1:
+                //Case 2:
+                //Case 3:
 
 
-            //test 2)
+            //TEST (2): check that a player has effectively placed an 'exact' number of new armies somewhere on the map by the end of the
+
+
 
             return true;
         }
