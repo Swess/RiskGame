@@ -54,7 +54,6 @@ namespace Player {
         int user_want_fortify = Terminal::print_select("Fortification is possible, would you like to fortify?");
         if (!user_want_fortify) return;
 
-
         Terminal::print("Select source country");
         for (auto & country : *countries) {
             selections.push_back(country->to_string_with_neighbors());
@@ -151,12 +150,7 @@ namespace Player {
 
         new_army += get_army_by_continent_owned();
 
-        string message;
-        if (new_army == 1 ){
-            message = "Player " + this->get_color() + ": You have " + std::to_string(new_army) + " unit to place.";
-        } else {
-            message = "Player " + this->get_color() + ":You have " + std::to_string(new_army) + " units to place.";
-        }
+        string message = "Player " + this->get_color() + ":You have " + std::to_string(new_army) + " units to place.";
         Terminal::print(message);
         new_army = update_army_by_exchange(new_army);
 
@@ -172,13 +166,14 @@ namespace Player {
         if (hand->size() < 3) trade_again = false;
         while (trade_again) {
             bool want_to_trade = false;
-            if (hand->size() >= 3) {
-                message = "You have more than three cards, do you want to trade?";
-                want_to_trade = Terminal::print_select(message);
-            } else if (hand->size() > 5) {
+
+            if (hand->size() > 5) {
                 want_to_trade = true;
                 message = "You have more than five cards, you must trade now.";
                 Terminal::print(message);
+            } else if (hand->size() >= 3) {
+                message = "You have more than three cards, do you want to trade?";
+                want_to_trade = Terminal::print_select(message);
             }
 
             if (want_to_trade) {
@@ -198,32 +193,35 @@ namespace Player {
                     do {
                         second_card = Terminal::print_select(selections);
                         if (second_card == first_card) Terminal::print("You can't take the same card, try again.");
-                    } while (second_card != first_card);
+                    } while (second_card == first_card);
                     do {
                         third_card = Terminal::print_select(selections);
-                        if (third_card == first_card && third_card == second_card)
+                        if (third_card == first_card || third_card == second_card)
                             Terminal::print("You can't take the same card, try again.");
-                    } while (third_card != first_card && third_card != second_card);
+                    } while (third_card == first_card || third_card == second_card);
 
                     int cards_to_trade[3] = {first_card, second_card, third_card};
                     int *ptr = cards_to_trade;
 
                     exchange_valid = hand->cardsValidForExchange(ptr);
-                    if (!exchange_valid) Terminal::print("The exchange is not valid, try again.");
+                    if (!exchange_valid) {
+                        Terminal::print("The exchange is not valid, try again.");
+                        continue;
+                    }
 
-                    new_army += hand->exchange(ptr);
-                    delete ptr;
-                    ptr = nullptr;
-                } while(exchange_valid);
-                if (new_army == 1) {
-                    message = "After trading, you now have " + to_string(new_army) + " unit to place.";
-                } else {
-                    message = "After trading, you now have " + to_string(new_army) + " units to place.";
-                }
+                    int exchange_card =  hand->exchange(ptr);
+                    new_army += exchange_card;
+                    Terminal::print("You got " + to_string(exchange_card) + " armies from the exchange.");
+
+                } while(!exchange_valid);
+
+                message = "After trading, you now have " + to_string(new_army) + " units to place.";
                 Terminal::print(message);
 
                 if(this->hand->size() < 3) {
                     break;
+                } else if (this->hand->size() > 5 ){
+                    continue;
                 }
                 message = "Do you want to trade again?";
                 trade_again = Terminal::print_select(message);
@@ -254,6 +252,7 @@ namespace Player {
     }
 
     void Player::reinforce_country(int new_army) {
+
         while (new_army != 0) {
             vector<Country *> owned_countries = get_countries();
             vector<string> selections;

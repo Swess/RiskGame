@@ -96,8 +96,8 @@ namespace Board {
         return os.str();
     }
 
-    int * Country::get_continent_index() {
-        return this->continent_index;
+    int Country::get_continent_index() {
+        return *this->continent_index;
     }
 
     Continent::Continent(const string &name, Map *map) {
@@ -185,8 +185,8 @@ namespace Board {
         return *bonus;
     }
 
-    int * Continent::get_index() {
-        return index;
+    int Continent::get_index() {
+        return *index;
     }
 
 

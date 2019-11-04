@@ -37,7 +37,7 @@ namespace Board {
 
         string get_name();
         int get_armies();
-        int * get_continent_index();
+        int get_continent_index();
         void set_armies(int num);
         Player::Player *get_owner();
         void set_owner(Player::Player* p);
@@ -105,7 +105,7 @@ namespace Board {
          */
         bool is_connected();
 
-        int * get_index();
+        int get_index();
     };
 
     /**

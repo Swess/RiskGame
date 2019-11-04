@@ -36,6 +36,7 @@ public:
     void shuffleDeck();
     Card draw();
     int get_size();
+    static int totalSetsTraded;
     vector<Card *> *cards;
 };
 

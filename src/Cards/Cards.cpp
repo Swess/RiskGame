@@ -4,12 +4,14 @@
 
 #include "Cards.h"
 #include <algorithm>
-#include <iostream>
 #include <ctime>
 
 using namespace std;
 
+
 namespace Cards {
+
+    int Deck::totalSetsTraded = 0;
 
 Card::Card() {
     this->country = new string;
@@ -55,7 +57,7 @@ string Card::to_string() {
     return "";
 }
 
-    Deck::Deck() {
+Deck::Deck() {
     cards = new vector<Card *>;
 }
 
@@ -72,8 +74,8 @@ Deck::Deck(vector<Card *> &cards) {
 
 Deck::~Deck() {
     delete cards;
-
     cards = nullptr;
+    totalSetsTraded = 0;
 }
 
 
@@ -106,7 +108,7 @@ Deck::Deck(const vector<string>& countries) {
         return this->cards->size();
     }
 
-    Hand::Hand() {
+Hand::Hand() {
     cards = new vector<Card *>;
 }
 
@@ -123,19 +125,18 @@ void Hand::insertCard(Card card) {
 }
 
 int Hand::exchange(int cardIndices[]) {
-    static int *totalSetsTraded = new int(0);
     sort(cardIndices, cardIndices+3);
     cards->erase(cards->begin() + cardIndices[2]);
     cards->erase(cards->begin() + cardIndices[1]);
     cards->erase(cards->begin() + cardIndices[0]);
 
     int numArmiesToReturn;
-    if (*totalSetsTraded < 5) {
-        numArmiesToReturn = 4 + *totalSetsTraded * 2;
+    if ( Deck::totalSetsTraded  < 5) {
+        numArmiesToReturn = 4 + Deck::totalSetsTraded  * 2;
     } else {
-        numArmiesToReturn = 15 + 5 * (*totalSetsTraded - 5);
+        numArmiesToReturn = 15 + 5 * (Deck::totalSetsTraded  - 5);
     }
-    (*totalSetsTraded)++;
+    (Deck::totalSetsTraded)++;
     return numArmiesToReturn;
 }
 
