@@ -29,20 +29,33 @@ Card::~Card() {
     type = nullptr;
 }
 
-string Card::getCountry() {
-    return *country;
+string * Card::get_country() {
+    return country;
 }
 
-Card::Type Card::getType() {
+Card::Type Card::get_type() {
     return *type;
 }
 
 Card::Card(Card &card) {
-    this->country = new string(card.getCountry());
-    this->type = new Card::Type(card.getType());
+    this->country = new string(*card.get_country());
+    this->type = new Card::Type(card.get_type());
 }
 
-Deck::Deck() {
+string Card::to_string() {
+
+    switch (*type){
+        case INFANTRY:
+            return "Card type: infantry, country: " + *get_country();
+        case ARTILLERY:
+            return "Card type: artillery, country: " + *get_country();
+        case CAVALRY:
+            return "Card type: cavalry, country: " + *get_country();
+    }
+    return "";
+}
+
+    Deck::Deck() {
     cards = new vector<Card *>;
 }
 
@@ -136,7 +149,7 @@ bool Hand::cardsValidForExchange(const int *handIndices){
     }
     bool typeFlags[] = {false, false, false};
     for (int i = 0; i < 3; i++) {
-        typeFlags[this->cards->at(handIndices[i])->getType()] = true;
+        typeFlags[this->cards->at(handIndices[i])->get_type()] = true;
     }
     int count = 0;
     for (bool typeFlag : typeFlags) {
@@ -149,5 +162,9 @@ bool Hand::cardsValidForExchange(const int *handIndices){
 
     int Hand::size() {
         return cards->size();
+    }
+
+    vector<Card *> * Hand::get_cards() {
+        return cards;
     }
 }

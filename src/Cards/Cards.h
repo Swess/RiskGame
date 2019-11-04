@@ -17,8 +17,9 @@ public:
     Card(Card &card);
     Card(string country, Type type);
     ~Card();
-    string getCountry();
-    Card::Type getType();
+    string * get_country();
+    Card::Type get_type();
+    string to_string();
 
 private:
     string *country;
@@ -46,8 +47,9 @@ public:
     int exchange(int cardIndices[]);
     bool cardsValidForExchange(const int handIndices[]);
     int size();
+    vector<Card *> * get_cards();
 private:
-    vector<Card *> *cards;
+    vector<Card *> * cards;
     static bool sameCardCheck(const int handIndices[]);
 };
 

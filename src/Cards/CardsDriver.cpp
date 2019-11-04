@@ -27,7 +27,7 @@ namespace Cards {
             for (int i = 0; i < NUMBER_OF_CARDS; i++) {
                 Card card(deck.draw());
 
-                typeCounter[card.getType()]++;
+                typeCounter[card.get_type()]++;
             }
 
             // assert creation of deck given list of countries produces equal number of each type of card INFANTRY, ARTILLERY, CAVALRY

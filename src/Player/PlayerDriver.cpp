@@ -25,7 +25,6 @@ namespace Player {
 
         }
 
-
         bool test_amount_of_dice() {
             // 2) only valid number of dice can be chosen by the attacker/defender;
             auto gameInstance = GameEngine::GameEngine::instance();
@@ -172,9 +171,7 @@ namespace Player {
             return true;
         }
 
-
         bool test_reinforce() {
-            Player p1;
             return true;
         }
 
@@ -229,7 +226,7 @@ namespace Player {
             countries.at(4)->set_armies(1);
 
             // Set inputs (fortify: yes, choose country 2 as source, choose neighbor 3 of country 2 as target, transfer 2 armies)
-            int input_array[] = {0, 1, 2, 1};
+            int input_array[] = {1 , 1, 2, 1};
             vector<int> input_vector;
             input_vector.assign(input_array, input_array + 4);
             Terminal::set_input_vector(input_vector);
@@ -269,11 +266,12 @@ namespace Player {
         }
 
         bool run() {
-            bool passed = test_attack() &&
-                          test_fortify() &&
-                          test_reinforce() &&
-                          test_Dice();
-
+            bool passed = (
+                    test_attack() &&
+                    test_fortify() &&
+                    test_reinforce() &&
+                    test_Dice()
+            );
             return passed;
         }
     }

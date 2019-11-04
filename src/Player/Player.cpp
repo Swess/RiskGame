@@ -9,16 +9,17 @@
 #include "../Cards/Cards.h"
 #include "../Dice/Dice.h"
 #include "../Terminal/Terminal.h"
+#include "../GameEngine/GameEngine.h"
 
 using namespace std;
 using namespace Board;
 
 namespace Player {
 
+    enum class player_color;
     int Player::player_count = 0;
-
     Player::Player() {
-        color = static_cast<player_color > (player_count++) ;
+        color = reinterpret_cast<player_color *>(new int(player_count++));
         hand = new Cards::Hand();
         dice = new Dice::Dice();
         countries = new vector<Country *>();
@@ -28,6 +29,8 @@ namespace Player {
         delete hand;
         delete dice;
         delete countries;
+        delete color;
+        color = nullptr;
         countries = nullptr;
         hand = nullptr;
         dice = nullptr;
@@ -41,32 +44,15 @@ namespace Player {
         int source_country_index;
         Country * source_country;
 
-        bool can_fortify = false;
-        // confirm fortification is possible
-        for (auto & country : *countries) {
-            for (auto & neighbor : *country->get_neighbors()) {
-                if (this == neighbor->get_owner() && country->get_armies() > 1) {
-                    can_fortify = true;
-                    break;
-                }
-            }
-            if (can_fortify) {
-                break;
-            }
-        }
+        bool can_fortify = player_can_fortify();
 
         if (!can_fortify) {
             Terminal::print("Fortification is not possible, you do not own two valid neighboring countries");
             return;
         }
-        Terminal::print("Fortification is possible, would you like to fortify?");
-        vector<string> fortify;
-        fortify.emplace_back("Yes");
-        fortify.emplace_back("No");
-        int response = Terminal::print_select(fortify);
-        if (response == 1) {
-            return;
-        }
+
+        int user_want_fortify = Terminal::print_select("Fortification is possible, would you like to fortify?");
+        if (!user_want_fortify) return;
 
 
         Terminal::print("Select source country");
@@ -141,8 +127,149 @@ namespace Player {
         Terminal::print(os.str());
     }
 
+    bool Player::player_can_fortify() const {
+        bool can_fortify = false;
+        // confirm fortification is possible
+        for (auto & country : *countries) {
+            for (auto & neighbor : *country->get_neighbors()) {
+                if (this == neighbor->get_owner() && country->get_armies() > 1) {
+                    can_fortify = true;
+                    break;
+                }
+            }
+            if (can_fortify) {
+                break;
+            }
+        }
+        return can_fortify;
+    }
+
     void Player::reinforce() {
-        //TODO
+
+        int new_army = (int) this->get_countries().size() / 3;
+        if (new_army < 3) new_army = 3;
+
+        new_army += get_army_by_continent_owned();
+
+        string message;
+        if (new_army == 1 ){
+            message = "Player " + this->get_color() + ": You have " + std::to_string(new_army) + " unit to place.";
+        } else {
+            message = "Player " + this->get_color() + ":You have " + std::to_string(new_army) + " units to place.";
+        }
+        Terminal::print(message);
+        new_army = update_army_by_exchange(new_army);
+
+        reinforce_country(new_army);
+
+        Terminal::print("You don't have any units to place anymore.");
+
+    }
+
+    int Player::update_army_by_exchange(int new_army) const {
+        bool trade_again = true;
+        string message;
+        if (hand->size() < 3) trade_again = false;
+        while (trade_again) {
+            bool want_to_trade = false;
+            if (hand->size() >= 3) {
+                message = "You have more than three cards, do you want to trade?";
+                want_to_trade = Terminal::print_select(message);
+            } else if (hand->size() > 5) {
+                want_to_trade = true;
+                message = "You have more than five cards, you must trade now.";
+                Terminal::print(message);
+            }
+
+            if (want_to_trade) {
+                bool exchange_valid;
+                do {
+                    vector<Cards::Card *> *owned_cards = hand->get_cards();
+                    vector<string> selections;
+                    for (auto card : *owned_cards) {
+                        selections.emplace_back(card->to_string());
+                    }
+
+                    message = "Which card do you want to use? Select three.";
+                    Terminal::print(message);
+                    int first_card = Terminal::print_select(selections);
+                    int second_card;
+                    int third_card;
+                    do {
+                        second_card = Terminal::print_select(selections);
+                        if (second_card == first_card) Terminal::print("You can't take the same card, try again.");
+                    } while (second_card != first_card);
+                    do {
+                        third_card = Terminal::print_select(selections);
+                        if (third_card == first_card && third_card == second_card)
+                            Terminal::print("You can't take the same card, try again.");
+                    } while (third_card != first_card && third_card != second_card);
+
+                    int cards_to_trade[3] = {first_card, second_card, third_card};
+                    int *ptr = cards_to_trade;
+
+                    exchange_valid = hand->cardsValidForExchange(ptr);
+                    if (!exchange_valid) Terminal::print("The exchange is not valid, try again.");
+
+                    new_army += hand->exchange(ptr);
+                    delete ptr;
+                    ptr = nullptr;
+                } while(exchange_valid);
+                if (new_army == 1) {
+                    message = "After trading, you now have " + to_string(new_army) + " unit to place.";
+                } else {
+                    message = "After trading, you now have " + to_string(new_army) + " units to place.";
+                }
+                Terminal::print(message);
+
+                if(this->hand->size() < 3) {
+                    break;
+                }
+                message = "Do you want to trade again?";
+                trade_again = Terminal::print_select(message);
+            }
+        }
+        return new_army;
+    }
+
+    int Player::get_army_by_continent_owned() {
+        int new_army = 0;
+        GameEngine::GameEngine * instance = GameEngine::GameEngine::instance();
+        auto continents = instance->get_map()->get_continents();
+
+        for (auto continent: continents){
+            int continent_size = continent->get_size();
+            int owned_country_of_this_continent = 0;
+            for (auto owned_country : get_countries()){
+                if ( owned_country->get_continent_index() == continent->get_index()) {
+                    owned_country_of_this_continent++;
+                }
+                if ( owned_country_of_this_continent == continent_size){
+                   new_army += continent->get_bonus();
+                   break;
+                }
+            }
+        }
+        return new_army;
+    }
+
+    void Player::reinforce_country(int new_army) {
+        while (new_army != 0) {
+            vector<Country *> owned_countries = get_countries();
+            vector<string> selections;
+            selections.reserve(owned_countries.size());
+            for (auto country : owned_countries){
+                selections.emplace_back(country->to_string());
+            }
+            string message = "Which country do you want to reinforce?";
+            Terminal::print(message);
+            int country_index = Terminal::print_select(selections);
+            Country * source = owned_countries.at(country_index);
+            message = "How many units?";
+            int answer = Terminal::print_select(1, new_army, message);
+            source->set_armies(source->get_armies()+answer);
+            new_army -= answer;
+        }
     }
 
     bool Player::attack() {
@@ -279,9 +406,9 @@ namespace Player {
     void Player::turn() {
         Terminal::debug("Player has started their turn");
 
-        this->fortify();
-        this->attack();
         this->reinforce();
+//        this->attack();
+//        this->fortify();
 
         Terminal::debug("Player has ended their turn");
     }
@@ -293,13 +420,13 @@ namespace Player {
     }
 
     string Player::get_color() {
-        switch (color) {
-            case RED: return "Red";
-            case BLUE: return "Blue";
-            case GREEN: return "Green";
-            case BLACK: return "Black";
-            case GRAY: return "Gray";
-            case WHITE: return "White";
+        switch (*color) {
+            case player_color::RED: return "Red";
+            case player_color::BLUE: return "Blue";
+            case player_color::GREEN: return "Green";
+            case player_color::BLACK: return "Black";
+            case player_color::GRAY: return "Gray";
+            case player_color::WHITE: return "White";
             default: return "ERROR";
         }
     }

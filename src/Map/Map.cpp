@@ -95,7 +95,11 @@ namespace Board {
         }
         return os.str();
     }
-  
+
+    int * Country::get_continent_index() {
+        return this->continent_index;
+    }
+
     Continent::Continent(const string &name, Map *map) {
         this->index = new int(map->get_continents().size());
         this->size = new int(0);
@@ -179,6 +183,10 @@ namespace Board {
 
     int Continent::get_bonus() {
         return *bonus;
+    }
+
+    int * Continent::get_index() {
+        return index;
     }
 
 
