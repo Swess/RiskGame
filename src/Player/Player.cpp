@@ -130,6 +130,8 @@ namespace Player {
                     if(exchange_desired){
                         army_exchange += this->hand->exchange(answer_cards_indices);
                     }
+                }else{
+                    /* TO DO */
                 }
 
                 //Exchanging cards
@@ -174,7 +176,7 @@ namespace Player {
 
             //Reducing the # of armies available
             army_total -= answer_number;
-        }while(army_total !=0);
+        }while(army_total <=0);
 
         //Printing success message
         vector<string> print_reinforcement_success;

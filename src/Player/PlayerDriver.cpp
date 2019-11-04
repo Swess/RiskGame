@@ -7,6 +7,7 @@
 #include "Player.h"
 #include "../MapLoader/MapLoader.h"
 #include "../Terminal/Terminal.h"
+#include "../exceptions.h"
 
 namespace Player{
     namespace Driver {
@@ -15,11 +16,37 @@ namespace Player{
             return true;
         }
         bool test_reinforce(){
-            Player p1;
-
             //The test_reinforce() method demonstrates that
             //1) if a player receives the right number of armies in the reinforcement phase (different cases)
             //2) the player has effectively placed this exact number of new armies somewhere on the map by the end of the reinforcement phase
+
+            //Preparing test map
+            Player p1;
+            auto * mapLoader = new MapLoader::MapLoader();
+            string s = "RiskEurope.map";
+            Board::Map * testMap = nullptr;
+            try {
+                testMap = mapLoader->load(s)->build();
+            } catch (IOException &e) {
+                string error = e.what(s);
+                Terminal::error(error);
+                exit(1);
+            }
+
+            //Creating 2 players
+            auto * playerBlue = new Player();
+            auto * playerGreen = new Player();
+
+            //Country Assignment Sample
+            // Assigning playerGreen 3 countries, country 1 is in between the other two
+            vector<Country * > countries = testMap->get_countries();
+            playerGreen->gain_control(countries.at(0));
+            playerGreen->gain_control(countries.at(1));
+            playerGreen->gain_control(countries.at(2));
+
+            // Assigning playerBlue two countries
+            playerBlue->gain_control(countries.at(3));
+            playerBlue->gain_control(countries.at(4));
 
             //test 1)
 
