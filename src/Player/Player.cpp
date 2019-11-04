@@ -42,13 +42,14 @@ namespace Player {
         vector<string> p;
         p.emplace_back("Player " + this->get_color() + ": \n -Countries:\n ");
         if(this->get_countries().size() == 0){
-            p.emplace_back("Player" + this->get_countries() + " has no countries!");
+            p.emplace_back("Player" + this->get_color() + " has no countries!");
             Terminal::print(p);
         }else{
             for(int c=0; c<this->get_countries().size(); c++){
                 p.emplace_back(this->get_countries().at(c)->get_name() +"\n");
             }
-            p.emplace_back("- Hand: \n" + this->hand->to_string());
+            p.emplace_back("- Hand: \n");
+            p.emplace_back(this->hand->to_string());
         }
 
         return p;
@@ -251,9 +252,7 @@ namespace Player {
                 answer_cards_indices[0] = Terminal::print_select(this->hand->to_string());
                 answer_cards_indices[1] = Terminal::print_select(this->hand->to_string());
                 answer_cards_indices[2] = Terminal::print_select(this->hand->to_string());
-
-                this->set_card_indices_for_exchange(answer_cards_indices);
-
+                
                 //Checking if cards are valid
                 if(this->hand->cardsValidForExchange(answer_cards_indices)){
                     exchange_desired = Terminal::print_select("Player [Color] has cards that are valid for exchange, would you like to proceed now?");
