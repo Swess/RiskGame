@@ -113,17 +113,15 @@ namespace Player {
 
                 //Displaying available cards to Player
                 for (int i = 0; i < this->hand->size(); i++) {
-                    print_hand.emplace_back(
-                            "Card " + to_string(i) + " : Type = " + this->hand->get_cards().at(i)->get_type_to_string() +
-                            ", Country: " + this->hand->get_cards().at(i)->getCountry() + ".");
+                    print_hand.emplace_back(this->hand->to_string());
                 }
                 Terminal::print(print_exchange_required);
 
                 //Prompt the user to choose three cards
-                Terminal::print("Please input your desired [3] cards: ");
-                answer_cards_indices[0] = Terminal::print_select(this->hand->to_string());
-                answer_cards_indices[1] = Terminal::print_select(this->hand->to_string());
-                answer_cards_indices[2] = Terminal::print_select(this->hand->to_string());
+                Terminal::print("Please input your desired [3] cards: [1" + std::to_string(this->hand->size()) + "].");
+                answer_cards_indices[0] = Terminal::print_select(this->hand->to_string()) -1;
+                answer_cards_indices[1] = Terminal::print_select(this->hand->to_string()) -1;
+                answer_cards_indices[2] = Terminal::print_select(this->hand->to_string()) -1;
 
 
                 //Checking if cards are valid
