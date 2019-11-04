@@ -8,6 +8,7 @@
 #include "../MapLoader/MapLoader.h"
 #include "../Terminal/Terminal.h"
 #include "../exceptions.h"
+#include "../GameEngine/GameEngine.h"
 
 namespace Player{
     namespace Driver {
@@ -49,31 +50,83 @@ namespace Player{
             player->gain_control(countries.at(2));
             */
 
-            vector<Country * > countries = testMap->get_countries();
+            vector<Country *> map_countries = testMap->get_countries()
+            Cards::Deck * game_deck = GameEngine::GameEngine::instance()->get_deck();
 
             //TEST (1): check if player receives the right number of armies during reinforcement
 
                 //Case 1: Player_red with no countries nor cards
-                vector<string> p_red = player_red->player_to_string();
-                Terminal::print(p_red);
-                player_red->reinforce();
+                    vector<string> p_red = player_red->player_to_string();
+                    Terminal::print(p_red);
+
+                    player_red->reinforce();
+                    delete player_red; //to avoid conflicts
 
                 //Case 2: Player_green with 3 countries and no cards
-                vector<string> p_green = player_blue->player_to_string();
-                Terminal::print(p_green);
+                    player_green->gain_control(map_countries.at(1)); //Malta
+                    player_green->gain_control(map_countries.at(2)); //Tunisia
+                    player_green->gain_control(map_countries.at(3)); //Algeria
+
+                    vector<string> p_green = player_blue->player_to_string();
+                    Terminal::print(p_green);
+
+                    player_green->reinforce();
+
+                    //This should 
+
+                    delete player_green; //to avoid conflicts
 
                 //Case 3: Player_blue with 4 countries and 4 cards
-                vector<string> p_blue = player_blue->player_to_string();
-                Terminal::print(p_blue);
+                    player_blue->gain_control(map_countries.at(4)); //Morocco
+                    player_blue->gain_control(map_countries.at(5)); //Spain
+                    player_blue->gain_control(map_countries.at(6)); //Portugal
+                    player_blue->gain_control(map_countries.at(7)); //France
+
+                    player_blue->hand->insertCard(game_deck->draw());
+                    player_blue->hand->insertCard(game_deck->draw());
+                    player_blue->hand->insertCard(game_deck->draw());
+                    player_blue->hand->insertCard(game_deck->draw());
+
+                    vector<string> p_blue = player_blue->player_to_string();
+                    Terminal::print(p_blue);
+
+                    player_blue->reinforce();
+                    delete player_blue; //to avoid conflicts
 
                 //Case 4: Player_black with 1 continent and 4 cards
-                vector<string> p_black = player_black->player_to_string();
-                Terminal::print(p_black);
+                    //Continent = Great Britain
+                    player_black->gain_control(map_countries.at(11)); //England
+                    player_black->gain_control(map_countries.at(12)); //Wales
+                    player_black->gain_control(map_countries.at(13)); //Scotland
+                    player_black->gain_control(map_countries.at(14)); //Northern Ireland
+                    player_black->gain_control(map_countries.at(15)); //Ireland
+
+                    player_black->hand->insertCard(game_deck->draw());
+                    player_black->hand->insertCard(game_deck->draw());
+                    player_black->hand->insertCard(game_deck->draw());
+                    player_black->hand->insertCard(game_deck->draw());
+
+                    vector<string> p_black = player_black->player_to_string();
+                    Terminal::print(p_black);
+
+                    player_blue->reinforce();
+                    delete player_black; //to avoid conflicts
 
                 //Case 5: Player_white with 2 continents and 7 cards
-                vector<string> p_white = player_white->player_to_string();
-                Terminal::print(p_white);
+                    //First Continent = Scandinavia
+                    player_white->gain_control(map_countries.at(16)); // Finland
+                    player_white->gain_control(map_countries.at(17)); // Sweden
+                    player_white->gain_control(map_countries.at(18)); // Norway
+                    player_white->gain_control(map_countries.at(19)); // Denmark
+                    player_white->gain_control(map_countries.at(20)); // Iceland
 
+                    //Second Continent = Iberia
+                    player_white->gain_control(map_countries.at(5)); // Spain
+                    player_white->gain_control(map_countries.at(6)); // Portugal
+
+                    vector<string> p_white = player_white->player_to_string();
+                    Terminal::print(p_white);
+                    delete player_white; // to avoid conflicts
 
 
             //TEST (2): check that a player has effectively placed this exact number of new armies somewhere on the map by the end of the phase
