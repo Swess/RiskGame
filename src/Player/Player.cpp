@@ -223,7 +223,7 @@ namespace Player {
                 Terminal::print(print_exchange_required);
 
                 //Prompt the user to choose three cards
-                Terminal::print("Please input your desired [3] cards: [1" + std::to_string(this->hand->size()) + "].");
+                Terminal::print_select(1, this->hand->size(), "Please input your desired [3] cards: ");
                 answer_cards_indices[0] = Terminal::print_select(this->hand->to_string());
                 answer_cards_indices[1] = Terminal::print_select(this->hand->to_string());
                 answer_cards_indices[2] = Terminal::print_select(this->hand->to_string());
@@ -272,9 +272,7 @@ namespace Player {
                 Terminal::print("Please enter the country [#] to which you would like to place armies: ");
                 int answer_country = Terminal::print_select(options);
 
-                vector<string> options_number;
-                options_number.emplace_back("Enter how many armies you would like to place on your chosen country: ");
-                int answer_number = Terminal::print_select(options_number);
+                int answer_number = Terminal::print_select(1, army_total, "Enter how many armies you would like to place on your chosen country: ");
 
                 //Adding 'answer_number' armies to 'answer_country'
                 countries_in_map.at(answer_country)->set_armies(countries_in_map.at(answer_country)->get_armies() + answer_number);
