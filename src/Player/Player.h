@@ -22,7 +22,6 @@ namespace Player {
         //void reinforce();
         bool attack();
         bool is_able_to_attack();
-        vector<Country *> get_countries_attack_source();
         player_color color;
         static int player_count;
         // The variables below are used for testing
@@ -39,6 +38,7 @@ namespace Player {
          * one that has control.
          */
         void gain_control(Country* country);
+        static void reset_player_count();
 
         /**
          * Take control of multiple country and handle logic for making sure the player is the only
@@ -52,9 +52,15 @@ namespace Player {
          */
         vector<Country *> get_countries();
 
+        vector<Country *> get_countries_attack_source();
+
         bool is_player_dead();
         string get_color();
         void turn();
+
+        int battle_and_get_last_roll_amount(Country *source, Country *target) const;
+
+        int get_attacker_amount_of_dice(Country *source) const;
         void reinforce();
         vector<string> player_to_string();
         void set_armies_assigned(int a);

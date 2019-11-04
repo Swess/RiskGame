@@ -353,49 +353,7 @@ namespace Player {
             // least as many armies as the number of dice you rolled in its last battle
             int last_roll_attacker = 0;
 
-            while (source->get_armies() > 1 && target->get_armies() > 0 ) {
-                Terminal::print("The country you started the attack from is");
-                Terminal::print(source->to_string());
-                Terminal::print("The country you are attacking is");
-                Terminal::print(target->to_string());
-
-                // If you attack with 2 army, can only throw 1 dice
-                int available_dice_attacker = source->get_armies() - 1;
-                // Clamp the amount of attacker's dice to 3
-                if (available_dice_attacker > 3) available_dice_attacker = 3;
-                string attacker_question = "How many dice you want to attack with? (Choose 0 to stop the battle.)";
-                int nb_of_dice_attacker = Terminal::print_select(0, available_dice_attacker, attacker_question);
-                if (nb_of_dice_attacker == 0) { break; }
-
-                int available_dice_defender = target->get_armies();
-                // Clamp the amount of defender's dice to 2
-                if (available_dice_defender > 2) available_dice_defender = 2;
-                int nb_of_dice_defender = 0;
-                if (available_dice_defender == 1) {
-                    Terminal::print("Player " + target->get_owner()->get_color() + " can only throw a die.");
-                    nb_of_dice_defender = 1;
-                } else {
-                    string defender_question = "How many dice Player " + target->get_owner()->get_color() + " want to defend with?";
-                    nb_of_dice_defender = Terminal::print_select(1, available_dice_defender, defender_question);
-                }
-                vector<int> roll_attacker = source->get_owner()->dice->roll(nb_of_dice_attacker);
-                vector<int> roll_defender = target->get_owner()->dice->roll(nb_of_dice_defender);
-
-                Terminal::print("Player " + source->get_owner()->get_color() + " rolled: ");
-                Terminal::print_on_same_line(roll_attacker);
-                Terminal::print("Player " + target->get_owner()->get_color() + " rolled: ");
-                Terminal::print_on_same_line(roll_defender);
-
-                int how_many_unit_will_die = available_dice_defender < available_dice_attacker ? available_dice_defender
-                                                                                               : available_dice_attacker;
-
-                for (int i = 0; i < how_many_unit_will_die; i++) {
-                    roll_attacker[i] > roll_defender[i] ? target->decrement_army() : source->decrement_army();
-                }
-
-                last_roll_attacker = nb_of_dice_attacker;
-
-            } // End of a battle
+            last_roll_attacker = battle_and_get_last_roll_amount(source, target);
 
             if (target->get_armies() == 0 ) {
                 got_a_country = true;
@@ -414,6 +372,61 @@ namespace Player {
             }
         } // End of attack round
         return got_a_country;
+    }
+
+    int Player::battle_and_get_last_roll_amount(Country *source, Country *target) const {
+        int last_roll_attacker = 0;
+        while (source->get_armies() > 1 && target->get_armies() > 0 ) {
+            Terminal::print("The country you started the attack from is");
+            Terminal::print(source->to_string());
+            Terminal::print("The country you are attacking is");
+            Terminal::print(target->to_string());
+
+            int available_dice_attacker = get_attacker_amount_of_dice(source);
+            string attacker_question = "How many dice you want to attack with? (Choose 0 to stop the battle.)";
+            int nb_of_dice_attacker = Terminal::print_select(0, available_dice_attacker, attacker_question);
+            if (nb_of_dice_attacker == 0) { break; }
+
+            int available_dice_defender = target->get_armies();
+            // Clamp the amount of defender's dice to 2
+            if (available_dice_defender > 2) available_dice_defender = 2;
+            int nb_of_dice_defender = 0;
+            if (available_dice_defender == 1) {
+                Terminal::print("Player " + target->get_owner()->get_color() + " can only throw a die.");
+                nb_of_dice_defender = 1;
+            } else {
+                string defender_question = "How many dice Player " + target->get_owner()->get_color() + " want to defend with?";
+                nb_of_dice_defender = Terminal::print_select(1, available_dice_defender, defender_question);
+            }
+
+            vector<int> roll_attacker = source->get_owner()->dice->roll(nb_of_dice_attacker);
+            vector<int> roll_defender = target->get_owner()->dice->roll(nb_of_dice_defender);
+
+            Terminal::print("Player " + source->get_owner()->get_color() + " rolled: ");
+            Terminal::print_on_same_line(roll_attacker);
+            Terminal::print("Player " + target->get_owner()->get_color() + " rolled: ");
+            Terminal::print_on_same_line(roll_defender);
+
+            // Remove no more then lower nb of dices
+            int how_many_unit_will_die = nb_of_dice_attacker < nb_of_dice_defender ? nb_of_dice_attacker
+                                                                                   : nb_of_dice_defender;
+
+            for (int i = 0; i < how_many_unit_will_die; i++) {
+                roll_attacker[i] > roll_defender[i] ? target->decrement_army() : source->decrement_army();
+            }
+
+            last_roll_attacker = nb_of_dice_attacker;
+
+        } // End of a battle
+
+        return last_roll_attacker;
+    }
+
+    int Player::get_attacker_amount_of_dice(Country *source) const {
+        int available_dice_attacker = source->get_armies() - 1;
+        // Clamp the amount of attacker's dice to 3
+        if (available_dice_attacker > 3) available_dice_attacker = 3;
+        return available_dice_attacker;
     }
 
     void Player::gain_control(Country *country) {
@@ -496,5 +509,8 @@ namespace Player {
         return avail_countries;
     }
 
+    void Player::reset_player_count() {
+        player_count = 0;
+    }
 
 }

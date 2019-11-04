@@ -1,5 +1,6 @@
 #include "Map.h"
 #include "../Player/Player.h"
+#include "../Terminal/Terminal.h"
 #include <list>
 #include <sstream>
 
@@ -44,7 +45,10 @@ namespace Board {
     }
 
     void Country::decrement_army() {
-        *nb_armies = *nb_armies - 1;
+        if(*nb_armies > 0)
+            *nb_armies = *nb_armies - 1;
+        else
+            Terminal::error("Can't decrement army amount to -1.");
     }
 
     void Country::increment_army() {

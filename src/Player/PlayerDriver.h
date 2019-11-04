@@ -8,6 +8,10 @@
 
 namespace Player {
     namespace Driver {
+        bool test_amount_of_dice();
+        bool test_attacking_and_attacked_country_validity();
+        bool test_deducted_armies();
+        bool test_multiple_attacks();
         bool test_attack();
         bool test_fortify();
         bool test_reinforce();
