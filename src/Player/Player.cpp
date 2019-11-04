@@ -468,4 +468,21 @@ namespace Player {
         }
         return avail_countries;
     }
+
+    vector<string> Player::player_to_string() {
+
+        vector<string> p;
+        p.emplace_back("Player " + this->get_color() + ": \n -Countries:\n ");
+        if(this->get_countries().size() == 0){
+            p.emplace_back("Player" + this->get_countries() + " has no countries!");
+            Terminal::print(p);
+        }else{
+            for(int c=0; c<this->get_countries().size(); c++){
+                p.emplace_back(this->get_countries().at(c)->get_name() +"\n");
+            }
+            p.emplace_back("- Hand: \n" + this->hand->to_string());
+        }
+
+        return p;
+    }
 }

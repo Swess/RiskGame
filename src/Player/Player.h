@@ -19,7 +19,7 @@ namespace Player {
     private:
         vector<Country *> *countries;
         void fortify();
-        void reinforce();
+        //void reinforce();
         bool attack();
         bool is_able_to_attack();
         vector<Country *> get_countries_attack_source();
@@ -54,5 +54,9 @@ namespace Player {
 
         string get_color();
         void turn();
+
+        void reinforce();
+
+        vector<string> player_to_string();
     };
 }

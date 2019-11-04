@@ -46,6 +46,7 @@ string Card::get_type_to_string(){
             break;
         case 2: return "Cavalry";
             break;
+        default: return "type";
     }
 }
 

@@ -33,29 +33,50 @@ namespace Player{
                 exit(1);
             }
 
-            //Creating 2 players
-            auto * playerBlue = new Player();
-            auto * playerGreen = new Player();
+            //Creating players
+            Player * player_red = new Player();
+            auto * player_green = new Player();
+            auto * player_blue = new Player();
+            auto * player_black = new Player();
+            auto * player_white = new Player();
 
+
+            /*
             //Country Assignment Sample
-            // Assigning playerGreen 3 countries, country 1 is in between the other two
-            vector<Country * > countries = testMap->get_countries();
-            playerGreen->gain_control(countries.at(0));
-            playerGreen->gain_control(countries.at(1));
-            playerGreen->gain_control(countries.at(2));
+            // Assigning player countries
+            player->gain_control(countries.at(0));
+            player->gain_control(countries.at(1));
+            player->gain_control(countries.at(2));
+            */
 
-            // Assigning playerBlue two countries
-            playerBlue->gain_control(countries.at(3));
-            playerBlue->gain_control(countries.at(4));
+            vector<Country * > countries = testMap->get_countries();
 
             //TEST (1): check if player receives the right number of armies during reinforcement
 
-                //Case 1:
-                //Case 2:
-                //Case 3:
+                //Case 1: Player_red with no countries nor cards
+                vector<string> p_red = player_red->player_to_string();
+                Terminal::print(p_red);
+                player_red->reinforce();
+
+                //Case 2: Player_green with 3 countries and no cards
+                vector<string> p_green = player_blue->player_to_string();
+                Terminal::print(p_green);
+
+                //Case 3: Player_blue with 4 countries and 4 cards
+                vector<string> p_blue = player_blue->player_to_string();
+                Terminal::print(p_blue);
+
+                //Case 4: Player_black with 1 continent and 4 cards
+                vector<string> p_black = player_black->player_to_string();
+                Terminal::print(p_black);
+
+                //Case 5: Player_white with 2 continents and 7 cards
+                vector<string> p_white = player_white->player_to_string();
+                Terminal::print(p_white);
 
 
-            //TEST (2): check that a player has effectively placed an 'exact' number of new armies somewhere on the map by the end of the
+
+            //TEST (2): check that a player has effectively placed this exact number of new armies somewhere on the map by the end of the phase
 
 
 
