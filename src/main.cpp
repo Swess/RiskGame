@@ -32,11 +32,12 @@ int main() {
 
 //    GameEngine::GameEngine::instance()->start();
 
-//    Terminal::debug_mode_on();
+    Terminal::debug_mode_on();
+    GameEngine::GameEngine::instance()->start();
 //    Terminal::test_mode_on();
 //    GameEngine::GameEngine::instance()->start_test(7,6); // map index 7  is regular risk
 //    GameEngine::GameEngine::instance()->startup_phase();
-//    Terminal::test_mode_off();
+//    Terminal::test_mode_off()
 //    GameEngine::GameEngine::instance()->game_loop();
 
     return 0;
