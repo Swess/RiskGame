@@ -3,7 +3,6 @@
 #include <vector>
 #include <string>
 #include <map>
-// #include "../Player/Player.h"
 
 using namespace std;
 
@@ -28,10 +27,11 @@ namespace Board {
         string *name;
         int *continent_index;
         int *nb_armies;
+        vector<Country *> *neighboring_countries;
         Player::Player *owner;
 
     public:
-        Country(const string &name);
+        explicit Country(const string &name);
 
         ~Country();
 
@@ -45,6 +45,16 @@ namespace Board {
 
         Player::Player *get_owner();
         void set_owner(Player::Player* p);
+        int get_index();
+        string to_string();
+        string to_string_with_neighbors();
+        vector<Country *> *get_neighbors() const;
+        void set_neighboring_countries(vector<Country *>  neighbors);
+
+        void decrement_army();
+
+        void increment_army();
+
     };
 
     /**
@@ -109,12 +119,6 @@ namespace Board {
      * The edges are implemented as an AdjacencyList with the corresponding object index to ensure O(1) seek & query.
      */
     class Map {
-        friend Continent;
-
-        vector<Continent *> *continents;
-        vector<Country *> *countries;
-        vector<vector<int>> *edges;
-
     public:
 
         Map();
@@ -151,6 +155,13 @@ namespace Board {
          * @param country
          */
         void connect(Continent &cont, Country &country);
+
+        /**
+         * Provides each country with a vector of neighbors.
+         * To be used following full construction of the map.
+         * @param country
+         */
+        void set_country_neighbors();
 
         /**
          * Helper function to create a bidirectional connection between 2 countries.
@@ -194,6 +205,13 @@ namespace Board {
          * @return
          */
         bool is_connected();
+    private:
+        friend Continent;
+        vector<Continent *> *continents;
+        vector<Country *> *countries;
+        vector<vector<int>> *edges;
+        Country *get_country_from_index(int index);
     };
+
 
 }

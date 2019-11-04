@@ -1,5 +1,7 @@
 #include "Map.h"
+#include "../Player/Player.h"
 #include <list>
+#include <sstream>
 
 namespace Board {
 
@@ -41,6 +43,14 @@ namespace Board {
         *nb_armies = num;
     }
 
+    void Country::decrement_army() {
+        *nb_armies = *nb_armies - 1;
+    }
+
+    void Country::increment_army() {
+        *nb_armies = *nb_armies + 1;
+    }
+
 
     Player::Player *Country::get_owner() {
         return owner;
@@ -50,6 +60,42 @@ namespace Board {
         owner = p;
     }
 
+    string Country::to_string() {
+        ostringstream os;
+        if (owner) {
+            os << "name: " << *name << ", owner: " << owner->get_color() << ", number of armies: " << *nb_armies;
+        } else {
+            os << "name: " << *name << ", owner: " << "unclaimed" << ", number of armies: " << *nb_armies;
+        }
+        return os.str();
+    }
+
+    int Country::get_index() {
+        return *index;
+    }
+
+    void Country::set_neighboring_countries(vector<Country *> neighbors) {
+        neighboring_countries = new vector<Country *>(std::move(neighbors));
+    }
+
+    vector<Country *> *Country::get_neighbors() const {
+        return neighboring_countries;
+    }
+
+    string Country::to_string_with_neighbors() {
+        ostringstream os;
+        if (owner) {
+            os << "name: " << *name << ", owner: " << owner->get_color() << ", number of armies: " << *nb_armies << "\n";
+        } else {
+            os << "name: " << *name << ", owner: " << "unclaimed" << ", number of armies: " << *nb_armies << "\n";
+
+        }
+        for (Country *neighbor: *neighboring_countries) {
+            os << "\t" << neighbor->to_string() << "\n";
+        }
+        return os.str();
+    }
+  
     Continent::Continent(const string &name, Map *map) {
         this->index = new int(map->get_continents().size());
         this->size = new int(0);
@@ -60,7 +106,7 @@ namespace Board {
         map->add_continent(this);
     }
 
-    Continent:: Continent(const string &name, const int &bonus, const string &color, Map *map) {
+    Continent::Continent(const string &name, const int &bonus, const string &color, Map *map) {
         this->index = new int(map->get_continents().size());
         this->size = new int(0);
         this->name = new string(name);
@@ -240,5 +286,24 @@ namespace Board {
 
     void Map::add_continent(Continent *continent) {
         continents->push_back(continent);
+    }
+
+    void Map::set_country_neighbors() {
+        for (size_t i = 0; i < countries->size(); i++) {
+            vector<Country *> neighbors;
+            for (int country_index : edges->at(i)) {
+                neighbors.push_back(get_country_from_index(country_index));
+            }
+            countries->at(i)->set_neighboring_countries(neighbors);
+        }
+    }
+
+    Country *Map::get_country_from_index(int index) {
+        for(Country *country: *countries) {
+            if (country->get_index() == index) {
+                return country;
+            }
+        }
+        return nullptr;
     }
 }

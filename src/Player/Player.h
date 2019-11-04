@@ -18,10 +18,11 @@ namespace Player {
     class Player {
     private:
         vector<Country *> *countries;
-        virtual void fortify();
-        virtual void reinforce();
-        virtual void attack();
-
+        void fortify();
+        void reinforce();
+        bool attack();
+        bool is_able_to_attack();
+        vector<Country *> get_countries_attack_source();
         player_color color;
         static int player_count;
     public:

@@ -16,6 +16,8 @@ using std::to_string;
 bool Terminal::debug_mode = false;
 bool Terminal::test_mode = false;
 int Terminal::input;
+vector<int> Terminal::input_vector;
+int Terminal::terminal_input_counter;
 
 void Terminal::print(const string& s) {
     cout << s << endl;
@@ -73,6 +75,30 @@ bool Terminal::print_select(const string& s) {
     return in == "Y" || in == "y" || in == "yes" || in == "YES" || in =="ya" || in =="oui";
 }
 
+
+int Terminal::print_select(const int &minimum, const int &maximum, const string &s) {
+    int answer;
+
+    Terminal::print(s);
+
+    if (test_mode) {
+        Terminal::test(input);
+        return input;
+    }
+
+    while (true) {
+        cout << "Choose a number between " << minimum << " and " << maximum << endl;
+        if ( cin >> answer  && answer <= maximum && answer >= minimum ) break;
+        else {
+            cin.clear();
+            cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        }
+    }
+    std::flush(cout);
+
+    return answer;
+}
+
 /*
 * @brief If used in test mode, make sure to define the input before use.
 * @output the selected index (user input - 1)
@@ -83,7 +109,11 @@ int Terminal::print_select(std::vector<string> array_string) {
         cout << i << ". " << array_string.at(i-1) << endl;
     }
     if (test_mode) {
-        Terminal::test(input+1);
+        if (terminal_input_counter != -1) {
+            input = input_vector.at(terminal_input_counter);
+            terminal_input_counter++;
+        }
+        Terminal::test(input + 1);
         return input;
     }
     while (true) {
@@ -100,6 +130,15 @@ int Terminal::print_select(std::vector<string> array_string) {
 
 void Terminal::set_input(const int &s){
     input = s;
+}
+
+void Terminal::set_input_vector(const vector<int> & vector) {
+    terminal_input_counter = 0;
+    input_vector = vector;
+}
+
+void Terminal::clear_terminal_input_counter() {
+    terminal_input_counter = -1;
 }
 
 void Terminal::debug_mode_on() {
@@ -137,3 +176,18 @@ void Terminal::run_test(const string &s, bool (*f)()) {
     f();
     Terminal::test(s + " component testing is successful");
 }
+
+void Terminal::print_on_same_line(const std::vector<string> &array_string) {
+    for (const auto& element: array_string){
+        cout << element << " ";
+    }
+    cout << endl;
+}
+
+void Terminal::print_on_same_line(const std::vector<int> &array_int) {
+    for (const auto& element: array_int){
+        cout << element << " ";
+    }
+    cout << endl;
+}
+
