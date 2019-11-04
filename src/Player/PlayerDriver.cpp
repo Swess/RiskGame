@@ -41,15 +41,6 @@ namespace Player{
             auto * player_black = new Player();
             auto * player_white = new Player();
 
-
-            /*
-            //Country Assignment Sample
-            // Assigning player countries
-            player->gain_control(countries.at(0));
-            player->gain_control(countries.at(1));
-            player->gain_control(countries.at(2));
-            */
-
             vector<Country *> map_countries = testMap->get_countries();
             Cards::Deck * game_deck = GameEngine::GameEngine::instance()->get_deck();
 
