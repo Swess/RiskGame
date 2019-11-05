@@ -15,7 +15,7 @@ int main() {
 
     Terminal::print("Domination Game - Team 12 - COMP 345");
 
-    bool test = true; // Maybe add a way to read sys args?
+    bool test = false; // Maybe add a way to read sys args?
 
     Terminal::debug_mode_on();
     if (test) {
@@ -29,16 +29,13 @@ int main() {
     }
 
     Terminal::test_mode_off();
-
-//    GameEngine::GameEngine::instance()->start();
-
 //    Terminal::debug_mode_on();
+    Terminal::test_mode_on();
 //    GameEngine::GameEngine::instance()->start();
-//    Terminal::test_mode_on();
-//    GameEngine::GameEngine::instance()->start_test(7,6); // map index 7  is regular risk
-//    GameEngine::GameEngine::instance()->startup_phase();
-//    Terminal::test_mode_off();
-//    GameEngine::GameEngine::instance()->game_loop();
+    GameEngine::GameEngine::instance()->start_test(7,6); // map index 7  is regular risk
+    GameEngine::GameEngine::instance()->startup_phase();
+    Terminal::test_mode_off();
+    GameEngine::GameEngine::instance()->game_loop();
 
     return 0;
 }

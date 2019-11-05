@@ -7,6 +7,8 @@
 #include <ctime>
 #include <algorithm>
 #include <random>
+#include <iostream>
+#include <fstream>
 #include "../MapLoader/MapLoader.h"
 #include "../Terminal/Terminal.h"
 #include "../exceptions.h"
@@ -288,6 +290,7 @@ namespace GameEngine {
     void GameEngine::game_loop() {
         Terminal::debug("Starting game loop.");
         while (!game_done()) {
+            output_state_to_file();
             for(int player_index : *player_order){
                 if (game_done()) continue;
                 Player::Player * current_player = players->at(player_index);
@@ -309,6 +312,26 @@ namespace GameEngine {
 
     bool GameEngine::is_game_done() {
         return game_done();
+    }
+
+    void GameEngine::output_state_to_file() {
+        Terminal::debug("Opening file to write state");
+        ofstream file_stream("ressources/state.ker", std::ios::out);
+        if (!file_stream) {
+            // Print an error and exit
+            Terminal::error("Uh oh, state.ker could not be opened for writing!");
+            exit(1);
+        }
+        for (auto country: map->get_countries()){
+            string continent_name = map->get_continents().at(country->get_continent_index())->get_name();
+            file_stream << country->get_index() << " " << country->get_name() << " " << country->get_owner()->get_color() << " " << country->get_armies() << " " << continent_name << " ";
+            for (auto neighbor : *country->get_neighbors()){
+                file_stream << neighbor->get_index() << " ";
+            }
+            file_stream << "\n";
+        }
+        Terminal::debug("Closing file to write state");
+        file_stream.close();
     }
 
 }

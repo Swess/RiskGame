@@ -62,6 +62,7 @@ namespace GameEngine {
         vector<Player::Player*> * players;
         Cards::Deck * deck;
         vector<int> * player_order;
+        void output_state_to_file();
     };
 
 

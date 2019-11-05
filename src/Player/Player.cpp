@@ -406,8 +406,8 @@ namespace Player {
         Terminal::debug("Player has started their turn");
 
         this->reinforce();
-//        this->attack();
-//        this->fortify();
+        this->attack();
+        this->fortify();
 
         Terminal::debug("Player has ended their turn");
     }
