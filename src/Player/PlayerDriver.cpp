@@ -25,7 +25,6 @@ namespace Player {
 
         }
 
-
         bool test_amount_of_dice() {
             // 2) only valid number of dice can be chosen by the attacker/defender;
             auto gameInstance = GameEngine::GameEngine::instance();
@@ -157,12 +156,14 @@ namespace Player {
                                       battle_actions_pattern.end());
             battle_actions.push_back(0);
 
+            Country *source = player->get_countries_attack_source().at(0);
+            Country *target_country = source->get_neighbors()->at(0);
+            // Make sure the target is not ours
+            gameInstance->get_players()->at(1)->gain_control(target_country);
+
             Terminal::set_input_vector(battle_actions);
             player->attack();
             Terminal::clear_terminal_input_counter();
-
-            Country *source = player->get_countries_attack_source().at(0);
-            Country *target_country = source->get_neighbors()->at(0);
 
             // Check that battles are successfully executed and won
             assert(source->get_armies() == 100);
@@ -172,11 +173,142 @@ namespace Player {
             return true;
         }
 
-
         bool test_reinforce() {
-            Player p1;
-            return true;
+
+
+            case_1_country_9_cards_2_exchanges();
+            // This case is different since after two trades, not enough cards to trade.
+            case_1_country_8_cards_2_exchanges();
+            case_all_country_0_cards();
+
+           return true;
         }
+
+        void case_1_country_9_cards_2_exchanges() {
+            auto gameInstance = GameEngine::GameEngine::instance();
+
+            gameInstance->start_test(1, 3);
+            gameInstance->startup_phase();
+
+            auto player = gameInstance->get_players()->at(0);
+            auto player2 = gameInstance->get_players()->at(1);
+
+            player2->gain_control(gameInstance->get_map()->get_countries());
+            player->gain_control(gameInstance->get_map()->get_countries().at(0)); // Give one country
+
+
+            for (auto card : * gameInstance->get_deck()->cards){
+                player2->hand->insertCard(*card);
+            }
+            for (auto card : * gameInstance->get_deck()->cards){
+                if (player->hand->size() == 9) break;
+                player->hand->insertCard(*card);
+            }
+
+            int owned_army = 0;
+            for (auto country : player->get_countries()){
+                owned_army += country->get_armies();
+            }
+
+            int expected_new_army = 13;
+
+            vector<int> input_buffer = {0,1,2,0,1,2,0,0, expected_new_army};
+            Terminal::set_input_vector(input_buffer);
+            player->reinforce();
+            Terminal::clear_terminal_input_counter();
+            int after_army = 0;
+            for (auto country : player->get_countries()){
+                after_army += country->get_armies();
+            }
+
+            assert(expected_new_army + owned_army == after_army);
+            gameInstance->reset_test();
+        }
+
+        void case_1_country_8_cards_2_exchanges() {
+            auto gameInstance = GameEngine::GameEngine::instance();
+
+            gameInstance->start_test(1, 3);
+            gameInstance->startup_phase();
+
+            auto player = gameInstance->get_players()->at(0);
+            auto player2 = gameInstance->get_players()->at(1);
+
+            player2->gain_control(gameInstance->get_map()->get_countries());
+            player->gain_control(gameInstance->get_map()->get_countries().at(0)); // Give one country
+
+
+            for (auto card : * gameInstance->get_deck()->cards){
+                player2->hand->insertCard(*card);
+            }
+            for (auto card : * gameInstance->get_deck()->cards){
+                if (player->hand->size() == 9) break;
+                player->hand->insertCard(*card);
+            }
+
+            int owned_army = 0;
+            for (auto country : player->get_countries()){
+                owned_army += country->get_armies();
+            }
+
+            int expected_new_army = 13;
+
+            vector<int> input_buffer = {0,1,2,0,1,2,0,0, expected_new_army};
+            Terminal::set_input_vector(input_buffer);
+            player->reinforce();
+            Terminal::clear_terminal_input_counter();
+            int after_army = 0;
+            for (auto country : player->get_countries()){
+                after_army += country->get_armies();
+            }
+
+            assert(expected_new_army + owned_army == after_army);
+            gameInstance->reset_test();
+        }
+
+        void case_all_country_0_cards() {
+            auto gameInstance = GameEngine::GameEngine::instance();
+
+            gameInstance->start_test(1, 3);
+            gameInstance->startup_phase();
+
+            auto player = gameInstance->get_players()->at(0);
+            auto player2 = gameInstance->get_players()->at(1);
+
+            player->gain_control(gameInstance->get_map()->get_countries());
+
+
+            for (auto card : * gameInstance->get_deck()->cards){
+                player2->hand->insertCard(*card);
+            }
+            for (auto card : * gameInstance->get_deck()->cards){
+                if (player->hand->size() == 0) break;
+                player->hand->insertCard(*card);
+            }
+
+            int owned_army = 0;
+            for (auto country : player->get_countries()){
+                owned_army += country->get_armies();
+            }
+
+            int expected_new_army = 0;
+            for (auto continent : gameInstance->get_map()->get_continents()){
+                expected_new_army += continent->get_bonus();
+            }
+            expected_new_army += (int) player->get_countries().size()/ 3;
+            vector<int> input_buffer = {0, expected_new_army};
+            Terminal::set_input_vector(input_buffer);
+            player->reinforce();
+            Terminal::clear_terminal_input_counter();
+            int after_army = 0;
+            for (auto country : player->get_countries()){
+                after_army += country->get_armies();
+            }
+
+            assert(expected_new_army + owned_army == after_army);
+            gameInstance->reset_test();
+        }
+
 
         bool test_fortify() {
 
@@ -229,7 +361,7 @@ namespace Player {
             countries.at(4)->set_armies(1);
 
             // Set inputs (fortify: yes, choose country 2 as source, choose neighbor 3 of country 2 as target, transfer 2 armies)
-            int input_array[] = {0, 1, 2, 1};
+            int input_array[] = {1 , 1, 2, 1};
             vector<int> input_vector;
             input_vector.assign(input_array, input_array + 4);
             Terminal::set_input_vector(input_vector);
@@ -269,11 +401,12 @@ namespace Player {
         }
 
         bool run() {
-            bool passed = test_attack() &&
-                          test_fortify() &&
-                          test_reinforce() &&
-                          test_Dice();
-
+            bool passed = (
+                    test_attack() &&
+                    test_fortify() &&
+                    test_reinforce() &&
+                    test_Dice()
+            );
             return passed;
         }
     }

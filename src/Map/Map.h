@@ -36,9 +36,8 @@ namespace Board {
         ~Country();
 
         string get_name();
-
         int get_armies();
-
+        int get_continent_index();
         void set_armies(int num);
         Player::Player *get_owner();
         void set_owner(Player::Player* p);
@@ -47,7 +46,6 @@ namespace Board {
         string to_string_with_neighbors();
         vector<Country *> *get_neighbors() const;
         void set_neighboring_countries(vector<Country *>  neighbors);
-
         void decrement_army();
 
         void increment_army();
@@ -73,9 +71,7 @@ namespace Board {
     public:
 
         Continent(const string &name, Map *map);
-
         Continent(const string &name, const int &bonus, const string &color, Map *map);
-
         ~Continent();
 
         /**
@@ -108,6 +104,8 @@ namespace Board {
          * @return
          */
         bool is_connected();
+
+        int get_index();
     };
 
     /**

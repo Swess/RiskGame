@@ -16,6 +16,9 @@ namespace Player {
         bool test_fortify();
         bool test_reinforce();
         bool run();
+        void case_1_country_9_cards_2_exchanges();
+        void case_1_country_8_cards_2_exchanges();
+        void case_all_country_0_cards();
     }
 };
 

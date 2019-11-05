@@ -4,12 +4,14 @@
 
 #include "Cards.h"
 #include <algorithm>
-#include <iostream>
 #include <ctime>
 
 using namespace std;
 
+
 namespace Cards {
+
+    int Deck::totalSetsTraded = 0;
 
 Card::Card() {
     this->country = new string;
@@ -29,17 +31,30 @@ Card::~Card() {
     type = nullptr;
 }
 
-string Card::getCountry() {
-    return *country;
+string * Card::get_country() {
+    return country;
 }
 
-Card::Type Card::getType() {
+Card::Type Card::get_type() {
     return *type;
 }
 
 Card::Card(Card &card) {
-    this->country = new string(card.getCountry());
-    this->type = new Card::Type(card.getType());
+    this->country = new string(*card.get_country());
+    this->type = new Card::Type(card.get_type());
+}
+
+string Card::to_string() {
+
+    switch (*type){
+        case INFANTRY:
+            return "Card type: infantry, country: " + *get_country();
+        case ARTILLERY:
+            return "Card type: artillery, country: " + *get_country();
+        case CAVALRY:
+            return "Card type: cavalry, country: " + *get_country();
+    }
+    return "";
 }
 
 Deck::Deck() {
@@ -59,8 +74,8 @@ Deck::Deck(vector<Card *> &cards) {
 
 Deck::~Deck() {
     delete cards;
-
     cards = nullptr;
+    totalSetsTraded = 0;
 }
 
 
@@ -93,7 +108,7 @@ Deck::Deck(const vector<string>& countries) {
         return this->cards->size();
     }
 
-    Hand::Hand() {
+Hand::Hand() {
     cards = new vector<Card *>;
 }
 
@@ -110,19 +125,18 @@ void Hand::insertCard(Card card) {
 }
 
 int Hand::exchange(int cardIndices[]) {
-    static int *totalSetsTraded = new int(0);
     sort(cardIndices, cardIndices+3);
     cards->erase(cards->begin() + cardIndices[2]);
     cards->erase(cards->begin() + cardIndices[1]);
     cards->erase(cards->begin() + cardIndices[0]);
 
     int numArmiesToReturn;
-    if (*totalSetsTraded < 5) {
-        numArmiesToReturn = 4 + *totalSetsTraded * 2;
+    if ( Deck::totalSetsTraded  < 5) {
+        numArmiesToReturn = 4 + Deck::totalSetsTraded  * 2;
     } else {
-        numArmiesToReturn = 15 + 5 * (*totalSetsTraded - 5);
+        numArmiesToReturn = 15 + 5 * (Deck::totalSetsTraded  - 5);
     }
-    (*totalSetsTraded)++;
+    (Deck::totalSetsTraded)++;
     return numArmiesToReturn;
 }
 
@@ -136,7 +150,7 @@ bool Hand::cardsValidForExchange(const int *handIndices){
     }
     bool typeFlags[] = {false, false, false};
     for (int i = 0; i < 3; i++) {
-        typeFlags[this->cards->at(handIndices[i])->getType()] = true;
+        typeFlags[this->cards->at(handIndices[i])->get_type()] = true;
     }
     int count = 0;
     for (bool typeFlag : typeFlags) {
@@ -149,5 +163,9 @@ bool Hand::cardsValidForExchange(const int *handIndices){
 
     int Hand::size() {
         return cards->size();
+    }
+
+    vector<Card *> * Hand::get_cards() {
+        return cards;
     }
 }
