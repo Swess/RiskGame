@@ -135,7 +135,7 @@ namespace MapLoader {
             new Board::Continent(*continent.name, *continent.bonus, *continent.color, map);
         }
         for (_country country : *countries_temp) {
-            Board::Country * new_country = new Board::Country(*country.name);
+            Board::Country * new_country = new Board::Country(*country.name, *country.x, *country.y);
             Board::Continent * continent = map->get_continents().at((*country.continentIndex) - 1 ); // Indexing in files start at 1
             continent->insert_country(*new_country);
         }

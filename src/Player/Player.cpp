@@ -406,8 +406,11 @@ namespace Player {
         Terminal::debug("Player has started their turn");
 
         this->reinforce();
+        GameEngine::GameEngine::instance()->output_state_to_file();
         this->attack();
+        GameEngine::GameEngine::instance()->output_state_to_file();
         this->fortify();
+        GameEngine::GameEngine::instance()->output_state_to_file();
 
         Terminal::debug("Player has ended their turn");
     }

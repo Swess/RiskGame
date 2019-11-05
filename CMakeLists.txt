@@ -19,4 +19,6 @@ add_custom_command(
         TARGET Team12_DominationGame POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_SOURCE_DIR}/ressources $<TARGET_FILE_DIR:Team12_DominationGame>/ressources
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_SOURCE_DIR}/ui $<TARGET_FILE_DIR:Team12_DominationGame>/ui
 )

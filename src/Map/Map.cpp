@@ -6,12 +6,15 @@
 
 namespace Board {
 
-    Country::Country(const string &name) {
+    Country::Country(const string &name, int i, int i1) {
         this->name = new string(name);
         this->index = new int(-1);
         this->continent_index = new int(-1);
         this->nb_armies = new int(0);
         this->owner = nullptr;
+        this->neighboring_countries = nullptr;
+        this-> x = new int(i);
+        this-> y = new int(i1);
     }
 
     Country::~Country() {
@@ -19,13 +22,16 @@ namespace Board {
         delete name;
         delete continent_index;
         delete nb_armies;
-
+        delete x;
+        delete y;
         // Remove dangling pointers
         index = nullptr;
         name = nullptr;
         continent_index = nullptr;
         nb_armies = nullptr;
         owner = nullptr;
+        x = nullptr;
+        y = nullptr;
     }
 
     string Country::get_name() {
@@ -98,6 +104,14 @@ namespace Board {
 
     int Country::get_continent_index() {
         return *this->continent_index;
+    }
+
+    int Country::getX() {
+        return *x;
+    }
+
+    int Country::getY() {
+        return *y;
     }
 
     Continent::Continent(const string &name, Map *map) {

@@ -290,7 +290,6 @@ namespace GameEngine {
     void GameEngine::game_loop() {
         Terminal::debug("Starting game loop.");
         while (!game_done()) {
-            output_state_to_file();
             for(int player_index : *player_order){
                 if (game_done()) continue;
                 Player::Player * current_player = players->at(player_index);
@@ -316,20 +315,35 @@ namespace GameEngine {
 
     void GameEngine::output_state_to_file() {
         Terminal::debug("Opening file to write state");
-        ofstream file_stream("ressources/state.ker", std::ios::out);
+        ofstream file_stream("ui/src/data/state.xml", std::ios::out);
         if (!file_stream) {
             // Print an error and exit
-            Terminal::error("Uh oh, state.ker could not be opened for writing!");
+            Terminal::error("Uh oh, state.xml could not be opened for writing!");
             exit(1);
         }
+        file_stream << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+        file_stream << "<map>";
         for (auto country: map->get_countries()){
             string continent_name = map->get_continents().at(country->get_continent_index())->get_name();
-            file_stream << country->get_index() << " " << country->get_name() << " " << country->get_owner()->get_color() << " " << country->get_armies() << " " << continent_name << " ";
+            file_stream << "<country>";
+            file_stream << "<index>" << country->get_index() << "</index>";
+            file_stream << "<name>" << country->get_name() << "</name>";
+            file_stream << "<player_color>" << country->get_owner()->get_color() << "</player_color>";
+            file_stream << "<army>" <<  country->get_armies() << "</army>";
+            file_stream << "<continent>" << continent_name << "</continent>";
+            file_stream << "<position>";
+            file_stream << "<x>" << country->getX() << "</x>";
+            file_stream << "<y>" << country->getY() << "</y>";
+            file_stream << "</position>";
+            file_stream << "<neighbor>";
             for (auto neighbor : *country->get_neighbors()){
-                file_stream << neighbor->get_index() << " ";
+                file_stream << "<index>" << neighbor->get_index() << "</index>";
             }
+            file_stream << "</neighbor>";
+            file_stream << "</country>";
             file_stream << "\n";
         }
+        file_stream << "</map>";
         Terminal::debug("Closing file to write state");
         file_stream.close();
     }

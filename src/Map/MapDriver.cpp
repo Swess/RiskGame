@@ -11,7 +11,7 @@ namespace Board {
 
         // Insert 6 stub nodes
         for (int i = 0; i < 6; i++)
-            map.insert_country(*new Country("Stub name"));
+            map.insert_country(*new Country("Stub name", 0, 0));
 
         vector<Country *> countries = map.get_countries();
 
@@ -51,7 +51,7 @@ namespace Board {
 
         // Insert 6 stub nodes
         for (int i = 0; i < 6; i++)
-            map2.insert_country(*new Country("Stub"));
+            map2.insert_country(*new Country("Stub", 0, 0));
 
         countries = map2.get_countries();
         map2.biconnect(*countries[0], *countries[1]);
@@ -66,11 +66,11 @@ namespace Board {
         Map map;
         Continent continent("Continent test", &map);
 
-        Country *c1 = new Country("1");
-        Country *c2 = new Country("2");
-        Country *c3 = new Country("3");
-        Country *c4 = new Country("4");
-        Country *c5 = new Country("5");
+        Country *c1 = new Country("1", 0, 0);
+        Country *c2 = new Country("2", 0, 0);
+        Country *c3 = new Country("3", 0, 0);
+        Country *c4 = new Country("4", 0, 0);
+        Country *c5 = new Country("5", 0, 0);
 
         // Adding to continent adds to the map also, but already connected
         continent.insert_country(*c1);
@@ -100,10 +100,10 @@ namespace Board {
     bool test_continent_country_exclusivity() {
         Map map;
 
-        Country *c1 = new Country("1");
-        Country *c2 = new Country("2");
-        Country *c3 = new Country("3");
-        Country *c4 = new Country("4");
+        Country *c1 = new Country("1", 0, 0);
+        Country *c2 = new Country("2", 0, 0);
+        Country *c3 = new Country("3", 0, 0);
+        Country *c4 = new Country("4", 0, 0);
 
         Continent continent1("Empire1", &map);
         continent1.insert_country(*c1);
@@ -132,10 +132,10 @@ namespace Board {
 
         // Insert 5 stub country
         for (int i = 0; i < 5; i++)
-            continent1.insert_country(*new Country("Stub Name"));
+            continent1.insert_country(*new Country("Stub Name", 0, 0));
 
         for (int i = 0; i < 5; i++)
-            continent2.insert_country(*new Country("Stub Name"));
+            continent2.insert_country(*new Country("Stub Name", 0, 0));
 
         vector<Country *> countries = map.get_countries();
 

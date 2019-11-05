@@ -27,14 +27,17 @@ namespace Board {
         string *name;
         int *continent_index;
         int *nb_armies;
-        vector<Country *> *neighboring_countries;
+        vector<Country *> *neighboring_countries{};
         Player::Player *owner;
-
+        int * x;
+        int * y;
     public:
-        explicit Country(const string &name);
+        explicit Country(const string &name, int i, int i1);
 
         ~Country();
 
+        int getX();
+        int getY();
         string get_name();
         int get_armies();
         int get_continent_index();

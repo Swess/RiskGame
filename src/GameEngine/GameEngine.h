@@ -40,6 +40,7 @@ namespace GameEngine {
         vector<Player::Player*> * get_players();
         Cards::Deck * get_deck();
         vector<int> * get_player_order();
+        void output_state_to_file();
     private:
         GameEngine();
         virtual ~GameEngine();
@@ -62,7 +63,6 @@ namespace GameEngine {
         vector<Player::Player*> * players;
         Cards::Deck * deck;
         vector<int> * player_order;
-        void output_state_to_file();
     };
 
 
