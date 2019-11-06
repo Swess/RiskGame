@@ -17,12 +17,10 @@ namespace Player {
     namespace Driver {
 
         bool test_attack() {
-
             return test_attacking_and_attacked_country_validity() &&
                    test_amount_of_dice() &&
                    test_deducted_armies() &&
                    test_multiple_attacks();
-
         }
 
         bool test_amount_of_dice() {
@@ -174,8 +172,6 @@ namespace Player {
         }
 
         bool test_reinforce() {
-
-
             case_1_country_9_cards_2_exchanges();
             // This case is different since after two trades, not enough cards to trade.
             case_1_country_8_cards_2_exchanges();
