@@ -77,9 +77,9 @@ namespace MapLoader {
     MapLoader * MapLoader::readFile() {
         string line;
         while (getline((*input_stream), line)) {
-            if (Sections::isStringAValidSection(line)) {
-                Sections::Value value = Sections::getSectionFromString(line);
-                section = new Sections(value);
+            if (SectionsReader::isStringAValidSection(line)) {
+                SectionsReader::Value value = SectionsReader::getSectionFromString(line);
+                section = new SectionsReader(value);
                 continue; // jump to the next line
             }
             if (section != nullptr && !line.empty()) {
@@ -150,7 +150,7 @@ namespace MapLoader {
         return map;
     }
 
-    void Sections::strategy(const string &line, MapLoader &mapLoader) {
+    void SectionsReader::strategy(const string &line, MapLoader &mapLoader) {
         char *line_c_str = const_cast<char *>(line.c_str());
         char *token = strtok(line_c_str, " ");
         const string FILE_ERROR = "Invalid file format";
@@ -211,7 +211,7 @@ namespace MapLoader {
         }
     }
 
-    Sections::Value Sections::getSectionFromString(const string &s) {
+    SectionsReader::Value SectionsReader::getSectionFromString(const string &s) {
         if (s == "[continents]")
             return Value::continent;
         else if (s == "[countries]")
@@ -222,11 +222,11 @@ namespace MapLoader {
             throw exception();
     }
 
-    bool Sections::isStringAValidSection(const string &s) {
+    bool SectionsReader::isStringAValidSection(const string &s) {
         return (s == "[continents]" || s == "[countries]" || s == "[borders]");
     }
 
-    Sections::Sections(Sections::Value s) {
+    SectionsReader::SectionsReader(SectionsReader::Value s) {
         section = new Value{s};
     }
 

@@ -13,9 +13,9 @@ using namespace std;
 namespace MapLoader {
     class MapLoader;
 
-/*
- * Struct to save the data in the first pass
- * */
+    /*
+     * Struct to save the data in the first pass
+     * */
     struct _continent {
         string *name;
         int *bonus;
@@ -35,12 +35,12 @@ namespace MapLoader {
         vector<int> *values;
     };
 
-/*
- * Helping class Sections
- * In reality, it's a glorified enumerations of all the possible sections founded in .map files
- * Each enum should have it's own strategy
- * */
-    class Sections {
+    /*
+     * Helping class SectionsReader
+     * In reality, it's a glorified enumerations of all the possible sections founded in .map files
+     * Each enum should have it's own strategy
+     * */
+    class SectionsReader {
     public:
         enum Value {
             continent,
@@ -48,12 +48,12 @@ namespace MapLoader {
             borders,
         };
 
-        Sections() = default;
+        SectionsReader() = default;
 
-        explicit Sections(Value s);
+        explicit SectionsReader(Value s);
         explicit operator bool() = delete;
         void strategy(const string &line, MapLoader &mapLoader);
-        static Sections::Value getSectionFromString(const string &s);
+        static SectionsReader::Value getSectionFromString(const string &s);
         static bool isStringAValidSection(const string &s);
 
     private:
@@ -62,10 +62,11 @@ namespace MapLoader {
 
 
     class MapLoader {
+        friend struct SectionsReader;
     private:
         ifstream *input_stream;
 
-        Sections *section = nullptr;
+        SectionsReader *section = nullptr;
         vector<_continent> *continents_temp;
         vector<_country> *countries_temp;
         vector<_border> *borders_temp;
@@ -75,17 +76,18 @@ namespace MapLoader {
         MapLoader * readFile();
         MapLoader * closeFile();
 
-        Board::Map *map;
-
-    public:
-        MapLoader();
-        virtual ~MapLoader();
         void addContinentToMemory(const _continent &continent);
         void addCountryToMemory(const _country &country);
         void addBorderToMemory(const _border &border);
+
+        Board::Map *map;
+    public:
+        MapLoader();
+        virtual ~MapLoader();
         MapLoader * load(const string &path);
         MapLoader * load(const int &index);
         Board::Map * build();
 
     };
+
 };
