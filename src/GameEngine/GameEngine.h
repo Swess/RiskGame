@@ -40,6 +40,7 @@ namespace GameEngine {
         vector<Player::Player*> * get_players();
         Cards::Deck * get_deck();
         vector<int> * get_player_order();
+        vector<Observer::PlayerObserver*> *player_observers;
     private:
         GameEngine();
         virtual ~GameEngine();

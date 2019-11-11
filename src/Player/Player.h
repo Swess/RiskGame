@@ -4,18 +4,22 @@
 #include "../Map/Map.h"
 #include "../Cards/Cards.h"
 #include "../Dice/Dice.h"
+#include "../GameObservers/GameObservers.h"
 
 using namespace std;
 using namespace Board;
 
 namespace Player {
 
-    // This is not used, but may be used later
     enum class player_color {
         RED=0, BLUE=1, GREEN=2, BLACK=3, GRAY=4, WHITE=5
     };
 
-    class Player {
+    enum class phase {
+        ATTACK=0, REINFORCEMENT=1, FORTIFICATION=2
+    };
+
+class Player : public Observer::PlayerSubject {
     private:
         vector<Country *> *countries;
         void fortify();
@@ -31,6 +35,15 @@ namespace Player {
         void reinforce_country(int new_army);
         int get_army_by_continent_owned();
         int update_army_by_exchange(int new_army) const;
+        void clear_state();
+
+        /**
+         * Current state of player, this is what the observer is watching
+         */
+        phase * current_phase;
+        Country * source_country;
+        Country * target_country;
+        int * number_of_armies;
     public:
         // TODO: These need to be private
         Dice::Dice *dice;
@@ -59,7 +72,12 @@ namespace Player {
 
         bool is_player_dead();
 
-        string get_color();
+        string get_color() override;
         void turn();
+
+        string get_phase() override;
+        Country *get_source_country() override;
+        Country *get_target_country() override;
+        int get_number_armies_used() override;
     };
 }

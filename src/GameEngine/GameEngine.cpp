@@ -7,6 +7,7 @@
 #include <ctime>
 #include <algorithm>
 #include <random>
+#include <sstream>
 #include "../MapLoader/MapLoader.h"
 #include "../Terminal/Terminal.h"
 #include "../exceptions.h"
@@ -15,6 +16,23 @@ using std::to_string;
 
 namespace GameEngine {
     GameEngine *GameEngine::game_engine_instance = nullptr;
+
+    void callback(Observer::PlayerSubject *player) {
+        ostringstream os;
+        os << "////////////////////////////////////\n";
+        os << player->get_color() << " player: " << player->get_phase() << " phase\n\n";
+        if (player->get_source_country()) {
+            os << "source country: " << player->get_source_country()->get_name() << "\n";
+        }
+        if (player->get_target_country()) {
+            os << "Target country: " << player->get_target_country()->get_name() << "\n";
+        }
+        if (player->get_number_armies_used() > 0) {
+            os << "Number of armies used: " << player->get_number_armies_used() << "\n";
+        }
+        os << "////////////////////////////////////\n";
+        Terminal::print(os.str());
+    }
 
     GameEngine *GameEngine::instance() {
         if (!game_engine_instance) game_engine_instance = new GameEngine;
@@ -116,6 +134,8 @@ namespace GameEngine {
 
         for (int i = 1; i <= answer ; ++i) {
             Player::Player * p = new Player::Player;
+            Observer::PlayerObserver *observer = new Observer::PlayerObserver(p, &callback);
+            player_observers->emplace_back(observer);
             players->emplace_back(p);
         }
 
@@ -146,6 +166,7 @@ namespace GameEngine {
         deck = nullptr;
         players = new vector<Player::Player *>();
         player_order = new vector<int>();
+        player_observers = new vector<Observer::PlayerObserver*>();
     }
 
     GameEngine::~GameEngine() {

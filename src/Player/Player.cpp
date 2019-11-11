@@ -23,6 +23,11 @@ namespace Player {
         hand = new Cards::Hand();
         dice = new Dice::Dice();
         countries = new vector<Country *>();
+
+        current_phase = new phase;
+        source_country = nullptr;
+        target_country = nullptr;
+        number_of_armies = new int(-1);
     };
 
     Player::~Player() {
@@ -39,10 +44,10 @@ namespace Player {
     void Player::fortify() {
         Terminal::debug("Player fortify");
         Terminal::print("Fortification phase");
+        *current_phase = phase::FORTIFICATION;
         vector<string> selections;
         bool validChoice = false;
         int source_country_index;
-        Country * source_country;
 
         bool can_fortify = player_can_fortify();
 
@@ -75,12 +80,12 @@ namespace Player {
                 Terminal::print("must choose a country which has at least 2 armies.");
             }
         }
+        notify();
 
         selections.clear();
         selections.shrink_to_fit();
         vector<Country *> * source_country_neighbors = source_country->get_neighbors();
         int target_country_index;
-        Country * target_country;
         validChoice = false;
         Terminal::print("Select target country");
         for (Country * neighbor: *source_country_neighbors) {
@@ -96,6 +101,7 @@ namespace Player {
                 validChoice = true;
             }
         }
+        notify();
 
         Terminal::print("Select number of armies to move");
         vector<string> num_of_armies(source_country->get_armies() - 1);
@@ -109,21 +115,23 @@ namespace Player {
             num_of_armies.at(i) = os.str();
         }
         num_of_armies.shrink_to_fit();
-        int selected_num_armies = Terminal::print_select(num_of_armies);
-        selected_num_armies++;
+        *number_of_armies = Terminal::print_select(num_of_armies);
+        *number_of_armies += 1;
+        notify();
 
         ostringstream os;
-        os << selected_num_armies << " armies have been transferred from " << source_country->get_name() << " to " << target_country->get_name();
+        os << *number_of_armies << " armies have been transferred from " << source_country->get_name() << " to " << target_country->get_name();
         Terminal::print(os.str());
 
-        source_country->set_armies(source_country->get_armies() - selected_num_armies);
-        target_country->set_armies(target_country->get_armies() + selected_num_armies);
+        source_country->set_armies(source_country->get_armies() - *number_of_armies);
+        target_country->set_armies(target_country->get_armies() + *number_of_armies);
         os.str("");
         os.clear();
         os << "countries following fortification: \n";
         os << "source country: " << source_country->to_string() << "\n";
         os << "target country: " << target_country->to_string();
         Terminal::print(os.str());
+        clear_state();
     }
 
     bool Player::player_can_fortify() const {
@@ -406,8 +414,8 @@ namespace Player {
         Terminal::debug("Player has started their turn");
 
         this->reinforce();
-//        this->attack();
-//        this->fortify();
+        this->attack();
+        this->fortify();
 
         Terminal::debug("Player has ended their turn");
     }
@@ -427,6 +435,19 @@ namespace Player {
             case player_color::GRAY: return "Gray";
             case player_color::WHITE: return "White";
             default: return "ERROR";
+        }
+    }
+
+    string Player::get_phase() {
+        switch(*current_phase) {
+            case phase::ATTACK:
+                return "Attack";
+            case phase::REINFORCEMENT:
+                return "Reinforcement";
+            case phase::FORTIFICATION:
+                return "Fortification";
+            default:
+                return "ERROR";
         }
     }
 
@@ -466,5 +487,24 @@ namespace Player {
     void Player::reset_player_count() {
         player_count = 0;
     }
+
+    Country *Player::get_source_country() {
+        return source_country;
+    }
+
+    Country *Player::get_target_country() {
+        return target_country;
+    }
+
+    int Player::get_number_armies_used() {
+        return *number_of_armies;
+    }
+
+    void Player::clear_state() {
+        source_country = nullptr;
+        target_country = nullptr;
+        *number_of_armies = -1;
+    }
+
 
 }
