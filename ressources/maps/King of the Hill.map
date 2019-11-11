@@ -1,0 +1,85 @@
+[Map]
+author=Rob Werhand
+image=King of the Hill.bmp
+wrap=no
+scroll=none
+warn=yes
+
+[Continents]
+Ring 0=6
+Ring 1=5
+Ring 2 Upper=4
+Ring 2 Lower=4
+Ring 3 Left=3
+Ring 3 Right=3
+Ring 4 Upper Left=2
+Ring 4 Lower Left=2
+Ring 4 Right=2
+Ring 5 Left=1
+Ring 5 Upper Right=1
+Ring 5 Lower Right=1
+
+[Territories]
+Territory00,592,383,Ring 0,Territory01,Territory02,Territory09,Territory04
+Territory01,670,381,Ring 0,Territory00,Territory04,Territory05,Territory06,Territory03
+Territory02,592,465,Ring 0,Territory00,Territory03,Territory07,Territory08,Territory09
+Territory03,668,462,Ring 0,Territory01,Territory06,Territory07,Territory02
+Territory04,609,291,Ring 1,Territory00,Territory01,Territory09,Territory05,Territory12,Territory11
+Territory05,735,342,Ring 1,Territory01,Territory06,Territory13,Territory12,Territory04
+Territory06,753,471,Ring 1,Territory01,Territory03,Territory07,Territory15,Territory14,Territory05
+Territory07,642,550,Ring 1,Territory03,Territory02,Territory08,Territory16,Territory15,Territory06
+Territory08,531,503,Ring 1,Territory02,Territory09,Territory17,Territory16,Territory07
+Territory09,513,374,Ring 1,Territory00,Territory02,Territory04,Territory11,Territory10,Territory08
+Territory10,442,381,Ring 2 Upper,Territory09,Territory17,Territory20,Territory21,Territory22,Territory11
+Territory11,530,255,Ring 2 Upper,Territory09,Territory04,Territory10,Territory22,Territory23,Territory12
+Territory12,670,233,Ring 2 Upper,Territory05,Territory04,Territory11,Territory23,Territory24,Territory25,Territory13
+Territory13,793,315,Ring 2 Upper,Territory05,Territory12,Territory25,Territory26,Territory14
+Territory14,819,468,Ring 2 Lower,Territory06,Territory13,Territory26,Territory27,Territory28,Territory15
+Territory15,737,582,Ring 2 Lower,Territory07,Territory06,Territory14,Territory28,Territory29,Territory16
+Territory16,584,606,Ring 2 Lower,Territory08,Territory07,Territory15,Territory29,Territory18,Territory19,Territory17
+Territory17,471,529,Ring 2 Lower,Territory08,Territory10,Territory16,Territory19,Territory20
+Territory18,566,668,Ring 3 Left,Territory16,Territory29,Territory38,Territory37,Territory19
+Territory19,446,603,Ring 3 Left,Territory16,Territory17,Territory20,Territory18,Territory37,Territory36
+Territory20,386,482,Ring 3 Left,Territory10,Territory17,Territory19,Territory36,Territory35,Territory21
+Territory21,386,352,Ring 3 Left,Territory10,Territory20,Territory34,Territory33,Territory22
+Territory22,450,241,Ring 3 Left,Territory10,Territory11,Territory21,Territory33,Territory32,Territory23
+Territory23,561,175,Ring 3 Left,Territory11,Territory12,Territory22,Territory32,Territory31,Territory24
+Territory24,696,175,Ring 3 Right,Territory12,Territory23,Territory31,Territory30,Territory25
+Territory25,813,241,Ring 3 Right,Territory12,Territory13,Territory24,Territory44,Territory43,Territory26
+Territory26,881,356,Ring 3 Right,Territory13,Territory14,Territory25,Territory42,Territory27,Territory43
+Territory27,877,489,Ring 3 Right,Territory14,Territory26,Territory42,Territory41,Territory28
+Territory28,812,600,Ring 3 Right,Territory14,Territory15,Territory27,Territory41,Territory40,Territory29
+Territory29,694,669,Ring 3 Right,Territory15,Territory16,Territory28,Territory39,Territory38,Territory18
+Territory30,728,118,Ring 4 Upper Left,Territory24,Territory31,Territory52,Territory53,Territory44
+Territory31,589,106,Ring 4 Upper Left,Territory23,Territory24,Territory32,Territory51,Territory52,Territory30
+Territory32,469,149,Ring 4 Upper Left,Territory22,Territory23,Territory33,Territory50,Territory51,Territory31
+Territory33,373,236,Ring 4 Upper Left,Territory21,Territory22,Territory34,Territory49,Territory50,Territory32
+Territory34,318,359,Ring 4 Upper Left,Territory21,Territory35,Territory48,Territory49,Territory33
+Territory35,323,486,Ring 4 Lower Left,Territory20,Territory36,Territory46,Territory47,Territory34
+Territory36,368,602,Ring 4 Lower Left,Territory20,Territory19,Territory35,Territory37,Territory45,Territory46
+Territory37,466,694,Ring 4 Lower Left,Territory18,Territory19,Territory38,Territory62,Territory45,Territory36
+Territory38,597,735,Ring 4 Lower Left,Territory29,Territory18,Territory39,Territory61,Territory62,Territory37
+Territory39,733,721,Ring 4 Lower Left,Territory29,Territory40,Territory60,Territory61,Territory38
+Territory40,847,654,Ring 4 Right,Territory28,Territory41,Territory58,Territory59,Territory39
+Territory41,928,549,Ring 4 Right,Territory27,Territory28,Territory42,Territory57,Territory58,Territory40
+Territory42,950,430,Ring 4 Right,Territory26,Territory27,Territory43,Territory56,Territory57,Territory41
+Territory43,927,300,Ring 4 Right,Territory25,Territory26,Territory44,Territory55,Territory56,Territory42
+Territory44,848,184,Ring 4 Right,Territory25,Territory30,Territory54,Territory55,Territory43
+Territory45,375,700,Ring 5 Left,Territory37,Territory36,Territory46,Territory62
+Territory46,293,597,Ring 5 Left,Territory35,Territory36,Territory45,Territory47
+Territory47,255,477,Ring 5 Left,Territory35,Territory46,Territory48
+Territory48,256,348,Ring 5 Left,Territory34,Territory47,Territory49
+Territory49,297,236,Ring 5 Left,Territory34,Territory33,Territory48,Territory50
+Territory50,373,138,Ring 5 Left,Territory33,Territory32,Territory49,Territory51
+Territory51,487,69,Ring 5 Upper Right,Territory32,Territory31,Territory50,Territory52
+Territory52,627,41,Ring 5 Upper Right,Territory31,Territory30,Territory51,Territory53
+Territory53,771,65,Ring 5 Upper Right,Territory30,Territory52,Territory54
+Territory54,881,131,Ring 5 Upper Right,Territory44,Territory53,Territory55
+Territory55,967,241,Ring 5 Upper Right,Territory44,Territory43,Territory54,Territory56
+Territory56,1006,361,Ring 5 Upper Right,Territory43,Territory42,Territory55,Territory57
+Territory57,1005,504,Ring 5 Lower Right,Territory42,Territory41,Territory56,Territory58
+Territory58,951,627,Ring 5 Lower Right,Territory41,Territory40,Territory57,Territory59
+Territory59,870,721,Ring 5 Lower Right,Territory40,Territory58,Territory60
+Territory60,751,785,Ring 5 Lower Right,Territory39,Territory59,Territory61
+Territory61,611,799,Ring 5 Lower Right,Territory39,Territory38,Territory60,Territory62
+Territory62,476,768,Ring 5 Lower Right,Territory38,Territory37,Territory61,Territory45
