@@ -4,6 +4,7 @@
 // Created by ker10 on 2019-09-27.
 //
 #pragma once
+
 #include <string>
 #include <vector>
 #include "../Map/Map.h"
@@ -36,11 +37,14 @@ namespace MapLoader {
     };
 
     /*
-     * Helping class SectionsReader
+     * Helping class LegacySectionReader (Original reader for Domination maps)
      * In reality, it's a glorified enumerations of all the possible sections founded in .map files
-     * Each enum should have it's own strategy
+     * Each enum should have it's own parse
+     *
+     * NOTE : As the original class, left without implementing the ISectionReader
+     *       voluntarily so that it is used by his Adapter wrapper.
      * */
-    class SectionsReader {
+    class LegacySectionReader {
     public:
         enum Value {
             continent,
@@ -48,45 +52,84 @@ namespace MapLoader {
             borders,
         };
 
-        SectionsReader() = default;
+        LegacySectionReader();
+        virtual ~LegacySectionReader();
 
-        explicit SectionsReader(Value s);
+        explicit LegacySectionReader(Value s);
+
         explicit operator bool() = delete;
-        void strategy(const string &line, MapLoader &mapLoader);
-        static SectionsReader::Value getSectionFromString(const string &s);
-        static bool isStringAValidSection(const string &s);
 
-    private:
+        void strategy(const string &line, MapLoader &mapLoader);
+
+        static LegacySectionReader::Value get_section_from_string(const string &s);
+
+        static bool is_string_valid_section(const string &s);
+
+    protected:
         Value *section;
+    };
+
+    ///////
+    // Adapter Pattern classes for various file formats reading
+    ///////
+    class ISectionReader {
+    public:
+        virtual ~ISectionReader() = default;
+
+        virtual void parse(const string &line, MapLoader &mapLoader) = 0;
+
+        virtual bool is_string_valid_section(const string &s) const = 0;
+    };
+
+    class ConquestSectionReader : public ISectionReader {
+    public:
+        void parse(const string &line, MapLoader &mapLoader) override;
+
+        bool is_string_valid_section(const string &s) const override;
+    };
+
+    class DominationSectionReader : public ISectionReader, private LegacySectionReader {
+    public:
+        void parse(const string &line, MapLoader &mapLoader) override;
+
+        bool is_string_valid_section(const string &s) const override;
     };
 
 
     class MapLoader {
-        friend struct SectionsReader;
     private:
         ifstream *input_stream;
 
-        SectionsReader *section = nullptr;
+        ISectionReader *section = nullptr;
         vector<_continent> *continents_temp;
         vector<_country> *countries_temp;
         vector<_border> *borders_temp;
 
-        MapLoader * openFile(const string &path);
-        MapLoader * openFile(const int &index);
-        MapLoader * readFile();
-        MapLoader * closeFile();
+        MapLoader *open_file(const string &path);
 
-        void addContinentToMemory(const _continent &continent);
-        void addCountryToMemory(const _country &country);
-        void addBorderToMemory(const _border &border);
+        MapLoader *open_file(const int &index);
+
+        MapLoader *read_file();
+
+        MapLoader *close_file();
 
         Board::Map *map;
+
     public:
         MapLoader();
         virtual ~MapLoader();
-        MapLoader * load(const string &path);
-        MapLoader * load(const int &index);
-        Board::Map * build();
+
+        MapLoader *load(const string &path);
+
+        MapLoader *load(const int &index);
+
+        Board::Map *build();
+
+        void add_continent_to_memory(const _continent &continent);
+
+        void add_country_to_memory(const _country &country);
+
+        void add_border_to_memory(const _border &border);
 
     };
 
