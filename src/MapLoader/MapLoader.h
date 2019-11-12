@@ -50,8 +50,8 @@ namespace MapLoader {
 
     /*
      * Helping class LegacySectionReader (Original reader for Domination maps)
-     * In reality, it's a glorified enumerations of all the possible sections founded in .map files
-     * Each enum should have it's own parse
+     * In reality, it'continents_buffer a glorified enumerations of all the possible sections founded in .map files
+     * Each enum should have it'continents_buffer own parse
      *
      * NOTE : As the original class, left without implementing the ISectionReader
      *       voluntarily so that it is used by his Adapter wrapper.
@@ -91,13 +91,26 @@ namespace MapLoader {
         virtual void parse(const string &line, MapLoader &mapLoader) = 0;
 
         virtual bool is_string_valid_section(const string &s) const = 0;
+
+        virtual void flush_buffers(MapLoader &mapLoader) = 0;
     };
 
     class ConquestSectionReader : public ISectionReader {
     public:
+        ConquestSectionReader();
+
+        ~ConquestSectionReader() override;
+
         void parse(const string &line, MapLoader &mapLoader) override;
 
         bool is_string_valid_section(const string &s) const override;
+
+        void flush_buffers(MapLoader &mapLoader) override;
+
+    private:
+        vector<_continent> *continents_buffer;
+        map<string,_country> *countries_buffer;
+        vector<pair<string,string>> *borders_buffer;
     };
 
     class DominationSectionReader : public ISectionReader, private LegacySectionReader {
@@ -105,6 +118,8 @@ namespace MapLoader {
         void parse(const string &line, MapLoader &mapLoader) override;
 
         bool is_string_valid_section(const string &s) const override;
+
+        void flush_buffers(MapLoader &mapLoader) override;
     };
 
 

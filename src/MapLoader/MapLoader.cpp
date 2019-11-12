@@ -78,6 +78,7 @@ namespace MapLoader {
         string line;
         ISectionReader *reader;
 
+        getline((*input_stream), line);
         if (line == "[Map]")
             reader = new ConquestSectionReader();
         else
@@ -92,6 +93,8 @@ namespace MapLoader {
                 }
             }
         }
+
+        reader->flush_buffers(*this);
 
         delete reader;  // Avoid memory leak
         return this;
@@ -272,9 +275,73 @@ namespace MapLoader {
             LegacySectionReader::strategy(line, mapLoader);
     }
 
-    void ConquestSectionReader::parse(const string &line, MapLoader &mapLoader) {
-        // TODO
+    void DominationSectionReader::flush_buffers(MapLoader &mapLoader) {
+        // Nothing to do here since the LegacySectionReader does send linked objects during parsing
+    }
 
+    void ConquestSectionReader::parse(const string &line, MapLoader &mapLoader) {
+        static string section_type;
+        if(is_string_valid_section(line)){
+            section_type = line;
+            return;
+        }
+
+        char *line_c_str = const_cast<char *>(line.c_str());
+        char *token = strtok(line_c_str, "=,");
+        const string FILE_ERROR = "Invalid file format";
+        if (token == nullptr) throw invalid_argument(FILE_ERROR);
+
+        if(section_type == "[Continents]"){
+            _continent continent{nullptr, nullptr, new string("none")};
+            continent.name = new string(token);
+
+            token = strtok(nullptr, "=,");
+            if (token == nullptr) throw invalid_argument(FILE_ERROR);
+            continent.bonus = new int(strtol(token, nullptr, 10));
+
+            continents_buffer->push_back(continent);
+            // mapLoader.add_continent_to_memory(continent);
+            return;
+        }
+
+        if(section_type == "[Territories]"){
+            _country country{nullptr, nullptr, nullptr, nullptr, nullptr};
+            country.name = new string(token);
+
+            token = strtok(nullptr, "=,");
+            if (token == nullptr) throw invalid_argument(FILE_ERROR);
+            country.x = new int(strtol(token, nullptr, 10));
+
+            token = strtok(nullptr, "=,");
+            if (token == nullptr) throw invalid_argument(FILE_ERROR);
+            country.y = new int(strtol(token, nullptr, 10));
+
+            token = strtok(nullptr, "=,");
+            if (token == nullptr) throw invalid_argument(FILE_ERROR);
+            string cont_name(token);
+
+            // Search continent in list to know his future index
+            for(int i=0; i < continents_buffer->size(); i++){
+                if(*continents_buffer->at(i).name == cont_name){
+                    country.continentIndex = new int(i);        // Future continent index = buffer position
+                    break;
+                }
+                if(i == continents_buffer->size() - 1){
+                    throw runtime_error("Could not find specified continent for country.");
+                }
+            }
+
+            // Add to mapping buffer
+            countries_buffer->insert(pair<string,_country>(*country.name,country));
+
+            // Loop futur borders and build mapping
+            token = strtok(nullptr, "=,");
+            if (token == nullptr) throw invalid_argument(FILE_ERROR);
+            while (token != nullptr) {
+                borders_buffer->emplace_back(*country.name, token);
+                token = strtok(nullptr, "=,");
+            }
+        }
     }
 
     bool ConquestSectionReader::is_string_valid_section(const string &s) const {
@@ -282,11 +349,19 @@ namespace MapLoader {
     }
 
     ConquestSectionReader::ConquestSectionReader() {
-        continent_buffer = new vector<_continent>();
+        continents_buffer = new vector<_continent>();
+        countries_buffer = new map<string, _country>();
+        borders_buffer = new vector<pair<string, string>>();
     }
 
     ConquestSectionReader::~ConquestSectionReader() {
-        delete continent_buffer;
+        delete continents_buffer;
+        delete countries_buffer;
+        delete borders_buffer;
+    }
+
+    void ConquestSectionReader::flush_buffers(MapLoader &mapLoader) {
+        // TODO: Link from string informations since we read it all now
     }
 
     void _continent::clr_mem() {
