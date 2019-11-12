@@ -152,6 +152,16 @@ namespace MapLoader {
         }
         map->set_country_neighbors();
 
+        // All values pointed at by struct has now been used.
+        // Therefore, clearing memory in heap
+        for(_continent c : *continents_temp)
+            c.clr_mem();
+        for(_country c : *countries_temp)
+            c.clr_mem();
+        for(_border b : *borders_temp)
+            b.clr_mem();
+
+
         return map;
     }
 
@@ -269,5 +279,32 @@ namespace MapLoader {
 
     bool ConquestSectionReader::is_string_valid_section(const string &s) const {
         return (s == "[Territories]" || s == "[Continents]");
+    }
+
+    ConquestSectionReader::ConquestSectionReader() {
+        continent_buffer = new vector<_continent>();
+    }
+
+    ConquestSectionReader::~ConquestSectionReader() {
+        delete continent_buffer;
+    }
+
+    void _continent::clr_mem() {
+        delete name;
+        delete bonus;
+        delete color;
+    }
+
+    void _country::clr_mem() {
+        delete index;
+        delete name;
+        delete continentIndex;
+        delete x;
+        delete y;
+    }
+
+    void _border::clr_mem() {
+        delete countryIndex;
+        delete values;
     }
 }

@@ -21,6 +21,10 @@ namespace MapLoader {
         string *name;
         int *bonus;
         string *color;
+
+        // Used to delete values pointed to by the struct members.
+        // Not as normal destructor as we don't always want the memory to be cleared.
+        void clr_mem();
     };
 
     struct _country {
@@ -29,11 +33,19 @@ namespace MapLoader {
         int *continentIndex;
         int *x;
         int *y;
+
+        // Used to delete values pointed to by the struct members.
+        // Not as normal destructor as we don't always want the memory to be cleared.
+        void clr_mem();
     };
 
     struct _border {
         int *countryIndex;
         vector<int> *values;
+
+        // Used to delete values pointed to by the struct members.
+        // Not as normal destructor as we don't always want the memory to be cleared.
+        void clr_mem();
     };
 
     /*
