@@ -84,9 +84,9 @@ namespace MapLoader {
             reader = new DominationSectionReader();
 
         while (getline((*input_stream), line)) {
-            if (section != nullptr && !line.empty()) {
+            if (!line.empty()) {
                 try {
-                    section->parse(line, *this);
+                    reader->parse(line, *this);
                 } catch (invalid_argument &e) {
                     throw e;
                 }
@@ -103,11 +103,11 @@ namespace MapLoader {
     }
 
     MapLoader *MapLoader::load(const string &path) {
-        return open_file(path)->read_file()->read_file();
+        return open_file(path)->read_file()->close_file();
     }
 
     MapLoader *MapLoader::load(const int &index) {
-        return open_file(index)->read_file()->read_file();
+        return open_file(index)->read_file()->close_file();
     }
 
     void MapLoader::add_continent_to_memory(const _continent &continent) {
@@ -212,7 +212,7 @@ namespace MapLoader {
                 break;
             }
             default:
-                throw exception();
+                throw runtime_error("Map parsing section not set.");
         }
     }
 
@@ -240,7 +240,7 @@ namespace MapLoader {
     }
 
     LegacySectionReader::LegacySectionReader() {
-        section = new Value;
+        section = (Value*)new int(-1);
     }
 
     bool DominationSectionReader::is_string_valid_section(const string &s) const {
@@ -253,11 +253,13 @@ namespace MapLoader {
             Value v = LegacySectionReader::get_section_from_string(line);
             delete LegacySectionReader::section;    // Avoid leak from older value
             LegacySectionReader::section = new Value{v};
-        } catch (exception e) {
+            return;
+        } catch (...) {
             // Muting the exception. Not new section simply...
         }
 
-        return LegacySectionReader::strategy(line, mapLoader);
+        if(*LegacySectionReader::section != -1)
+            LegacySectionReader::strategy(line, mapLoader);
     }
 
     void ConquestSectionReader::parse(const string &line, MapLoader &mapLoader) {

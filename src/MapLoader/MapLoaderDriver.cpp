@@ -23,6 +23,7 @@ namespace MapLoader { namespace Driver {
 
         assert( testMap->get_continents().at(8)->get_name() == "East_Europe" );
         assert( testMap->get_countries().at(45)->get_name() == "Ukraine" );
+        delete testMap;
         delete mapLoader;
         return true;
     };
