@@ -84,6 +84,9 @@ namespace MapLoader {
     ///////
     // Adapter Pattern classes for various file formats reading
     ///////
+    /**
+     * The target interface wnated by the client (MapLoader)
+     */
     class ISectionReader {
     public:
         virtual ~ISectionReader() = default;
@@ -95,6 +98,9 @@ namespace MapLoader {
         virtual void flush_buffers(MapLoader &mapLoader) = 0;
     };
 
+    /**
+     * New class implementing the wanted client interface & parsing Conquest map format
+    */
     class ConquestSectionReader : public ISectionReader {
     public:
         ConquestSectionReader();
@@ -114,6 +120,10 @@ namespace MapLoader {
         vector<pair<string,string>> *borders_buffer;
     };
 
+    /**
+     * Adapter class the serves the client wanted interface for the adaptee (LegacySectionReader) that was reading the
+     * Domination file format maps.
+     */
     class DominationSectionReader : public ISectionReader, private LegacySectionReader {
     public:
         void parse(const string &line, MapLoader &mapLoader) override;
