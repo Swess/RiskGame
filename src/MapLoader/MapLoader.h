@@ -85,7 +85,7 @@ namespace MapLoader {
     // Adapter Pattern classes for various file formats reading
     ///////
     /**
-     * The target interface wnated by the client (MapLoader)
+     * The target interface wanted by the client (MapLoader)
      */
     class ISectionReader {
     public:
