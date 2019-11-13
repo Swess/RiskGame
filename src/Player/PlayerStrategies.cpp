@@ -428,21 +428,179 @@ namespace Player {
 
     }
 
+    /**
+ * an aggressive computer player that focuses on attack (reinforces its strongest
+country, then always attack with it until it cannot attack anymore, then fortifies in order to maximize aggregation of
+forces in one country),
+ * @param i
+ */
+
     bool AggressivePlayerStrategy::attack() {
+        bool has_won_a_battle = false;
+        //Find strongest country
+        int biggest_army = 0;
+        Country * strongest_country = nullptr;
+        for (auto &country : player->get_countries()){
+            if (country->get_armies() > biggest_army){
+                // Verify if the country has a neighbor that player owns and has army
+                for (auto &neighbor_country : * country->get_neighbors()){
+                    if (neighbor_country->get_owner() == player && neighbor_country->get_armies() > 1){
+                        strongest_country = country;
+                        biggest_army = country->get_armies();
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (strongest_country == nullptr){
+            Terminal::error("Strongest_country is null, this should NEVER happen");
+            return has_won_a_battle;
+        }
+
+        while (strongest_country->get_armies() > 1){
+            Board::Country * country_under_attack = nullptr;
+            for (auto &neighbor : *strongest_country->get_neighbors()){
+                if (neighbor->get_owner() != this->player) {
+                    country_under_attack = neighbor;
+                    break;
+                }
+            }
+            if (country_under_attack == nullptr) return has_won_a_battle;
+
+            int last_roll = battle_and_get_last_roll_amount(strongest_country, country_under_attack);
+
+            if (country_under_attack->get_armies() == 0 ) {
+                has_won_a_battle = true;
+                this->player->gain_control(country_under_attack);
+
+                int moving_units = strongest_country->get_armies()-1;
+                strongest_country->set_armies(strongest_country->get_armies() - moving_units);
+                country_under_attack->set_armies(moving_units);
+            } else if (strongest_country->get_armies() == 1){
+                Terminal::debug("Player " + player->get_color() + " can't attack from this country anymore.");
+            }
+
+            return has_won_a_battle;
+
+        }
+
+
         return false;
     }
 
     vector<Board::Country *> AggressivePlayerStrategy::fortify() {
-        return vector<Board::Country *>();
+        Terminal::debug("Performing fortify from a aggresive player" + player->get_color());
+        // Fortifies in order to move armies to weaker countries
+        vector<Board::Country *> answer;
+        vector<Board::Country *> owned_countries = player->get_countries();
+
+        //Find strongest country
+        int biggest_army = 0;
+        Country * strongest_country = nullptr;
+        for (auto &country : owned_countries){
+            if (country->get_armies() > biggest_army){
+                // Verify if the country has a neighbor that player owns and has army
+                for (auto &neighbor_country : * country->get_neighbors()){
+                    if (neighbor_country->get_owner() == player && neighbor_country->get_armies() > 1){
+                        strongest_country = country;
+                        biggest_army = country->get_armies();
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (strongest_country == nullptr){
+            return answer;
+        }
+
+        // Find the biggest army neighbor to weakest country
+        biggest_army = 0;
+        Country * strongest_neighbor = nullptr;
+        for (auto &country : * strongest_country->get_neighbors()){
+            if (country->get_armies() > biggest_army && country->get_owner() == player){
+                biggest_army = country->get_armies();
+                strongest_neighbor = country;
+            }
+        }
+
+        if(strongest_neighbor == nullptr) {
+            Terminal::error("Strongest neighbor is null, this should never happen");
+            return answer;
+        }
+
+        int total_armies = strongest_neighbor->get_armies() + strongest_country->get_armies();
+        strongest_neighbor->set_armies(1);
+        strongest_country->set_armies(total_armies-1);
+
+
+        answer.emplace_back(strongest_neighbor); // source
+        answer.emplace_back(strongest_country); //target
+        return answer;
     }
 
     void AggressivePlayerStrategy::reinforce(int i) {
+        Terminal::debug("Performing reinforce from a aggresive player" + player->get_color());
 
+        vector<Board::Country *> owned_countries = player->get_countries();
+        //Find weakest country
+        int big_army = 0;
+        Country * strongest_country = nullptr;
+        for (auto &country : owned_countries){
+            if (country->get_armies() > big_army){
+                strongest_country = country;
+                big_army = country->get_armies();
+            }
+        }
+
+        if(strongest_country == nullptr) {
+            Terminal::error("Weakest country is null, this should NEVER happen");
+            return;
+        }
+
+        strongest_country->set_armies(strongest_country->get_armies() + i);
     }
 
-    int
-    AggressivePlayerStrategy::battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const {
-        return 0;
+    int AggressivePlayerStrategy::battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const {
+        int last_roll_attacker = 0;
+        while (source->get_armies() > 1 && target->get_armies() > 0 ) {
+            Terminal::debug("The country aggressive player  " + player->get_color() + "  started the attack from is");
+            Terminal::debug(source->to_string());
+            Terminal::debug("The country aggressive player " + player->get_color() + " you are attacking is");
+            Terminal::debug(target->to_string());
+
+            int available_dice_attacker = get_attacker_amount_of_dice(source);
+            int nb_of_dice_attacker = available_dice_attacker;
+            if (nb_of_dice_attacker == 0) { break; }
+
+            int available_dice_defender = target->get_armies();
+            // Clamp the amount of defender's dice to 2
+            if (available_dice_defender > 2) available_dice_defender = 2;
+            int nb_of_dice_defender = available_dice_defender;
+
+
+            vector<int> roll_attacker = source->get_owner()->dice->roll(nb_of_dice_attacker);
+            vector<int> roll_defender = target->get_owner()->dice->roll(nb_of_dice_defender);
+
+            Terminal::print("Player " + source->get_owner()->get_color() + " rolled: ");
+            Terminal::print_on_same_line(roll_attacker);
+            Terminal::print("Player " + target->get_owner()->get_color() + " rolled: ");
+            Terminal::print_on_same_line(roll_defender);
+
+            // Remove no more then lower nb of dices
+            int how_many_unit_will_die = nb_of_dice_attacker < nb_of_dice_defender ? nb_of_dice_attacker
+                                                                                   : nb_of_dice_defender;
+
+            for (int i = 0; i < how_many_unit_will_die; i++) {
+                roll_attacker[i] > roll_defender[i] ? target->decrement_army() : source->decrement_army();
+            }
+
+            last_roll_attacker = nb_of_dice_attacker;
+
+        } // End of a battle
+
+        return last_roll_attacker;
     }
 
     AggressivePlayerStrategy::AggressivePlayerStrategy(Player *player) : PlayerStrategies(player) {

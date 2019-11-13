@@ -9,6 +9,7 @@
 namespace PlayerStrategies {
     namespace Driver {
         bool test_benevolent_strategy();
+        bool test_aggresive_strategy();
         bool run();
     }
 };
