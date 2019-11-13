@@ -27,13 +27,10 @@ namespace Player {
         playerStrategies = new HumanPlayerStrategy(this);
     };
 
-    Player::Player(PlayerStrategies * playerStrategies1) {
-        color = reinterpret_cast<player_color *>(new int(player_count++));
-        hand = new Cards::Hand();
-        dice = new Dice::Dice();
-        countries = new vector<Country *>();
-        playerStrategies1->setPlayer(this);
+    Player::Player(PlayerStrategies * playerStrategies1) : Player() {
+       delete playerStrategies1;
         playerStrategies = playerStrategies1;
+        playerStrategies1->setPlayer(this);
     }
 
     Player::~Player() {

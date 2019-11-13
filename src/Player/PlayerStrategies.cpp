@@ -442,9 +442,9 @@ forces in one country),
         Country * strongest_country = nullptr;
         for (auto &country : player->get_countries()){
             if (country->get_armies() > biggest_army){
-                // Verify if the country has a neighbor that player owns and has army
+                // Verify if the country has a neighbor that any other player owns and has army
                 for (auto &neighbor_country : * country->get_neighbors()){
-                    if (neighbor_country->get_owner() == player && neighbor_country->get_armies() > 1){
+                    if (neighbor_country->get_owner() != player && neighbor_country->get_armies() > 1){
                         strongest_country = country;
                         biggest_army = country->get_armies();
                         break;
@@ -454,7 +454,7 @@ forces in one country),
         }
 
         if (strongest_country == nullptr){
-            Terminal::error("Strongest_country is null, this should NEVER happen");
+            Terminal::error("Player " + player->get_color() + " has no country to attack from");
             return has_won_a_battle;
         }
 
