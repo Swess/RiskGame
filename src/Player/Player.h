@@ -4,6 +4,7 @@
 #include "../Map/Map.h"
 #include "../Cards/Cards.h"
 #include "../Dice/Dice.h"
+#include "./PlayerStrategies.h"
 
 using namespace std;
 using namespace Board;
@@ -17,34 +18,50 @@ namespace Player {
 
     class Player {
     private:
+        //Data members
         vector<Country *> *countries;
+        player_color * color;
+        PlayerStrategies * playerStrategies;
+
+        //Methods
         void fortify();
         void reinforce();
         bool attack();
-        bool is_able_to_attack();
-        player_color * color;
         static int player_count;
-        vector<Country *> get_countries_attack_source();
-        int battle_and_get_last_roll_amount(Country *source, Country *target) const;
-        int get_attacker_amount_of_dice(Country *source) const;
         bool player_can_fortify() const;
-        void reinforce_country(int new_army);
         int get_army_by_continent_owned();
-        int update_army_by_exchange(int new_army) const;
     public:
         // TODO: These need to be private
         Dice::Dice *dice;
         Cards::Hand *hand;
 
         Player();
+        Player(PlayerStrategies * playerStrategies1);
         virtual ~Player();
+
+        /**
+         * change player strategy at runtime
+         */
+        void setPlayerStrategy(PlayerStrategies * playerStrategies1);
+
         /**
          * Take control of a country and handle logic for making sure the player is the only
          * one that has control.
          */
         void gain_control(Country* country);
+        /*
+         * Reset the player count to make sure we have new colors if we reset the gameinstance.
+         */
         static void reset_player_count();
+        /*
+         * Verify if the player is able to attack with his country as context
+         */
+        bool is_able_to_attack();
 
+        /*
+         * @returns list of available countries attack source
+         */
+        vector<Country *> get_countries_attack_source();
         /**
          * Take control of multiple country and handle logic for making sure the player is the only
          * one that has control. Used for testing mostly.
