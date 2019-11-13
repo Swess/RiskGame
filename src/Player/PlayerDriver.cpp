@@ -5,9 +5,11 @@
 #include <cassert>
 
 #define private public
+#define protected public
 
 #include "PlayerDriver.h"
 #include "Player.h"
+#include "PlayerStrategies.h"
 #include "../MapLoader/MapLoader.h"
 #include "../Terminal/Terminal.h"
 #include "../exceptions.h"
@@ -34,7 +36,7 @@ namespace Player {
 
             Country *source = countries.at(0);
 
-            int amount_of_dice = player->get_attacker_amount_of_dice(source);
+            int amount_of_dice = player->playerStrategies->get_attacker_amount_of_dice(source);
 
             if (source->get_armies() > 3) {
                 assert(amount_of_dice == 3);
@@ -100,7 +102,7 @@ namespace Player {
             // Substitute inputs and test
             vector<int> input_vector = {3, 2, 0};
             Terminal::set_input_vector(input_vector);
-            player->battle_and_get_last_roll_amount(source, target_country);
+            player->playerStrategies->battle_and_get_last_roll_amount(source, target_country);
             Terminal::clear_terminal_input_counter();
 
             assert(source->get_armies() == 10);
@@ -109,7 +111,7 @@ namespace Player {
             // .. With 2 dices
             input_vector = {2, 2, 0};
             Terminal::set_input_vector(input_vector);
-            player->battle_and_get_last_roll_amount(source, target_country);
+            player->playerStrategies->battle_and_get_last_roll_amount(source, target_country);
             Terminal::clear_terminal_input_counter();
 
             assert(source->get_armies() == 10);
@@ -118,7 +120,7 @@ namespace Player {
             // With 1 dice attack
             input_vector = {1, 2, 0};
             Terminal::set_input_vector(input_vector);
-            player->battle_and_get_last_roll_amount(source, target_country);
+            player->playerStrategies->battle_and_get_last_roll_amount(source, target_country);
             Terminal::clear_terminal_input_counter();
 
             assert(source->get_armies() == 10);
