@@ -27,6 +27,10 @@ pattern.
 
 namespace Player {
 
+    PlayerStrategies::PlayerStrategies() {
+        player = nullptr;
+    }
+
     PlayerStrategies::PlayerStrategies(Player * received_player) {
         player = received_player;
     }
@@ -318,10 +322,134 @@ namespace Player {
         return last_roll_attacker;
     }
 
+    HumanPlayerStrategy::~HumanPlayerStrategy() {
+
+    }
+
     int PlayerStrategies::get_attacker_amount_of_dice(Country *source) const {
         int available_dice_attacker = source->get_armies() - 1;
         // Clamp the amount of attacker's dice to 3
         if (available_dice_attacker > 3) available_dice_attacker = 3;
         return available_dice_attacker;
+    }
+
+    void PlayerStrategies::setPlayer(Player * d_player) {
+        this->player = d_player;
+    }
+
+    BenevolentPlayerStrategy::BenevolentPlayerStrategy(Player *player) : PlayerStrategies(player) {
+
+    }
+
+    bool BenevolentPlayerStrategy::attack() {
+        return false;
+    }
+
+    vector<Board::Country *> BenevolentPlayerStrategy::fortify() {
+        Terminal::debug("Performing fortify from a benevolent player" + player->get_color());
+        // Fortifies in order to move armies to weaker countries
+        vector<Board::Country *> answer;
+        vector<Board::Country *> owned_countries = player->get_countries();
+
+        //Find weakest country
+        int smallest_army = 99999;
+        Country * weakest_country = nullptr;
+        for (auto &country : owned_countries){
+            if (country->get_armies() < smallest_army){
+                // Verify if the country has a neighbor that player owns
+                for (auto &neighbor_country : * country->get_neighbors()){
+                    if (neighbor_country->get_owner() == player){
+                        weakest_country = country;
+                        smallest_army = country->get_armies();
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (weakest_country == nullptr){
+            return answer;
+        }
+
+        // Find the biggest army neighbor to weakest country
+        int biggest_army = 0;
+        Country * strongest_neighbor = nullptr;
+        for (auto &country : * weakest_country->get_neighbors()){
+            if (country->get_armies() > biggest_army ){
+                biggest_army = country->get_armies();
+                strongest_neighbor = country;
+            }
+        }
+
+        if(strongest_neighbor == nullptr) {
+            Terminal::error("Strongest neighbor is null, this should never happen");
+            return answer;
+        }
+
+        int total_armies = strongest_neighbor->get_armies() + weakest_country->get_armies();
+        int total_armies_divided_by_two = total_armies / 2;
+        if (total_armies_divided_by_two * 2 == total_armies) {
+            strongest_neighbor->set_armies(total_armies_divided_by_two);
+            weakest_country->set_armies(total_armies_divided_by_two);
+        } else {
+            strongest_neighbor->set_armies(total_armies_divided_by_two+1);
+            weakest_country->set_armies(total_armies_divided_by_two);
+        }
+
+        answer.emplace_back(strongest_neighbor); // source
+        answer.emplace_back(weakest_country); //target
+        return answer;
+    }
+
+    void BenevolentPlayerStrategy::reinforce(int i) {
+        Terminal::debug("Performing reinforce from a benevolent player" + player->get_color());
+
+        vector<Board::Country *> owned_countries = player->get_countries();
+        //Find weakest country
+        int smallest_army = 99999;
+        Country * weakest_country = nullptr;
+        for (auto &country : owned_countries){
+            if (country->get_armies() < smallest_army){
+                weakest_country = country;
+                smallest_army = country->get_armies();
+            }
+        }
+
+        if(weakest_country == nullptr) {
+            Terminal::error("Weakest country is null, this should NEVER happen");
+            return;
+        }
+
+        weakest_country->set_armies(weakest_country->get_armies() + i);
+
+    }
+
+    BenevolentPlayerStrategy::~BenevolentPlayerStrategy() {
+
+    }
+
+    bool AggressivePlayerStrategy::attack() {
+        return false;
+    }
+
+    vector<Board::Country *> AggressivePlayerStrategy::fortify() {
+        return vector<Board::Country *>();
+    }
+
+    void AggressivePlayerStrategy::reinforce(int i) {
+
+    }
+
+    int
+    AggressivePlayerStrategy::battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const {
+        return 0;
+    }
+
+    AggressivePlayerStrategy::AggressivePlayerStrategy(Player *player) : PlayerStrategies(player) {
+
+    }
+
+    AggressivePlayerStrategy::~AggressivePlayerStrategy() {
+
     }
 }

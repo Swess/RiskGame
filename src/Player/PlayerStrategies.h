@@ -30,19 +30,20 @@ namespace Player {
         Player * player;
         int get_attacker_amount_of_dice(Board::Country *source) const;
     public:
+        PlayerStrategies();
         PlayerStrategies(Player *received_player);
         virtual ~PlayerStrategies();
-
-    public:
         virtual bool attack() = 0;
         virtual vector<Board::Country *> fortify() = 0;
         virtual void reinforce(int i) = 0;
+        void setPlayer(Player *d_player);
     };
 
     class HumanPlayerStrategy : public PlayerStrategies{
     public:
-        HumanPlayerStrategy(Player * player) ;
-        ~HumanPlayerStrategy() = default;
+        HumanPlayerStrategy() = default;
+        HumanPlayerStrategy(Player * player);
+        ~HumanPlayerStrategy();
 
     private:
         bool attack() override;
@@ -57,26 +58,41 @@ namespace Player {
         void reinforce_country(int new_army);
     };
 
-//    class AggressivePlayerStrategy : public PlayerStrategies {
-//    public:
-//        AggressivePlayerStrategy(Player * player);
-//        ~AggressivePlayerStrategy() = default;
-//    private:
-//        vector<Board::Country *> attack(vector<Board::Country *> countries_source, vector<Board::Country *> owned_countries) override;
-//        vector<Board::Country *> fortify(vector<Board::Country *> owned_countries) override;
-//        void reinforce(int army, Cards::Hand *hand, vector<Board::Country *> owned_countries) override;
-//
-//    };
-//
-//    class BenevolentPlayerStrategy : public PlayerStrategies {
-//    public:
-//        BenevolentPlayerStrategy(Player * player);
-//        ~BenevolentPlayerStrategy() = default;
-//    private:
-//        vector<Board::Country *> attack(vector<Board::Country *> countries_source, vector<Board::Country *> owned_countries) override;
-//        vector<Board::Country *> fortify(vector<Board::Country *> owned_countries) override;
-//        void reinforce(int army, Cards::Hand *hand, vector<Board::Country *> owned_countries) override;
-//    };
+    class AggressivePlayerStrategy : public PlayerStrategies {
+    public:
+        AggressivePlayerStrategy() = default;
+        AggressivePlayerStrategy(Player * player);
+        ~AggressivePlayerStrategy();
+    private:
+    public:
+        bool attack() override;
+
+        vector<Board::Country *> fortify() override;
+
+        void reinforce(int i) override;
+
+    private:
+        int battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const override;
+
+    };
+
+    class BenevolentPlayerStrategy : public PlayerStrategies {
+    public:
+        BenevolentPlayerStrategy() = default;
+        BenevolentPlayerStrategy(Player * player);
+        ~BenevolentPlayerStrategy();
+    private:
+        int battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const {
+            return 0;
+        }
+
+    public:
+        bool attack() override;
+
+        vector<Board::Country *> fortify() override;
+
+        void reinforce(int i) override;
+    };
 
 }
 

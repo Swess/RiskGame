@@ -29,9 +29,7 @@ namespace Player {
         bool attack();
         static int player_count;
         bool player_can_fortify() const;
-        void reinforce_country(int new_army);
         int get_army_by_continent_owned();
-        int update_army_by_exchange(int new_army) const;
     public:
         // TODO: These need to be private
         Dice::Dice *dice;
@@ -40,6 +38,12 @@ namespace Player {
         Player();
         Player(PlayerStrategies * playerStrategies1);
         virtual ~Player();
+
+        /**
+         * change player strategy at runtime
+         */
+        void setPlayerStrategy(PlayerStrategies * playerStrategies1);
+
         /**
          * Take control of a country and handle logic for making sure the player is the only
          * one that has control.

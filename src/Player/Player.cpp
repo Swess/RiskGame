@@ -32,6 +32,7 @@ namespace Player {
         hand = new Cards::Hand();
         dice = new Dice::Dice();
         countries = new vector<Country *>();
+        playerStrategies1->setPlayer(this);
         playerStrategies = playerStrategies1;
     }
 
@@ -127,7 +128,7 @@ namespace Player {
         }
         return new_army;
     }
-    
+
     bool Player::attack() {
         return playerStrategies->attack();
     }
@@ -154,9 +155,9 @@ namespace Player {
     void Player::turn() {
         Terminal::debug("Player has started their turn");
 
-        this->reinforce();
-//        this->attack();
-//        this->fortify();
+        reinforce();
+        attack();
+        fortify();
 
         Terminal::debug("Player has ended their turn");
     }
@@ -214,6 +215,11 @@ namespace Player {
 
     void Player::reset_player_count() {
         player_count = 0;
+    }
+
+    void Player::setPlayerStrategy(PlayerStrategies *playerStrategies1) {
+        delete playerStrategies;
+        playerStrategies = playerStrategies1;
     }
 
 
