@@ -14,11 +14,8 @@ interaction, and computer players make decisions automatically, which are both i
 pattern.
 */
 
-#ifndef TEAM12_DOMINATIONGAME_PLAYERSTRATEGIES_H
-#define TEAM12_DOMINATIONGAME_PLAYERSTRATEGIES_H
+#pragma once
 
-
-#include "PlayerStrategies.h"
 #include "../Cards/Cards.h"
 #include "../Map/Map.h"
 
@@ -95,5 +92,3 @@ namespace Player {
     };
 
 }
-
-#endif //TEAM12_DOMINATIONGAME_PLAYERSTRATEGIES_H
