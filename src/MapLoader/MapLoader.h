@@ -108,6 +108,7 @@ namespace MapLoader {
         void flush_buffers(MapLoader &mapLoader) override;
 
     private:
+        string* mode;
         vector<_continent> *continents_buffer;
         map<string,_country> *countries_buffer;
         vector<pair<string,string>> *borders_buffer;
