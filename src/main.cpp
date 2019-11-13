@@ -24,9 +24,8 @@ int main(int argc, const char*argv[]) {
         if (string_test == argv[i] ) test = true;
     }
 
-
-    // Terminal::debug_mode_on();
     if (test) {
+        Terminal::debug_mode_on();
         Terminal::test_mode_on();
         Terminal::run_test("MapLoader", MapLoader::Driver::run);
         Terminal::run_test("Map", Board::Driver::run);
