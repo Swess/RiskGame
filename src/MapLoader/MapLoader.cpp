@@ -59,11 +59,16 @@ namespace MapLoader {
         if (h_find != INVALID_HANDLE_VALUE) {
             do {
                 if (!(fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+                    string map_name = fd.cFileName;
+                    size_t extension = map_name.find(".map");
+                    // If not of extension .map
+                    if(extension >= map_name.length())
+                        continue;
                     if (index == curr_index++) {
                         Terminal::debug("File found.");
                         FindClose(h_find);
-                        Terminal::debug(fd.cFileName);
-                        return open_file(fd.cFileName);
+                        Terminal::debug(map_name);
+                        return open_file(map_name);
                     }
                 }
             } while (FindNextFile(h_find, &fd));
