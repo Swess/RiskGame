@@ -35,8 +35,7 @@ class Player : public Observer::PlayerSubject {
         bool player_can_fortify() const;
         int get_army_by_continent_owned();
         ///////////////////////////////
-        int update_army_by_exchange(int new_army) const;
-        void clear_state();
+
 
         /**
          * Current state of player, this is what the observer is watching
@@ -45,6 +44,12 @@ class Player : public Observer::PlayerSubject {
         Country * source_country;
         Country * target_country;
         int * number_of_armies;
+        int * battle_number;
+        bool * success;
+        int * number_armies_gained_from_countries;
+        int * number_armies_gained_from_continent;
+        int * number_armies_gained_from_exchange;
+        vector<pair<int, Country*>*> *reinforce_pair_vector;
         ///////////////////////////////////
     public:
         // TODO: These need to be private
@@ -96,10 +101,27 @@ class Player : public Observer::PlayerSubject {
         void turn();
 
         /////////////////////////
-        string get_phase() override;
+        void set_source_country(Country *country);
+        void set_target_country(Country *country);
+        void set_battle_number(int battle_number);
+        void set_success(bool success);
+        void set_number_armies(int armies);
+        void set_armies_gained_by_exchange(int gained);
+        void set_autonomous_fortification_phase_state(Country *source, Country *target, int armies_moved);
+        void update_reinforce_pair_vector(pair<int, Country*> *int_country);
+
+
+
+        string get_phase_string() override;
         Country *get_source_country() override;
         Country *get_target_country() override;
         int get_number_armies_used() override;
-        /////////////////////////
+        int get_battle_number() override;
+        bool *get_success() override;
+        int get_armies_gained_by_continent_owned() override;
+        int get_armies_gained_by_country_owned() override;
+        int get_armies_gained_by_exchange() override;
+        vector<pair<int, Country*>*> *get_reinforcement_vector() override;
+        void clear_phase_state();
     };
 }

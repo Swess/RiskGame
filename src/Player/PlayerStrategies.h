@@ -50,8 +50,8 @@ namespace Player {
     class HumanPlayerStrategy : public PlayerStrategies{
     public:
         HumanPlayerStrategy() = default;
-        HumanPlayerStrategy(Player * player);
-        ~HumanPlayerStrategy();
+        explicit HumanPlayerStrategy(Player * player);
+        ~HumanPlayerStrategy() override;
 
     private:
 
@@ -63,7 +63,7 @@ namespace Player {
 
         void reinforce(int i) override;
         //Used by reinforce
-        int update_army_by_exchange(int new_army) const;
+        int update_army_by_exchange() const;
         void reinforce_country(int new_army);
     };
 
@@ -76,8 +76,8 @@ namespace Player {
     class AggressivePlayerStrategy : public PlayerStrategies {
     public:
         AggressivePlayerStrategy() = default;
-        AggressivePlayerStrategy(Player * player);
-        ~AggressivePlayerStrategy();
+        explicit AggressivePlayerStrategy(Player * player);
+        ~AggressivePlayerStrategy() override;
     private:
     public:
         bool attack() override;
@@ -98,10 +98,10 @@ namespace Player {
     class BenevolentPlayerStrategy : public PlayerStrategies {
     public:
         BenevolentPlayerStrategy() = default;
-        BenevolentPlayerStrategy(Player * player);
-        ~BenevolentPlayerStrategy();
+        explicit BenevolentPlayerStrategy(Player * player);
+        ~BenevolentPlayerStrategy() override;
     private:
-        int battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const {
+        int battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const override {
             return 0;
         }
 

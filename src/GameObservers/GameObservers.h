@@ -35,10 +35,17 @@ namespace Observer {
     class PlayerSubject : public Subject {
     public:
         virtual string get_color() = 0;
-        virtual string get_phase() = 0;
+        virtual string get_phase_string() = 0;
         virtual Board::Country *get_source_country() = 0;
         virtual Board::Country *get_target_country() = 0;
+        virtual int get_battle_number() = 0;
+        virtual bool *get_success() = 0;
         virtual int get_number_armies_used() = 0;
+        virtual int get_armies_gained_by_country_owned() = 0;
+        virtual int get_armies_gained_by_continent_owned() = 0;
+        virtual int get_armies_gained_by_exchange() = 0;
+        virtual vector<pair<int, Board::Country*>*> *get_reinforcement_vector() = 0;
+
     };
 
     class PlayerObserver : public Observer {

@@ -19,16 +19,40 @@ namespace GameEngine {
 
     void callback(Observer::PlayerSubject *player) {
         ostringstream os;
+        os << endl;
         os << "////////////////////////////////////\n";
-        os << player->get_color() << " player: " << player->get_phase() << " phase\n\n";
+        os << player->get_color() << " player: " << player->get_phase_string() << " phase\n\n";
+        if (player->get_battle_number() > 0) {
+            os << "Battle number: " << player->get_battle_number() << "\n";
+        }
+        if (player->get_number_armies_used() > 0) {
+            os << "Number of armies used: " << player->get_number_armies_used() << "\n";
+        }
+        if (player->get_armies_gained_by_continent_owned() >= 0) {
+            os << "number of armies gained from continents owned: " << player->get_armies_gained_by_continent_owned() << endl;
+        }
+        if (player->get_armies_gained_by_country_owned() >= 0) {
+            os << "number of armies gained from country owned: " << player->get_armies_gained_by_country_owned() << endl;
+        }
+        if (player->get_armies_gained_by_exchange() >= 0) {
+            os << "number of armies gained from exchange: " << player->get_armies_gained_by_exchange() << endl;
+            int sum = player->get_armies_gained_by_exchange() + player->get_armies_gained_by_country_owned() + player->get_armies_gained_by_continent_owned();
+            os << "Total number of armies gained: " << sum << endl;
+        }
+        if (!player->get_reinforcement_vector()->empty()) {
+            for (auto int_country : *player->get_reinforcement_vector()) {
+                os << "Country: " << int_country->second->get_name() << " reinforced with " << int_country->first << " armies" << endl;
+            }
+        }
         if (player->get_source_country()) {
-            os << "source country: " << player->get_source_country()->get_name() << "\n";
+            os << "Source country: " << player->get_source_country()->get_name() << "\n";
         }
         if (player->get_target_country()) {
             os << "Target country: " << player->get_target_country()->get_name() << "\n";
         }
-        if (player->get_number_armies_used() > 0) {
-            os << "Number of armies used: " << player->get_number_armies_used() << "\n";
+        if (player->get_success()) {
+            string result = player->get_success() ? "success" : "failure";
+            os << "The attack was a " << result << "\n";
         }
         os << "////////////////////////////////////\n";
         Terminal::print(os.str());
