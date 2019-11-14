@@ -58,10 +58,15 @@ namespace GameEngine {
                 if(! (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) ) {
                     string map_name = fd.cFileName;
                     size_t extension = map_name.find(".map");
+
+                    // If not of extension .map
+                    if(extension >= map_name.length())
+                        continue;
+
                     map_name = map_name.substr(0, extension);
                     results.emplace_back(map_name);
                 }
-            } while( FindNextFile(h_find, &fd)) ;
+            } while( FindNextFile(h_find, &fd));
             FindClose(h_find);
         }
 
