@@ -156,7 +156,10 @@ namespace Player {
     bool Player::attack() {
         *current_phase = phase::ATTACK;
         notify();
-        return playerStrategies->attack();
+        bool attack = playerStrategies->attack();
+        clear_phase_state();
+        return attack;
+
     }
 
     void Player::gain_control(Country *country) {

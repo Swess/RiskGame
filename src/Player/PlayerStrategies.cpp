@@ -84,6 +84,7 @@ namespace Player {
                 Terminal::print("Your new country now is");
                 Terminal::print(target->to_string());
             } else if (source->get_armies() == 1){
+                got_a_country = false;
                 Terminal::print("Whoops! You can't attack from this country anymore. Better luck next time.");
             }
             player->set_success(got_a_country);
