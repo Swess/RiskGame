@@ -34,6 +34,7 @@ namespace Player {
         bool got_a_country = false;
         int battle_number = 0;
         while(Terminal::print_select("Player " + this->player->get_color() + ": Do you want to attack this round?")){
+            player->clear_phase_state();
             player->set_battle_number(++battle_number);
             if (!this->player->is_able_to_attack()) {
                 Terminal::print("Player " + this->player->get_color() + " don't have any country he can attack from." );
@@ -54,15 +55,17 @@ namespace Player {
 
             Terminal::print("Choose your target country");
             vector<string> selections_target;
+            vector<Country*> valid_countries;
             for (auto country : * countries_source.at(answer_source)->get_neighbors()){
                 if (country->get_owner() == this->player) continue;
                 selections_target.emplace_back(country->to_string());
+                valid_countries.emplace_back(country);
             }
             selections_target.emplace_back("Restart the process.");
             int answer_target = Terminal::print_select(selections_target);
             if (answer_target == selections_target.size()-1) { continue; }
             Country * source = countries_source.at(answer_source);
-            Country * target = source->get_neighbors()->at(answer_target);
+            Country * target = valid_countries.at(answer_target);
             player->set_target_country(target);
 
             // At the end of an attack, if it's a win a attacker has to move in at
@@ -88,7 +91,6 @@ namespace Player {
                 Terminal::print("Whoops! You can't attack from this country anymore. Better luck next time.");
             }
             player->set_success(got_a_country);
-            player->clear_phase_state();
         } // End of attack round
         return got_a_country;
     }
@@ -99,7 +101,6 @@ namespace Player {
 
         new_army+= exchange_gained_exchange;
         reinforce_country(new_army);
-        player->clear_phase_state();
     }
 
     int HumanPlayerStrategy::update_army_by_exchange() const {

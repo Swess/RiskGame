@@ -76,6 +76,7 @@ namespace Player {
     void Player::fortify() {
         Terminal::debug("Player fortify");
         Terminal::print("Fortification phase");
+        clear_phase_state();
         *current_phase = phase::FORTIFICATION;
         notify();
         vector<string> selections;
@@ -95,7 +96,6 @@ namespace Player {
         source_country = fortify_country.at(0);
         target_country = fortify_country.at(1);
         notify();
-        clear_phase_state();
     }
 
     bool Player::player_can_fortify() const {
@@ -117,6 +117,7 @@ namespace Player {
 
     void Player::reinforce() {
 
+        clear_phase_state();
         *current_phase = phase::REINFORCEMENT;
         *number_armies_gained_from_countries = (int) this->get_countries().size() / 3;
         if (*number_armies_gained_from_countries < 3) *number_armies_gained_from_countries = 3;
@@ -154,10 +155,10 @@ namespace Player {
     }
 
     bool Player::attack() {
+        clear_phase_state();
         *current_phase = phase::ATTACK;
         notify();
         bool attack = playerStrategies->attack();
-        clear_phase_state();
         return attack;
 
     }

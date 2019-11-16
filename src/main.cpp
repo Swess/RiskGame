@@ -6,6 +6,7 @@
 #include "Cards/CardsDriver.h"
 #include "Player/PlayerDriver.h"
 #include "Player/PlayerStrategiesDriver.h"
+#include "GameObservers/PlayerObserverDriver.h"
 #include "Terminal/Terminal.h"
 // RUN INCLUDES
 #include "GameEngine/GameEngine.h"
