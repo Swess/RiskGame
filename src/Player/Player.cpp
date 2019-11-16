@@ -176,6 +176,7 @@ namespace Player {
 
         countries->push_back(country);
         country->set_owner(this);
+        GameEngine::GameEngine::instance()->get_map()->notify();
     }
 
     vector<Country *> Player::get_countries() {

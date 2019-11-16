@@ -41,6 +41,7 @@ namespace GameEngine {
         Cards::Deck * get_deck();
         vector<int> * get_player_order();
         vector<Observer::PlayerObserver*> *player_observers;
+        Observer::MapObserver*  map_observer;
     private:
         GameEngine();
         virtual ~GameEngine();

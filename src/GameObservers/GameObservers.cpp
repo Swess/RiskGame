@@ -56,4 +56,17 @@ void Observer::PlayerObserver::update() {
 }
 
 
+Observer::MapObserver::MapObserver(MapSubject *model, void (*display_callback)(MapSubject*)): Observer(model) {
+    this->model = model;
+    this->display_callback = display_callback;
+}
 
+Observer::MapObserver::~MapObserver() {
+    model->detach(this);
+    model = nullptr;
+    display_callback = nullptr;
+}
+
+void Observer::MapObserver::update() {
+    display_callback(model);
+}

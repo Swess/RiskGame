@@ -5,9 +5,12 @@
 #pragma once
 
 #include <vector>
-#include "../Map/Map.h"
+#include <string>
+//#include "../Map/Map.h"
+
 
 using namespace std;
+namespace Board {class Country;}
 
 namespace Observer {
 
@@ -56,6 +59,21 @@ namespace Observer {
         void (*display_callback)(PlayerSubject*);
     private:
         PlayerSubject *model;
+    };
+
+    class MapSubject : public Subject {
+    public:
+        virtual vector<Board::Country *> get_countries() = 0;
+    };
+
+    class MapObserver : public Observer {
+    public:
+        MapObserver(MapSubject *model, void (*display_callback)(MapSubject*));
+        ~MapObserver();
+        void update() override;
+        void (*display_callback)(MapSubject*);
+    private:
+        MapSubject *model;
     };
 }
 

@@ -17,7 +17,7 @@ using std::to_string;
 namespace GameEngine {
     GameEngine *GameEngine::game_engine_instance = nullptr;
 
-    void callback(Observer::PlayerSubject *player) {
+    void phase_callback(Observer::PlayerSubject *player) {
         ostringstream os;
         os << endl;
         os << "////////////////////////////////////\n";
@@ -56,6 +56,14 @@ namespace GameEngine {
         }
         os << "////////////////////////////////////\n";
         Terminal::print(os.str());
+    }
+
+    void map_callback(Observer::MapSubject *map) {
+        vector<Player::Player *> *players = GameEngine::instance()->get_players();
+        ostringstream os;
+        for (auto player : *players) {
+            os << player->get_color() << "Player owns " << player->get_countries().size() << " armies";
+        }
     }
 
     GameEngine *GameEngine::instance() {
@@ -163,7 +171,7 @@ namespace GameEngine {
 
         for (int i = 1; i <= answer ; ++i) {
             auto * p = new Player::Player;
-            auto *observer = new Observer::PlayerObserver(p, &callback);
+            auto *observer = new Observer::PlayerObserver(p, &phase_callback);
             player_observers->emplace_back(observer);
             players->emplace_back(p);
         }
@@ -337,6 +345,7 @@ namespace GameEngine {
 
     void GameEngine::game_loop() {
         Terminal::debug("Starting game loop.");
+        map_observer = new Observer::MapObserver(map, map_callback);
         while (!game_done()) {
             for(int player_index : *player_order){
                 if (game_done()) continue;
