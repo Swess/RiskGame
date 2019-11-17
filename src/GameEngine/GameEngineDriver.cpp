@@ -28,7 +28,8 @@ namespace GameEngine {
         }
 
         bool map_loaded() {
-            GameEngine::instance()->start_test(1, 3);
+            string map_name = "eurasien.map";
+            GameEngine::instance()->start_test(map_name, 3);
             auto map = GameEngine::instance()->get_map();
             assert(map->is_connected());
             assert(map->get_countries().at(0)->get_name() == "Portugal");
@@ -56,8 +57,9 @@ namespace GameEngine {
         }
 
         bool mutex_country_to_players() {
+            string map_name = "eurasien.map";
             int nb_of_players = 4;
-            GameEngine::instance()->start_test(1, nb_of_players);
+            GameEngine::instance()->start_test(map_name, nb_of_players);
             auto map = GameEngine::instance()->get_map();
             vector<Player::Player *> *loaded_players = GameEngine::instance()->get_players();
 

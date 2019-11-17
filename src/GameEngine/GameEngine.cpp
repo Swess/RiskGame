@@ -90,6 +90,15 @@ namespace GameEngine {
         Terminal::debug("Map defined in GameEngine");
     }
 
+
+    void GameEngine::select_map(string &name) {
+        Terminal::print("Select the map you want to play in.");
+        MapLoader::MapLoader mapLoader;
+        map = mapLoader.load(name)->build();
+        Terminal::debug("Map defined in GameEngine");
+    }
+
+
     void GameEngine::create_deck() {
         Terminal::debug("Creating the deck");
 
@@ -145,6 +154,17 @@ namespace GameEngine {
         select_player();
         Terminal::debug("Game Engine Done.");
     }
+
+    void GameEngine::start_test(string &name, int nb_player) {
+        nb_player -= 2;
+        Terminal::debug("Game Engine Starting...");
+        select_map(name);
+        create_deck();
+        Terminal::set_input(nb_player);
+        select_player();
+        Terminal::debug("Game Engine Done.");
+    }
+
 
     GameEngine::GameEngine() {
         map = nullptr;

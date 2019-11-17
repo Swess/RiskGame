@@ -29,7 +29,7 @@ namespace GameEngine {
          */
         void start();
         void start_test(int map_index, int nb_player);
-        void startup_phase();
+        void start_test(string &name, int nb_player);void startup_phase();
         void game_loop();
         void reset_test(); // ONLY USE FOR TESTS
         void assign_player_order_randomly();
@@ -54,6 +54,7 @@ namespace GameEngine {
          * Load the resources accordingly, and create objects.
          */
         void select_map();
+        void select_map(string &name);
         void select_player();
         void create_deck();
         bool game_done();
