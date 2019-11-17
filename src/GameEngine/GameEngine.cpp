@@ -255,6 +255,7 @@ namespace GameEngine {
         player_order = new vector<int>();
         Player::Player::reset_player_count();
         players = new vector<Player::Player *>();
+        game_state->clear();
     }
 
     vector<int> *GameEngine::get_player_order() {
@@ -442,6 +443,12 @@ namespace GameEngine {
 
     Player::Player *GameState::get_winner() {
         return winner;
+    }
+
+    void GameState::clear() {
+        players_in_game->clear();
+        winner = nullptr;
+        *game_over = false;
     }
 
 }

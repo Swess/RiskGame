@@ -75,6 +75,7 @@ class GameState : public Observer::GameStateSubject{
         GameState();
         ~GameState();
         void remove_player(Player::Player *player);
+        void clear();
         vector<Player::Player *> *get_players_in_game() override;
         bool is_game_over() override;
         Player::Player *get_winner() override;
