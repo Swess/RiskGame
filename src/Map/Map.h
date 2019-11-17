@@ -3,11 +3,12 @@
 #include <vector>
 #include <string>
 #include <map>
+#include "../GameObservers/GameObservers.h"
 
 using namespace std;
 
 // Some Fwd declarations
-namespace Player { class Player; }
+namespace Player { class Player;}
 
 namespace Board {
 
@@ -113,7 +114,7 @@ namespace Board {
      * The Map is the complete graph of all countries (Nodes). It also contains the continents and manages them.
      * The edges are implemented as an AdjacencyList with the corresponding object index to ensure O(1) seek & query.
      */
-    class Map {
+class Map : public Observer::MapSubject {
     public:
 
         Map();
@@ -186,7 +187,7 @@ namespace Board {
          * Get a vector of pointers to all countries present in the map.
          * @return
          */
-        vector<Country *> get_countries() const;
+        vector<Country *> get_countries() override;
 
         /**
          * Get a vector of pointers to all continents present in the map.

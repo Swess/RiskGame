@@ -32,7 +32,10 @@ namespace Player {
 
     bool HumanPlayerStrategy::attack() {
         bool got_a_country = false;
+        int battle_number = 0;
         while(Terminal::print_select("Player " + this->player->get_color() + ": Do you want to attack this round?")){
+            player->clear_phase_state();
+            player->set_battle_number(++battle_number);
             if (!this->player->is_able_to_attack()) {
                 Terminal::print("Player " + this->player->get_color() + " don't have any country he can attack from." );
                 return false;
@@ -48,19 +51,22 @@ namespace Player {
             selections_source.emplace_back("Restart the process.");
             int answer_source = Terminal::print_select(selections_source);
             if (answer_source == selections_source.size()-1) { continue; }
+            player->set_source_country(countries_source.at(answer_source));
 
             Terminal::print("Choose your target country");
             vector<string> selections_target;
+            vector<Country*> valid_countries;
             for (auto country : * countries_source.at(answer_source)->get_neighbors()){
                 if (country->get_owner() == this->player) continue;
                 selections_target.emplace_back(country->to_string());
+                valid_countries.emplace_back(country);
             }
             selections_target.emplace_back("Restart the process.");
             int answer_target = Terminal::print_select(selections_target);
             if (answer_target == selections_target.size()-1) { continue; }
-
             Country * source = countries_source.at(answer_source);
-            Country * target = source->get_neighbors()->at(answer_target);
+            Country * target = valid_countries.at(answer_target);
+            player->set_target_country(target);
 
             // At the end of an attack, if it's a win a attacker has to move in at
             // least as many armies as the number of dice you rolled in its last battle
@@ -81,20 +87,25 @@ namespace Player {
                 Terminal::print("Your new country now is");
                 Terminal::print(target->to_string());
             } else if (source->get_armies() == 1){
+                got_a_country = false;
                 Terminal::print("Whoops! You can't attack from this country anymore. Better luck next time.");
             }
+            player->set_success(got_a_country);
         } // End of attack round
         return got_a_country;
     }
 
     void HumanPlayerStrategy::reinforce(int new_army) {
-        new_army = update_army_by_exchange(new_army);
+        int exchange_gained_exchange = update_army_by_exchange();
+        player->set_armies_gained_by_exchange(exchange_gained_exchange);
 
+        new_army+= exchange_gained_exchange;
         reinforce_country(new_army);
     }
 
-    int HumanPlayerStrategy::update_army_by_exchange(int new_army) const {
+    int HumanPlayerStrategy::update_army_by_exchange() const {
         bool trade_again = true;
+        int new_army = 0;
         string message;
         if (player->hand->size() < 3) trade_again = false;
         while (trade_again) {
@@ -164,8 +175,8 @@ namespace Player {
     }
 
     void HumanPlayerStrategy::reinforce_country(int new_army) {
-
         while (new_army != 0) {
+            auto *reinforce_pair = new pair<int, Country*>;
             vector<Country *> owned_countries = player->get_countries();
             vector<string> selections;
             selections.reserve(owned_countries.size());
@@ -179,6 +190,9 @@ namespace Player {
             message = "How many units?";
             int answer = Terminal::print_select(1, new_army, message);
             source->set_armies(source->get_armies()+answer);
+            reinforce_pair->first = answer;
+            reinforce_pair->second = source;
+            player->update_reinforce_pair_vector(reinforce_pair);
             new_army -= answer;
         }
     }
@@ -187,7 +201,8 @@ namespace Player {
         vector<Board::Country *> fortificate_country;
         bool validChoice = false;
         int source_country_index;
-        Country * source_country;vector<string> selections;
+        Country * source_country;
+        vector<string> selections;
 
         int user_want_fortify = Terminal::print_select("Fortification is possible, would you like to fortify?");
         if (!user_want_fortify) return fortificate_country;
@@ -213,6 +228,7 @@ namespace Player {
                 Terminal::print("must choose a country which has at least 2 armies.");
             }
         }
+        player->set_source_country(source_country);
 
         selections.clear();
         selections.shrink_to_fit();
@@ -234,6 +250,7 @@ namespace Player {
                 validChoice = true;
             }
         }
+        player->set_target_country(target_country);
 
         Terminal::print("Select number of armies to move");
         vector<string> num_of_armies(source_country->get_armies() - 1);
@@ -249,6 +266,7 @@ namespace Player {
         num_of_armies.shrink_to_fit();
         int selected_num_armies = Terminal::print_select(num_of_armies);
         selected_num_armies++;
+        player->set_number_armies(selected_num_armies);
 
         source_country->set_armies(source_country->get_armies() - selected_num_armies);
         target_country->set_armies(target_country->get_armies() + selected_num_armies);
@@ -256,9 +274,9 @@ namespace Player {
         os << selected_num_armies << " armies have been transferred from " << source_country->get_name() << " to " << target_country->get_name();
         Terminal::print(os.str());
 
-        fortificate_country.emplace_back(source_country);
-        fortificate_country.emplace_back(target_country);
-        return fortificate_country;
+//        fortificate_country.emplace_back(source_country);
+//        fortificate_country.emplace_back(target_country);
+        return fortificate_country; // make sure this is empty
     }
 
     int HumanPlayerStrategy::battle_and_get_last_roll_amount(Country *source, Country *target) const {
@@ -357,7 +375,6 @@ namespace Player {
         if (weakest_country == nullptr){
             return answer;
         }
-
         // Find the biggest army neighbor to weakest country
         int biggest_army = 0;
         Country * strongest_neighbor = nullptr;
@@ -375,13 +392,17 @@ namespace Player {
 
         int total_armies = strongest_neighbor->get_armies() + weakest_country->get_armies();
         int total_armies_divided_by_two = total_armies / 2;
-        if (total_armies_divided_by_two * 2 == total_armies) {
-            strongest_neighbor->set_armies(total_armies_divided_by_two);
-            weakest_country->set_armies(total_armies_divided_by_two);
+        int armies_set;
+        if (total_armies % 2 == 0) {
+            armies_set = total_armies_divided_by_two;
         } else {
-            strongest_neighbor->set_armies(total_armies_divided_by_two+1);
-            weakest_country->set_armies(total_armies_divided_by_two);
+            armies_set = total_armies_divided_by_two + 1;
         }
+        int armies_moved = armies_set - weakest_country->get_armies();
+        strongest_neighbor->set_armies(armies_set);
+        weakest_country->set_armies(total_armies_divided_by_two);
+
+        player->set_autonomous_fortification_phase_state(strongest_neighbor, weakest_country, armies_moved);
 
         answer.emplace_back(strongest_neighbor); // source
         answer.emplace_back(weakest_country); //target
@@ -406,6 +427,10 @@ namespace Player {
             Terminal::error("Weakest country is null, this should NEVER happen");
             return;
         }
+        auto reinforce_pair = new pair<int, Country*>;
+        reinforce_pair->first = i;
+        reinforce_pair->second = weakest_country;
+        player->update_reinforce_pair_vector(reinforce_pair);
 
         weakest_country->set_armies(weakest_country->get_armies() + i);
 
@@ -518,6 +543,7 @@ forces in one country),
         }
 
         int total_armies = strongest_neighbor->get_armies() + strongest_country->get_armies();
+        player->set_number_armies(strongest_neighbor->get_armies() - 1);
         strongest_neighbor->set_armies(1);
         strongest_country->set_armies(total_armies-1);
 
@@ -541,11 +567,16 @@ forces in one country),
             }
         }
 
+
         if(strongest_country == nullptr) {
-            Terminal::error("Weakest country is null, this should NEVER happen");
+            Terminal::error("Strongest country is null, this should NEVER happen");
             return;
         }
 
+        auto reinforce_pair = new pair<int, Country*>;
+        reinforce_pair->first = i;
+        reinforce_pair->second = strongest_country;
+        player->update_reinforce_pair_vector(reinforce_pair);
         strongest_country->set_armies(strongest_country->get_armies() + i);
     }
 

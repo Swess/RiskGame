@@ -7,6 +7,7 @@
 #include <ctime>
 #include <algorithm>
 #include <random>
+#include <sstream>
 #include "../MapLoader/MapLoader.h"
 #include "../Terminal/Terminal.h"
 #include "../exceptions.h"
@@ -15,6 +16,55 @@ using std::to_string;
 
 namespace GameEngine {
     GameEngine *GameEngine::game_engine_instance = nullptr;
+
+    void phase_callback(Observer::PlayerSubject *player) {
+        ostringstream os;
+        os << endl;
+        os << "////////////////////////////////////\n";
+        os << player->get_color() << " player: " << player->get_phase_string() << " phase\n\n";
+        if (player->get_battle_number() > 0) {
+            os << "Battle number: " << player->get_battle_number() << "\n";
+        }
+        if (player->get_number_armies_used() > 0) {
+            os << "Number of armies used: " << player->get_number_armies_used() << "\n";
+        }
+        if (player->get_armies_gained_by_continent_owned() >= 0) {
+            os << "number of armies gained from continents owned: " << player->get_armies_gained_by_continent_owned() << endl;
+        }
+        if (player->get_armies_gained_by_country_owned() >= 0) {
+            os << "number of armies gained from country owned: " << player->get_armies_gained_by_country_owned() << endl;
+        }
+        if (player->get_armies_gained_by_exchange() >= 0) {
+            os << "number of armies gained from exchange: " << player->get_armies_gained_by_exchange() << endl;
+            int sum = player->get_armies_gained_by_exchange() + player->get_armies_gained_by_country_owned() + player->get_armies_gained_by_continent_owned();
+            os << "Total number of armies gained: " << sum << endl;
+        }
+        if (!player->get_reinforcement_vector()->empty()) {
+            for (auto int_country : *player->get_reinforcement_vector()) {
+                os << "Country: " << int_country->second->get_name() << " reinforced with " << int_country->first << " armies" << endl;
+            }
+        }
+        if (player->get_source_country()) {
+            os << "Source country: " << player->get_source_country()->get_name() << "\n";
+        }
+        if (player->get_target_country()) {
+            os << "Target country: " << player->get_target_country()->get_name() << "\n";
+        }
+        if (player->get_success()) {
+            string result = *player->get_success() ? "success" : "failure";
+            os << "The attack was a " << result << "\n";
+        }
+        os << "////////////////////////////////////\n";
+        Terminal::print(os.str());
+    }
+
+    void map_callback(Observer::MapSubject *map) {
+        vector<Player::Player *> *players = GameEngine::instance()->get_players();
+        ostringstream os;
+        for (auto player : *players) {
+            os << player->get_color() << "Player owns " << player->get_countries().size() << " armies";
+        }
+    }
 
     GameEngine *GameEngine::instance() {
         if (!game_engine_instance) game_engine_instance = new GameEngine;
@@ -129,7 +179,9 @@ namespace GameEngine {
         Terminal::debug("Initializing " + to_string(answer) + " players.");
 
         for (int i = 1; i <= answer ; ++i) {
-            Player::Player * p = new Player::Player;
+            auto * p = new Player::Player;
+            auto *observer = new Observer::PlayerObserver(p, &phase_callback);
+            player_observers->emplace_back(observer);
             players->emplace_back(p);
         }
 
@@ -171,6 +223,7 @@ namespace GameEngine {
         deck = nullptr;
         players = new vector<Player::Player *>();
         player_order = new vector<int>();
+        player_observers = new vector<Observer::PlayerObserver*>();
     }
 
     GameEngine::~GameEngine() {
@@ -312,6 +365,7 @@ namespace GameEngine {
 
     void GameEngine::game_loop() {
         Terminal::debug("Starting game loop.");
+        map_observer = new Observer::MapObserver(map, map_callback);
         while (!game_done()) {
             for(int player_index : *player_order){
                 if (game_done()) continue;

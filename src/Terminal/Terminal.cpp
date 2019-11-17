@@ -150,6 +150,7 @@ void Terminal::set_input_vector(const vector<int> & vector) {
 }
 
 void Terminal::clear_terminal_input_counter() {
+    input_vector.clear();
     terminal_input_counter = -1;
 }
 
