@@ -114,7 +114,7 @@ namespace Board {
      * The Map is the complete graph of all countries (Nodes). It also contains the continents and manages them.
      * The edges are implemented as an AdjacencyList with the corresponding object index to ensure O(1) seek & query.
      */
-class Map : public Observer::MapSubject {
+class Map {
     public:
 
         Map();
@@ -187,7 +187,7 @@ class Map : public Observer::MapSubject {
          * Get a vector of pointers to all countries present in the map.
          * @return
          */
-        vector<Country *> get_countries() override;
+        vector<Country *> get_countries();
 
         /**
          * Get a vector of pointers to all continents present in the map.

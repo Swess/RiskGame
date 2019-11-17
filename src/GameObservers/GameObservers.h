@@ -6,10 +6,12 @@
 
 #include <vector>
 #include <string>
+//#include "../Player/Player.h"
 //#include "../Map/Map.h"
 
 
 using namespace std;
+namespace Player {class Player;}
 namespace Board {class Country;}
 
 namespace Observer {
@@ -61,19 +63,21 @@ namespace Observer {
         PlayerSubject *model;
     };
 
-    class MapSubject : public Subject {
+    class GameStateSubject : public Subject {
     public:
-        virtual vector<Board::Country *> get_countries() = 0;
+        virtual vector<Player::Player *> *get_players_in_game() = 0;
+        virtual bool is_game_over() = 0;
+        virtual Player::Player *get_winner() = 0;
     };
 
-    class MapObserver : public Observer {
+    class GameStateObserver : Observer {
     public:
-        MapObserver(MapSubject *model, void (*display_callback)(MapSubject*));
-        ~MapObserver();
+        GameStateObserver(GameStateSubject *model, void (*display_callback)(GameStateSubject*));
+        ~GameStateObserver();
         void update() override;
-        void (*display_callback)(MapSubject*);
+        void (*display_callback)(GameStateSubject*);
     private:
-        MapSubject *model;
+        GameStateSubject *model;
     };
 }
 

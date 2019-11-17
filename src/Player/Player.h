@@ -97,7 +97,7 @@ class Player : public Observer::PlayerSubject {
         bool is_player_dead();
 
         string get_color() override;
-        void turn();
+        bool turn();
 
         /////////////////////////
         void set_source_country(Country *country);

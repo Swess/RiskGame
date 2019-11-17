@@ -41,11 +41,11 @@ namespace PlayerObserver {
 
         bool change_phase();
 
-//        bool test_attack();
-//
-//        bool test_reinforce();
-//
-//        bool test_fortify();
+        bool test_attack();
+
+        bool test_reinforce();
+
+        bool test_fortify();
 
         bool run();
     }

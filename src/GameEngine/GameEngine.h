@@ -16,6 +16,7 @@ using std::vector;
 
 namespace GameEngine {
 
+    class GameState;
     class GameEngine {
     public:
         /**
@@ -41,7 +42,7 @@ namespace GameEngine {
         Cards::Deck * get_deck();
         vector<int> * get_player_order();
         vector<Observer::PlayerObserver*> *player_observers;
-        Observer::MapObserver*  map_observer;
+        GameState *game_state;
     private:
         GameEngine();
         virtual ~GameEngine();
@@ -60,11 +61,27 @@ namespace GameEngine {
         void select_player();
         void create_deck();
         bool game_done();
+        void update_state();
         static GameEngine *game_engine_instance;
         Board::Map *map;
         vector<Player::Player*> * players;
         Cards::Deck * deck;
         vector<int> * player_order;
+    };
+
+class GameState : public Observer::GameStateSubject{
+        friend GameEngine;
+    public:
+        GameState();
+        ~GameState();
+        void remove_player(Player::Player *player);
+        vector<Player::Player *> *get_players_in_game() override;
+        bool is_game_over() override;
+        Player::Player *get_winner() override;
+    private:
+        vector<Player::Player *> *players_in_game;
+        Player::Player *winner;
+        bool *game_over;
     };
 
 

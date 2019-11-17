@@ -55,18 +55,17 @@ void Observer::PlayerObserver::update() {
     display_callback(model);
 }
 
-
-Observer::MapObserver::MapObserver(MapSubject *model, void (*display_callback)(MapSubject*)): Observer(model) {
+Observer::GameStateObserver::GameStateObserver(GameStateSubject *model, void (*display_callback)(GameStateSubject *)): Observer(model) {
     this->model = model;
     this->display_callback = display_callback;
 }
 
-Observer::MapObserver::~MapObserver() {
-    model->detach(this);
-    model = nullptr;
-    display_callback = nullptr;
+void Observer::GameStateObserver::update() {
+    display_callback(model);
 }
 
-void Observer::MapObserver::update() {
-    display_callback(model);
+Observer::GameStateObserver::~GameStateObserver() {
+    model->detach(this);
+    this->model = nullptr;
+    this->display_callback = nullptr;
 }

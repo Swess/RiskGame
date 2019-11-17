@@ -58,14 +58,6 @@ namespace GameEngine {
         Terminal::print(os.str());
     }
 
-    void map_callback(Observer::MapSubject *map) {
-        vector<Player::Player *> *players = GameEngine::instance()->get_players();
-        ostringstream os;
-        for (auto player : *players) {
-            os << player->get_color() << "Player owns " << player->get_countries().size() << " armies";
-        }
-    }
-
     GameEngine *GameEngine::instance() {
         if (!game_engine_instance) game_engine_instance = new GameEngine;
         return game_engine_instance;
@@ -182,6 +174,7 @@ namespace GameEngine {
             auto * p = new Player::Player;
             auto *observer = new Observer::PlayerObserver(p, &phase_callback);
             player_observers->emplace_back(observer);
+            game_state->players_in_game->emplace_back(p);
             players->emplace_back(p);
         }
 
@@ -224,6 +217,7 @@ namespace GameEngine {
         players = new vector<Player::Player *>();
         player_order = new vector<int>();
         player_observers = new vector<Observer::PlayerObserver*>();
+        game_state = new GameState();
     }
 
     GameEngine::~GameEngine() {
@@ -231,13 +225,15 @@ namespace GameEngine {
         delete players;
         delete deck;
         delete player_order;
+        delete game_state;
         player_order = nullptr;
         deck = nullptr;
         map = nullptr;
         players = nullptr;
+        game_state = nullptr;
     }
 
-    Map * GameEngine::get_map() {
+    Board::Map * GameEngine::get_map() {
         return map;
     }
 
@@ -300,9 +296,9 @@ namespace GameEngine {
 
     void GameEngine::assign_country_to_player() {
         // Loop countries with player index increasing
-        vector<Country *> countries = map->get_countries();
+        vector<Board::Country *> countries = map->get_countries();
 
-        shuffle( countries.begin(), countries.end(), default_random_engine(time(0)));
+        shuffle(countries.begin(), countries.end(), default_random_engine(time(0)));
 
         int owner_index = 0;
         for(auto & country : countries){
@@ -325,8 +321,8 @@ namespace GameEngine {
 
         // Auto place 1 army to every country
         for(int player_index : *player_order){
-            vector<Country *> countries = players->at(player_index)->get_countries();
-            for (Country *c : countries) {
+            vector<Board::Country *> countries = players->at(player_index)->get_countries();
+            for (Board::Country *c : countries) {
                 c->set_armies(c->get_armies() + 1);
                 remaining[player_index]--;
                 total_placed++;
@@ -346,7 +342,7 @@ namespace GameEngine {
                 Terminal::print("It is now the turn of Player "+ current_player->get_color());
 
                 // Build list of choices with current amount of armies for display
-                vector<Country *> countries = current_player->get_countries();
+                vector<Board::Country *> countries = current_player->get_countries();
                 vector<string> options;
                 for(auto c_ptr : countries)
                     options.emplace_back(c_ptr->get_name() + " ("+to_string(c_ptr->get_armies())+" armies present)");
@@ -365,21 +361,33 @@ namespace GameEngine {
 
     void GameEngine::game_loop() {
         Terminal::debug("Starting game loop.");
-        map_observer = new Observer::MapObserver(map, map_callback);
+        int count;
+        bool needs_update;
         while (!game_done()) {
+            count = 0;
+            needs_update = false;
             for(int player_index : *player_order){
                 if (game_done()) continue;
                 Player::Player * current_player = players->at(player_index);
                 if (current_player->is_player_dead()) continue;
-                current_player->turn();
+                needs_update = current_player->turn();
+                if (needs_update) {
+                    update_state();
+                }
             }
         }
     }
 
+
+
     bool GameEngine::game_done() {
         for(int player_index : *player_order){
             if (players->at(player_index)->get_countries().size() == map->get_countries().size()) {
+                *game_state->game_over = true;
+                game_state->winner = players->at(player_index);
+                game_state->notify();
                 Terminal::debug("There is a winner.");
+
                 return true;
             }
         }
@@ -388,6 +396,52 @@ namespace GameEngine {
 
     bool GameEngine::is_game_done() {
         return game_done();
+    }
+
+    void GameEngine::update_state() {
+        for (auto player : *players) {
+            if (player->is_player_dead()) {
+                game_state->remove_player(player);
+            }
+        }
+        game_state->notify();
+    }
+
+    GameState::GameState() {
+        players_in_game = new vector<Player::Player *>;
+        game_over = new bool(false);
+        winner = nullptr;
+    }
+
+    GameState::~GameState() {
+        delete this->players_in_game;
+        delete game_over;
+
+        players_in_game = nullptr;
+        game_over = nullptr;
+        winner = nullptr;
+    }
+
+    vector<Player::Player *> *GameState::get_players_in_game() {
+        return players_in_game;
+    }
+
+    bool GameState::is_game_over() {
+        return *game_over;
+    }
+
+    void GameState::remove_player(Player::Player *player_to_delete) {
+        int position = 0;
+        for (auto *player : *players_in_game) {
+            if (player_to_delete == player) {
+                players_in_game->erase(players_in_game->begin() + position);
+            }
+            position++;
+        }
+    }
+
+    Player::Player *GameState::get_winner() {
+        return winner;
     }
 
 }

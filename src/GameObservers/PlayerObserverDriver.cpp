@@ -22,7 +22,7 @@ namespace PlayerObserver {
             source_country = nullptr;
             target_country = nullptr;
             number_of_armies = -1;
-            battle_number = nullptr;
+            battle_number = new int(-1);
             success = nullptr;
             number_armies_gained_from_countries = -1;
             number_armies_gained_from_continent = -1;
@@ -48,6 +48,7 @@ namespace PlayerObserver {
             driver_state->number_armies_gained_from_countries = player->get_armies_gained_by_country_owned();
             driver_state->number_armies_gained_from_exchange = player->get_armies_gained_by_exchange();
             driver_state->reinforce_pair_vector = player->get_reinforcement_vector();
+            *driver_state->battle_number = player->get_battle_number();
         }
 
         void before() {
@@ -109,17 +110,16 @@ namespace PlayerObserver {
             driver_state->p1->attack();
             Terminal::clear_terminal_input_counter();
 
-            assert(driver_state->p1->get_source_country());
-            assert( driver_state->p1->get_target_country());
-            assert(driver_state->p1->get_success());
-            assert(driver_state->p1->get_battle_number() > 0);
+            assert(driver_state->source_country);
+            assert(driver_state->target_country);
+            assert(driver_state->success);
+            assert(*driver_state->battle_number > 0);
             return true;
 
         }
 
         bool test_fortify() {
             DriverState *driver_state = DriverState::get_instance();
-//            Terminal::test_mode_off();
             vector<int> input_vector = {1, 1, 0, 0};
             Terminal::set_input_vector(input_vector);
             driver_state->p1->fortify();
@@ -134,29 +134,28 @@ namespace PlayerObserver {
 
         bool test_reinforce() {
             DriverState *driver_state = DriverState::get_instance();
-//            Terminal::test_mode_off();
             vector<int> input_vector = {0, 3, 1, 2 };
             Terminal::set_input_vector(input_vector);
             driver_state->p1->reinforce();
             Terminal::clear_terminal_input_counter();
 
-            assert(driver_state->p1->get_armies_gained_by_country_owned() >= 0);
-            assert(driver_state->p1->get_armies_gained_by_continent_owned() >= 0);
-            assert(driver_state->p1->get_armies_gained_by_exchange() >= 0);
-            assert(driver_state->p1->get_reinforcement_vector()->size() == 2);
+            assert(driver_state->number_armies_gained_from_continent >= 0);
+            assert(driver_state->number_armies_gained_from_countries >= 0);
+            assert(driver_state->number_armies_gained_from_exchange >= 0);
+            assert(driver_state->reinforce_pair_vector->size() == 2);
 
             return true;
         }
 
         bool run() {
             before();
-//            Terminal::test_mode_off();
             bool passed = (
                     test_reinforce() &&
                     change_phase() &&
                     test_fortify() &&
                     test_attack()
             );
+            DriverState::get_instance()->gameInstance->reset_test();
             return passed;
         }
 

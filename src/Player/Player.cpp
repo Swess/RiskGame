@@ -159,8 +159,10 @@ namespace Player {
         *current_phase = phase::ATTACK;
         notify();
         bool attack = playerStrategies->attack();
+        if (attack && GameEngine::GameEngine::instance()->game_state) {
+            GameEngine::GameEngine::instance()->game_state->notify();
+        }
         return attack;
-
     }
 
     void Player::gain_control(Country *country) {
@@ -176,21 +178,21 @@ namespace Player {
 
         countries->push_back(country);
         country->set_owner(this);
-        GameEngine::GameEngine::instance()->get_map()->notify();
     }
 
     vector<Country *> Player::get_countries() {
         return *countries;
     }
 
-    void Player::turn() {
+    bool Player::turn() {
         Terminal::debug("Player has started their turn");
 
         reinforce();
-        attack();
+        bool needs_update = attack();
         fortify();
 
         Terminal::debug("Player has ended their turn");
+        return needs_update;
     }
 
     void Player::gain_control(vector<Country *> f_countries) {
