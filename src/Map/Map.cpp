@@ -137,7 +137,7 @@ namespace Board {
         int visited_count = 1;
 
         // Finding first country in this continent
-        vector<Country *> countries = map->get_countries();
+        vector<Country *> countries = map->get_countries() ;
         for(unsigned i=0; i<countries.size(); i++){
             if(*countries[i]->continent_index == *index){
                 current = *countries[i]->index;
@@ -233,7 +233,7 @@ namespace Board {
         return false;
     }
 
-    vector<Country *> Map::get_countries() const {
+    vector<Country *> Map::get_countries() {
         return *countries;
     }
 

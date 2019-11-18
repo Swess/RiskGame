@@ -25,7 +25,18 @@ namespace Player {
         dice = new Dice::Dice();
         countries = new vector<Country *>();
         playerStrategies = new HumanPlayerStrategy(this);
-    };
+
+        current_phase = new phase;
+        source_country = nullptr;
+        target_country = nullptr;
+        number_of_armies = new int(-1);
+        battle_number = new int(-1);
+        number_armies_gained_from_continent = new int(-1);
+        number_armies_gained_from_countries = new int(-1);
+        number_armies_gained_from_exchange = new int(-1);
+        reinforce_pair_vector = new vector<pair<int, Country*>*>;
+        success = nullptr;
+    }
 
     Player::Player(PlayerStrategies * playerStrategies1) : Player() {
        delete playerStrategies1;
@@ -44,12 +55,33 @@ namespace Player {
         countries = nullptr;
         hand = nullptr;
         dice = nullptr;
+
+        // phase variables
+        delete current_phase;
+        delete number_of_armies;
+        delete battle_number;
+        delete number_armies_gained_from_continent;
+        delete number_armies_gained_from_countries;
+        delete number_armies_gained_from_exchange;
+
+        current_phase = nullptr;
+        number_of_armies = nullptr;
+        battle_number = nullptr;
+        number_armies_gained_from_countries = nullptr;
+        number_armies_gained_from_countries = nullptr;
+        number_armies_gained_from_exchange = nullptr;
+
     }
 
     void Player::fortify() {
         Terminal::debug("Player fortify");
         Terminal::print("Fortification phase");
+        clear_phase_state();
+        *current_phase = phase::FORTIFICATION;
+        notify();
         vector<string> selections;
+        bool validChoice = false;
+        int source_country_index;
 
         bool can_fortify = player_can_fortify();
 
@@ -58,18 +90,12 @@ namespace Player {
             return;
         }
 
-        vector<Board::Country *> forfity_country = playerStrategies->fortify();
-        if (forfity_country.empty()) return;
+        vector<Board::Country *> fortify_country = playerStrategies->fortify();
+        if (fortify_country.empty()) return;
 
-        Board::Country * source_country = forfity_country.at(0);
-        Board::Country * target_country = forfity_country.at(1);
-        ostringstream os;
-        os.str("");
-        os.clear();
-        os << "countries following fortification: \n";
-        os << "source country: " << source_country->to_string() << "\n";
-        os << "target country: " << target_country->to_string();
-        Terminal::print(os.str());
+        source_country = fortify_country.at(0);
+        target_country = fortify_country.at(1);
+        notify();
     }
 
     bool Player::player_can_fortify() const {
@@ -91,11 +117,13 @@ namespace Player {
 
     void Player::reinforce() {
 
-        int new_army = (int) this->get_countries().size() / 3;
-        if (new_army < 3) new_army = 3;
-
-        new_army += get_army_by_continent_owned();
-
+        clear_phase_state();
+        *current_phase = phase::REINFORCEMENT;
+        *number_armies_gained_from_countries = (int) this->get_countries().size() / 3;
+        if (*number_armies_gained_from_countries < 3) *number_armies_gained_from_countries = 3;
+        *number_armies_gained_from_continent = get_army_by_continent_owned();
+        notify();
+        int new_army = *number_armies_gained_from_continent + *number_armies_gained_from_countries;
         string message = "Player " + this->get_color() + ":You have " + std::to_string(new_army) + " units to place.";
         Terminal::print(message);
 
@@ -127,7 +155,14 @@ namespace Player {
     }
 
     bool Player::attack() {
-        return playerStrategies->attack();
+        clear_phase_state();
+        *current_phase = phase::ATTACK;
+        notify();
+        bool attack = playerStrategies->attack();
+        if (attack && GameEngine::GameEngine::instance()->game_state) {
+            GameEngine::GameEngine::instance()->game_state->notify();
+        }
+        return attack;
     }
 
     void Player::gain_control(Country *country) {
@@ -149,14 +184,15 @@ namespace Player {
         return *countries;
     }
 
-    void Player::turn() {
+    bool Player::turn() {
         Terminal::debug("Player has started their turn");
 
         reinforce();
-        attack();
+        bool needs_update = attack();
         fortify();
 
         Terminal::debug("Player has ended their turn");
+        return needs_update;
     }
 
     void Player::gain_control(vector<Country *> f_countries) {
@@ -174,6 +210,19 @@ namespace Player {
             case player_color::GRAY: return "Gray";
             case player_color::WHITE: return "White";
             default: return "ERROR";
+        }
+    }
+
+    string Player::get_phase_string() {
+        switch(*current_phase) {
+            case phase::ATTACK:
+                return "Attack";
+            case phase::REINFORCEMENT:
+                return "Reinforcement";
+            case phase::FORTIFICATION:
+                return "Fortification";
+            default:
+                return "ERROR";
         }
     }
 
@@ -214,10 +263,104 @@ namespace Player {
         player_count = 0;
     }
 
+    Country *Player::get_source_country() {
+        return source_country;
+    }
+
+    Country *Player::get_target_country() {
+        return target_country;
+    }
+
+    int Player::get_number_armies_used() {
+        return *number_of_armies;
+    }
+
+    void Player::clear_phase_state() {
+        source_country = nullptr;
+        target_country = nullptr;
+        *number_of_armies = -1;
+        *battle_number = -1;
+        *number_armies_gained_from_continent = -1;
+        *number_armies_gained_from_countries = -1;
+        *number_armies_gained_from_exchange = -1;
+        reinforce_pair_vector->clear();
+
+        delete success;
+        success = nullptr;
+    }
+
+    int Player::get_battle_number() {
+        return *battle_number;
+    }
+
+    bool *Player::get_success() {
+        return success;
+    }
+
+    int Player::get_armies_gained_by_continent_owned() {
+        return *number_armies_gained_from_continent;
+    }
+
+    int Player::get_armies_gained_by_country_owned() {
+        return *number_armies_gained_from_countries;
+    }
+
+    int Player::get_armies_gained_by_exchange() {
+        return *number_armies_gained_from_exchange;
+    }
+
+
     void Player::setPlayerStrategy(PlayerStrategies *playerStrategies1) {
         delete playerStrategies;
         playerStrategies = playerStrategies1;
     }
 
+    void Player::set_source_country(Country *country) {
+        source_country = country;
+        notify();
+    }
+
+    void Player::set_target_country(Country *country) {
+        target_country = country;
+        notify();
+    }
+
+    void Player::set_battle_number(int battle_number) {
+        *this->battle_number = battle_number;
+        notify();
+    }
+
+    void Player::set_success(bool success) {
+        this->success = new bool(success);
+        notify();
+    }
+
+    void Player::set_number_armies(int armies) {
+        *this->number_of_armies = armies;
+        notify();
+    }
+
+    void Player::set_armies_gained_by_exchange(int gained) {
+        *this->number_armies_gained_from_exchange = gained;
+        notify();
+    }
+
+    void Player::update_reinforce_pair_vector(pair<int, Country *> *int_country) {
+        this->reinforce_pair_vector->emplace_back(int_country);
+        notify();
+    }
+
+    void Player::set_autonomous_fortification_phase_state(Country *source, Country *target, int armies_moved) {
+        source_country = source;
+        target_country = target;
+        *this->number_of_armies = armies_moved;
+        notify();
+    }
+
+    vector<pair<int, Country*>*> *Player::get_reinforcement_vector() {
+        return reinforce_pair_vector;
+    }
 
 }
+
+
