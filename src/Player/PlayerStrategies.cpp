@@ -274,8 +274,6 @@ namespace Player {
         os << selected_num_armies << " armies have been transferred from " << source_country->get_name() << " to " << target_country->get_name();
         Terminal::print(os.str());
 
-//        fortificate_country.emplace_back(source_country);
-//        fortificate_country.emplace_back(target_country);
         return fortificate_country; // make sure this is empty
     }
 
