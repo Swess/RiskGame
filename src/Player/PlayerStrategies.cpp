@@ -199,7 +199,7 @@ namespace Player {
         }
     }
 
-    vector<Board::Country *>  HumanPlayerStrategy::fortify() {
+    vector<Board::Country *> HumanPlayerStrategy::fortify() {
         vector<Board::Country *> fortificate_country;
         bool validChoice = false;
         int source_country_index;
@@ -646,6 +646,10 @@ forces in one country),
         while(num_of_attack > 0){
             // This may change after each attack
             vector<Country*> countries_source = player->get_countries_attack_source();
+
+            // Possible that we are not able to attack anymore
+            if(countries_source.empty()) return has_won_a_battle;
+
             int source_index = rand() % countries_source.size();
             Country* source_country = countries_source.at(source_index);
 
@@ -679,11 +683,69 @@ forces in one country),
     }
 
     vector<Board::Country *> RandomPlayerStrategy::fortify() {
-        return vector<Board::Country *>();
+        Terminal::debug("Performing fortify from player" + player->get_color() + " who is playing randomly.");
+        // Fortifies in order to move armies to weaker countries
+        vector<Board::Country *> answer;
+        vector<Board::Country *> owned_countries = player->get_countries();
+
+        // Find possible source countries
+        vector<Country *> possible_sources;
+        for (auto &country : owned_countries){
+            // Verify if the country has a neighbor that player owns
+            for (auto &neighbor_country : * country->get_neighbors()){
+                if (neighbor_country->get_owner() == player){
+                    possible_sources.push_back(country);
+                    break;
+                }
+            }
+        }
+
+        if (possible_sources.empty())
+            return answer;
+
+        // Choose source
+        Country* source_c = possible_sources.at(rand() % possible_sources.size());
+
+        // Find possible target for selected source
+        int biggest_army = 0;
+        vector<Country *> possible_targets;
+        for (auto &country : *source_c->get_neighbors()){
+            if (country->get_owner() == player )
+                possible_targets.push_back(country);
+        }
+
+        if(possible_targets.empty()) {
+            Terminal::error("Could not select a target to reinforce AFTER selecting a source. Should never happen.");
+            return answer;
+        }
+
+        // Choose target
+        Country* target_c = possible_targets.at(rand() % possible_targets.size());
+
+        int armies_moved = rand() % source_c->get_armies();
+        target_c->set_armies(target_c->get_armies() + armies_moved);
+        source_c->set_armies(source_c->get_armies() - armies_moved);
+
+        player->set_autonomous_fortification_phase_state(target_c, source_c, armies_moved);
+
+        answer.emplace_back(target_c); // source
+        answer.emplace_back(source_c); // target
+        return answer;
     }
 
     void RandomPlayerStrategy::reinforce(int i) {
+        Terminal::debug("Performing reinforce from player "+player->get_color()+" playing randomly.");
 
+        vector<Board::Country *> owned_countries = player->get_countries();
+        int index = rand() % owned_countries.size();
+        Country* to_reinforce = owned_countries.at(index);
+
+        auto reinforce_pair = new pair<int, Country*>;
+        reinforce_pair->first = i;
+        reinforce_pair->second = to_reinforce;
+
+        player->update_reinforce_pair_vector(reinforce_pair);
+        to_reinforce->set_armies(to_reinforce->get_armies() + i);
     }
 
     int RandomPlayerStrategy::battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const {
