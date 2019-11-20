@@ -6,6 +6,8 @@ Created by ker10 on 2019-11-12.
 #include <string>
 #include <vector>
 #include <sstream>
+#include <ctime>
+#include <random>
 #include "../Terminal/Terminal.h"
 #include "../Map/Map.h"
 #include "../Cards/Cards.h"
@@ -581,9 +583,9 @@ forces in one country),
     int AggressivePlayerStrategy::battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const {
         int last_roll_attacker = 0;
         while (source->get_armies() > 1 && target->get_armies() > 0 ) {
-            Terminal::debug("The country aggressive player  " + player->get_color() + "  started the attack from is");
+            Terminal::debug("The country aggressive player  " + player->get_color() + " started the attack from is");
             Terminal::debug(source->to_string());
-            Terminal::debug("The country aggressive player " + player->get_color() + " you are attacking is");
+            Terminal::debug("The country aggressive player " + player->get_color() + " is are attacking is");
             Terminal::debug(target->to_string());
 
             int available_dice_attacker = get_attacker_amount_of_dice(source);
@@ -625,5 +627,103 @@ forces in one country),
 
     AggressivePlayerStrategy::~AggressivePlayerStrategy() {
 
+    }
+
+    RandomPlayerStrategy::RandomPlayerStrategy(Player *player) : PlayerStrategies(player) {
+
+    }
+
+    RandomPlayerStrategy::~RandomPlayerStrategy() {
+
+    }
+
+    bool RandomPlayerStrategy::attack() {
+        // attacks a random number of times a random country
+        bool has_won_a_battle = false;
+        int max_num_of_targets = 15;
+        int num_of_attack = rand() % (max_num_of_targets+1);
+
+        while(num_of_attack > 0){
+            // This may change after each attack
+            vector<Country*> countries_source = player->get_countries_attack_source();
+            int source_index = rand() % countries_source.size();
+            Country* source_country = countries_source.at(source_index);
+
+            vector<Country*> avail_targets;
+            for(Country* target : *source_country->get_neighbors() ){
+                if(target->get_owner() != player){
+                    avail_targets.push_back(target);
+                }
+            }
+
+            if(avail_targets.empty()) return true;
+
+            int target_index = rand() % avail_targets.size();
+            Board::Country * country_under_attack = avail_targets.at(target_index);
+
+            int last_roll = battle_and_get_last_roll_amount(source_country, country_under_attack);
+
+            if (country_under_attack->get_armies() == 0 ) {
+                has_won_a_battle = true;
+                this->player->gain_control(country_under_attack);
+
+                int moving_units = source_country->get_armies()-1;
+                source_country->set_armies(source_country->get_armies() - moving_units);
+                country_under_attack->set_armies(moving_units);
+            }
+
+            num_of_attack--;
+        }
+
+        return has_won_a_battle;
+    }
+
+    vector<Board::Country *> RandomPlayerStrategy::fortify() {
+        return vector<Board::Country *>();
+    }
+
+    void RandomPlayerStrategy::reinforce(int i) {
+
+    }
+
+    int RandomPlayerStrategy::battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const {
+        int last_roll_attacker = 0;
+
+        // Random Player rolls only once, but will attack from random source to random target, a random times.
+        // So this may be called multiple times in the same turn.
+
+        Terminal::debug("The country random player  " + player->get_color() + " started the attack from is");
+        Terminal::debug(source->to_string());
+        Terminal::debug("The country random player " + player->get_color() + " is are attacking is");
+        Terminal::debug(target->to_string());
+
+        int available_dice_attacker = get_attacker_amount_of_dice(source);
+        int nb_of_dice_attacker = rand() % (available_dice_attacker + 1);
+        if (nb_of_dice_attacker == 0) { nb_of_dice_attacker=1; }
+
+        int available_dice_defender = target->get_armies();
+        // Clamp the amount of defender's dice to 2
+        if (available_dice_defender > 2) available_dice_defender = 2;
+        int nb_of_dice_defender = available_dice_defender;
+
+        vector<int> roll_attacker = source->get_owner()->dice->roll(nb_of_dice_attacker);
+        vector<int> roll_defender = target->get_owner()->dice->roll(nb_of_dice_defender);
+
+        Terminal::print("Player " + source->get_owner()->get_color() + " rolled: ");
+        Terminal::print_on_same_line(roll_attacker);
+        Terminal::print("Player " + target->get_owner()->get_color() + " rolled: ");
+        Terminal::print_on_same_line(roll_defender);
+
+        // Remove no more then lower nb of dices
+        int how_many_unit_will_die = nb_of_dice_attacker < nb_of_dice_defender ? nb_of_dice_attacker
+                                                                               : nb_of_dice_defender;
+
+        for (int i = 0; i < how_many_unit_will_die; i++) {
+            roll_attacker[i] > roll_defender[i] ? target->decrement_army() : source->decrement_army();
+        }
+
+        last_roll_attacker = nb_of_dice_attacker;
+
+        return last_roll_attacker;
     }
 }
