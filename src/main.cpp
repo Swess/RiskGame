@@ -34,15 +34,15 @@ int main(int argc, const char*argv[]) {
     // Terminal::debug_mode_on();
     if (test) {
         Terminal::test_mode_on();
-//        Terminal::run_test("MapLoader", MapLoader::Driver::run);
-//        Terminal::run_test("Map", Board::Driver::run);
-//        Terminal::run_test("Dice", Dice::Driver::run);
-//        Terminal::run_test("Cards", Cards::Driver::run);
-//        Terminal::run_test("Player", Player::Driver::run);
-//        Terminal::run_test("GameEngine", GameEngine::Driver::run);
+        Terminal::run_test("MapLoader", MapLoader::Driver::run);
+        Terminal::run_test("Map", Board::Driver::run);
+        Terminal::run_test("Dice", Dice::Driver::run);
+        Terminal::run_test("Cards", Cards::Driver::run);
+        Terminal::run_test("Player", Player::Driver::run);
+        Terminal::run_test("GameEngine", GameEngine::Driver::run);
         Terminal::run_test("PlayerStrategies", PlayerStrategies::Driver::run);
-//        Terminal::run_test("PlayerObservers", PlayerObserver::Driver::run);
-//        Terminal::run_test("GameStatisticsObserver", GameStatisticsObserver::Driver::run);
+        Terminal::run_test("PlayerObservers", PlayerObserver::Driver::run);
+        Terminal::run_test("GameStatisticsObserver", GameStatisticsObserver::Driver::run);
 
         Terminal::test_mode_off();
     } else {
