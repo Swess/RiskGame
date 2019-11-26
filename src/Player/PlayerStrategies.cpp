@@ -788,4 +788,43 @@ forces in one country),
 
         return last_roll_attacker;
     }
+
+    CheaterPlayerStrategy::CheaterPlayerStrategy(Player *player) : PlayerStrategies(player) {
+
+    }
+
+    CheaterPlayerStrategy::~CheaterPlayerStrategy() {
+
+    }
+
+    bool CheaterPlayerStrategy::attack() {
+        return false;
+    }
+
+    vector<Board::Country *> CheaterPlayerStrategy::fortify() {
+
+        auto all_countries = player->get_countries();
+        for (auto country : all_countries){ // Check all his country
+            for (auto neighbor : *country->get_neighbors()) { // Check his neighbor
+                if (neighbor->get_owner() != player ) { // If a neighbor isnt us
+                    country->set_armies(country->get_armies()*2); // double the army
+                    break;
+                }
+            }
+        }
+
+        //Return an empty vector
+        return vector<Board::Country *>();
+    }
+
+    void CheaterPlayerStrategy::reinforce(int i) {
+        auto all_countries = player->get_countries();
+        for (auto country : all_countries){
+            country->set_armies(country->get_armies()*2);
+        }
+    }
+
+    int CheaterPlayerStrategy::battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const {
+        return 0;
+    }
 }
