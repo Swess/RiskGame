@@ -798,7 +798,20 @@ forces in one country),
     }
 
     bool CheaterPlayerStrategy::attack() {
-        return false;
+        vector<Board::Country *> current_country;
+        for (auto country : player->get_countries()){ // Check all his country
+           current_country.emplace_back(country);
+        }
+
+        for (auto country : current_country){
+            for (auto neighbor : *country->get_neighbors()){
+                if (neighbor->get_owner() == player) continue;
+                neighbor->set_armies(1);
+                player->gain_control(neighbor);
+            }
+        }
+
+        return true;
     }
 
     vector<Board::Country *> CheaterPlayerStrategy::fortify() {
