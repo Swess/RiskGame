@@ -85,6 +85,20 @@ class GameState : public Observer::GameStateSubject{
         bool *game_over;
     };
 
+class Tournament { 
+        friend GameEngine;
+    private:
+        /*
+         * Tournament Variables
+         */
+        vector<Map*> maps;
+        vector<Player::Player*> players;
+        int numGames;
+        int maxTurns;
+
+    public:
+
+}
 
 }
 #endif //TEAM12_DOMINATIONGAME_GAMEENGINE_H
