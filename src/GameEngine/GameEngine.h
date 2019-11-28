@@ -97,7 +97,11 @@ class Tournament {
         int maxTurns;
 
     public:
+        Tournament(vector<Map*> maps, vector<Player::Player*> players, int numGames, int maxTurns);
+        ~Tournament();
 
+        void start();
+        void displayResults();
 }
 
 }

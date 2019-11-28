@@ -451,4 +451,27 @@ namespace GameEngine {
         *game_over = false;
     }
 
+    /*
+     * Tournament
+     */
+    Tournament::Tournament(vector<Map*> maps, vector<Player::Player*> players, int numGames, int maxTurns) {
+        this->maps = maps;
+        this->players = players;
+        this->numGames = numGames;
+        this->maxTurns = maxTurns;
+    }
+    Tournament::~Tournament() {
+
+    }
+    void Tournament::start() {
+        for(Map* map : maps) {
+            //Clearing Game State (reset winner & players in game)
+            GameEngine::GameEngine::instance()->game_state->clear();
+            //Start Game
+            //Keep track of winners
+        }
+    }
+    void Tournament::displayResults() {
+        //
+    }
 }
