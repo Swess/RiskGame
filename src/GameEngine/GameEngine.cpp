@@ -589,7 +589,7 @@ namespace GameEngine {
         int num_players = Terminal::print_select(2, 4, "Select number of players");
         for (int i = 0; i < num_players; i++) {
             auto *p = new Player::Player();
-            p->select_strategy();
+            p->select_computer_strategy();
             players->emplace_back(p);
         }
         //Ask user the max number of turns allowed (10 - 50)

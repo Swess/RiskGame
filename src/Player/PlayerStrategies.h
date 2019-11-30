@@ -17,8 +17,6 @@ namespace Player {
         HUMAN = 0, BENEVOLENT =1, AGGRESSIVE = 2, RANDOM = 3, CHEATER = 4
     };
 
-    vector<string> get_available_strategies();
-
     class PlayerStrategies {
     private:
         virtual int battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const = 0;

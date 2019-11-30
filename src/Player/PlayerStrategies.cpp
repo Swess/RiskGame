@@ -16,10 +16,6 @@ Created by ker10 on 2019-11-12.
 
 namespace Player {
 
-    vector<string> get_available_strategies() {
-        return {"Human", "Benevolent", "Aggressive"};
-    }
-
     PlayerStrategies::PlayerStrategies() {
         player = nullptr;
         type = nullptr;
@@ -353,6 +349,8 @@ namespace Player {
             case strategy_type::HUMAN: return "Human";
             case strategy_type::BENEVOLENT: return "Benevolent";
             case strategy_type::AGGRESSIVE: return "Aggressive";
+            case strategy_type::RANDOM: return "Random";
+            case strategy_type::CHEATER: return "Cheater";
             default: return "ERROR";
         }
     }
@@ -648,7 +646,7 @@ forces in one country),
 
     }
 
-    RandomPlayerStrategy::RandomPlayerStrategy(Player *player) : PlayerStrategies(player) {
+    RandomPlayerStrategy::RandomPlayerStrategy(Player *player) : PlayerStrategies(player, strategy_type::RANDOM) {
 
     }
 
@@ -808,7 +806,7 @@ forces in one country),
         return last_roll_attacker;
     }
 
-    CheaterPlayerStrategy::CheaterPlayerStrategy(Player *player) : PlayerStrategies(player) {
+    CheaterPlayerStrategy::CheaterPlayerStrategy(Player *player) : PlayerStrategies(player, strategy_type::CHEATER) {
 
     }
 

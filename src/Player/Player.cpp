@@ -367,19 +367,24 @@ namespace Player {
         this->hand->clear_hand();
     }
 
-    void Player::select_strategy() {
-        vector<string> available_strategies = {"Human", "Benevolent", "Aggressive"};
+    void Player::select_computer_strategy() {
+        vector<string> available_strategies = {"Benevolent", "Aggressive", "Random", "Cheater"};
         int strat_index = Terminal::print_select(available_strategies);
         switch (strat_index) {
-            case 1:
+            case 0:
                 setPlayerStrategy(new BenevolentPlayerStrategy(this));
                 break;
-            case 2:
+            case 1:
                 setPlayerStrategy(new AggressivePlayerStrategy(this));
                 break;
-            case 0:
+            case 2:
+                setPlayerStrategy(new RandomPlayerStrategy(this));
+                break;
+            case 3:
+                setPlayerStrategy(new CheaterPlayerStrategy(this));
+                break;
             default:
-                setPlayerStrategy(new HumanPlayerStrategy(this));
+                break;
         }
     }
 

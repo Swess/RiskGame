@@ -58,7 +58,7 @@ class Player : public Observer::PlayerSubject {
         Player();
         explicit Player(PlayerStrategies * playerStrategies1);
         virtual ~Player();
-        void select_strategy();
+        void select_computer_strategy();
 
         /**
          * Player is about to be used in another game, clear all previous data except strategy and colour
