@@ -532,30 +532,29 @@ namespace GameEngine {
         for (int i = 0; i < map_indices->size(); i++) {
             for (int j = 0; j < *numGames; j++) {
                 game_engine->set_tournament(*maxTurns);
-                //TODO: call new game
+                //call new game
                 game_engine->new_game();
-                //TODO: load map
+                //load map
                 game_engine->load_map(map_indices->at(i));
-                //TODO: deck
+                //create deck
                 game_engine->create_deck();
-                //TODO: set players
+                //set players
 //                game_engine->set_players(players);
-                //TODO: distribute countries
+                //distribute countries
                 game_engine->startup_phase();
-                //TODO: run game loop loop
+                //run game loop loop
                 game_engine->game_loop();
-                //TODO: check for winner
+                //check for winner
                 string *winner = new string;
                 if (game_engine->game_state->get_winner())  {   // is winner null?
                     *winner = game_engine->game_state->get_winner()->getPlayerStrategy()->get_type_string();
                 } else {
                     *winner = "draw";
                 }
-                //TODO: write to game_stats vectors
+                //write to game_stats vectors
                 game_stats->at(i)->at(j) = winner;
             }
         }
-        //TODO: display results
         displayResults();
     }
     void Tournament::displayResults() {
@@ -575,26 +574,26 @@ namespace GameEngine {
     }
 
     void Tournament::prepareTournament() {
-        //TODO: Ask user to choose number of maps (1, 5)
+        //Ask user to choose number of maps (1, 5)
         *num_maps = Terminal::print_select(1, 5, "Select number of maps");
-        //TODO: Ask user how many games to play in each map (1, 5)
+        //Ask user how many games to play in each map (1, 5)
         *numGames = Terminal::print_select(1, 5, "Select number of games to play in each map");
-        //TODO: Ask user to select that number of maps (from available maps)
-        // Currenctly assuming these are all valid
+        //Ask user to select that number of maps (from available maps)
+        //Currently assuming these are all valid
         for (int i = 0; i < *num_maps; i++) {
             map_indices->emplace_back(Terminal::print_select(GameEngine::instance()->get_available_map()));
             game_stats->emplace_back(new vector<string *>(*numGames));
         }
 
-        //TODO: Ask user how many players (2, 4)
+        //Ask user how many players (2, 4)
         int num_players = Terminal::print_select(2, 4, "Select number of players");
         for (int i = 0; i < num_players; i++) {
             auto *p = new Player::Player();
             p->select_strategy();
             players->emplace_back(p);
         }
-        //TODO: Ask user the max number of turns allowed (10 - 50)
-        *maxTurns = Terminal::print_select(1, 50, "Select maximum number of turns per game");
+        //Ask user the max number of turns allowed (10 - 50)
+        *maxTurns = Terminal::print_select(10, 50, "Select maximum number of turns per game");
 
         GameEngine::instance()->set_tournament(*maxTurns);
         GameEngine::instance()->set_players(players);
