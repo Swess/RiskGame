@@ -113,4 +113,40 @@ namespace Player {
         void reinforce(int i) override;
     };
 
+    /* Random player strategy is a concrete player strategy
+     * A random computer player that reinforces random a random country, attacks a random number
+     * of times a random country, and fortifies a random country.
+     */
+    class RandomPlayerStrategy : public PlayerStrategies {
+    public:
+        RandomPlayerStrategy() = default;
+        explicit RandomPlayerStrategy(Player * player);
+        ~RandomPlayerStrategy() override;
+        bool attack() override;
+        vector<Board::Country *> fortify() override;
+        void reinforce(int i) override;
+    private:
+        int battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const override;
+    };
+
+    /*
+     * A Cheater Computer Player Strategy whose reinforce() method doubles the number of armies on all
+        its countries, whose attack() method automatically conquers all the neighbors of all its countries, and
+        whose fortify() method doubles the number of armies on its countries that have neighbors that belong
+        to other players.
+     */
+
+    class CheaterPlayerStrategy : public PlayerStrategies {
+    public:
+        CheaterPlayerStrategy() = default;
+        explicit CheaterPlayerStrategy(Player * player);
+        ~CheaterPlayerStrategy() override;
+        bool attack() override;
+        vector<Board::Country *> fortify() override;
+        void reinforce(int i) override;
+
+    private:
+        int battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const override;
+    };
+
 }
