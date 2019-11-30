@@ -798,10 +798,7 @@ forces in one country),
     }
 
     bool CheaterPlayerStrategy::attack() {
-        vector<Board::Country *> current_country;
-        for (auto country : player->get_countries()){ // Check all his country
-           current_country.emplace_back(country);
-        }
+        vector<Board::Country *> current_country = player->get_countries();
 
         for (auto country : current_country){
             for (auto neighbor : *country->get_neighbors()){
