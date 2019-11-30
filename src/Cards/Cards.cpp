@@ -168,4 +168,8 @@ bool Hand::cardsValidForExchange(const int *handIndices){
     vector<Card *> * Hand::get_cards() {
         return cards;
     }
+
+    void Hand::clear_hand() {
+        this->cards->clear();
+    }
 }

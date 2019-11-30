@@ -13,15 +13,22 @@ namespace Player {
      * PlayerStrategies uses the Strategy design pattern, and is the Strategy (super class) class where other
      * Concrete Strategy will extends. It needs a reference of the player object it lives in.
      */
+    enum class strategy_type {
+        HUMAN = 0, BENEVOLENT =1, AGGRESSIVE = 2, RANDOM = 3, CHEATER = 4
+    };
+
+    vector<string> get_available_strategies();
+
     class PlayerStrategies {
     private:
         virtual int battle_and_get_last_roll_amount(Board::Country *source, Board::Country *target) const = 0;
     protected:
         Player * player;
+        strategy_type *type;
         int get_attacker_amount_of_dice(Board::Country *source) const;
     public:
         PlayerStrategies();
-        PlayerStrategies(Player *received_player);
+        PlayerStrategies(Player *received_player, strategy_type received_type);
         virtual ~PlayerStrategies();
         /*
          * @return true if the attacker gain atleast one country (useful for deck handling)
@@ -41,6 +48,11 @@ namespace Player {
          * set a player reference to the strategy. Must only be used by the player constructor.
          */
         void setPlayer(Player *d_player);
+        /**
+         * convert type enum to string for display
+         */
+         string get_type_string();
+         strategy_type get_type();
     };
 
     /*

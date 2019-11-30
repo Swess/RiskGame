@@ -23,46 +23,54 @@ int main(int argc, const char*argv[]) {
     Terminal::print("Domination Game - Team 12 - COMP 345");
 
     bool test = false;
+    bool tournament = false;
 
     for (int i = 0; i < argc; i++)
     {
-        string string_test = "test";
+        string string_test = "test", string_tournament = "tournament";
         if (string_test == argv[i] ) test = true;
+        if (string_tournament == argv[i]) tournament = true;
     }
 
 
     // Terminal::debug_mode_on();
-    if (test) {
-        Terminal::test_mode_on();
-        Terminal::run_test("MapLoader", MapLoader::Driver::run);
-        Terminal::run_test("Map", Board::Driver::run);
-        Terminal::run_test("Dice", Dice::Driver::run);
-        Terminal::run_test("Cards", Cards::Driver::run);
-        Terminal::run_test("Player", Player::Driver::run);
-        Terminal::run_test("GameEngine", GameEngine::Driver::run);
-        Terminal::run_test("PlayerStrategies", PlayerStrategies::Driver::run);
-        Terminal::run_test("PlayerObservers", PlayerObserver::Driver::run);
-        Terminal::run_test("GameStatisticsObserver", GameStatisticsObserver::Driver::run);
-
-        Terminal::test_mode_off();
+    if (tournament) {
+        GameEngine::Tournament risk_tournament = GameEngine::Tournament();
+        risk_tournament.start();
     } else {
-        auto gameInstance = GameEngine::GameEngine::instance();
-        int debug_mode = Terminal::print_select("Do you want debug mode on?");
-        if (debug_mode) Terminal::debug_mode_on();
-        int automated_start = Terminal::print_select("Do you want an automated start set-up?");
-        if (automated_start){
-            int players = Terminal::print_select(2,6, "How many players?");
+        if (test) {
             Terminal::test_mode_on();
-            gameInstance->start_test(7 , players);
-            gameInstance->startup_phase();
+            Terminal::run_test("MapLoader", MapLoader::Driver::run);
+            Terminal::run_test("Map", Board::Driver::run);
+            Terminal::run_test("Dice", Dice::Driver::run);
+            Terminal::run_test("Cards", Cards::Driver::run);
+            Terminal::run_test("Player", Player::Driver::run);
+            Terminal::run_test("GameEngine", GameEngine::Driver::run);
+            Terminal::run_test("PlayerStrategies", PlayerStrategies::Driver::run);
+            Terminal::run_test("PlayerObservers", PlayerObserver::Driver::run);
+            Terminal::run_test("GameStatisticsObserver", GameStatisticsObserver::Driver::run);
+
             Terminal::test_mode_off();
         } else {
-            gameInstance->start();
-            gameInstance->startup_phase();
+            auto gameInstance = GameEngine::GameEngine::instance();
+            int debug_mode = Terminal::print_select("Do you want debug mode on?");
+            if (debug_mode) Terminal::debug_mode_on();
+            int automated_start = Terminal::print_select("Do you want an automated start set-up?");
+            if (automated_start){
+                int players = Terminal::print_select(2,6, "How many players?");
+                Terminal::test_mode_on();
+                gameInstance->start_test(7 , players);
+                gameInstance->startup_phase();
+                Terminal::test_mode_off();
+            } else {
+                gameInstance->start();
+                gameInstance->startup_phase();
+            }
+            auto *game_state_observer = new Observer::GameStateObserver(gameInstance->game_state, game_state_callback);
+            gameInstance->game_loop();
         }
-        auto *game_state_observer = new Observer::GameStateObserver(gameInstance->game_state, game_state_callback);
-        gameInstance->game_loop();
     }
+
 
     return 0;
 }

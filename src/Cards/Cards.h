@@ -44,6 +44,7 @@ class Hand {
 public:
     Hand();
     ~Hand();
+    void clear_hand();
     void insertCard(Card card);
     int exchange(int cardIndices[]);
     bool cardsValidForExchange(const int handIndices[]);

@@ -56,14 +56,20 @@ class Player : public Observer::PlayerSubject {
         Cards::Hand *hand;
 
         Player();
-        Player(PlayerStrategies * playerStrategies1);
+        explicit Player(PlayerStrategies * playerStrategies1);
         virtual ~Player();
+        void select_strategy();
 
+        /**
+         * Player is about to be used in another game, clear all previous data except strategy and colour
+         */
+        void clearPlayerForNewGame();
         /**
          * change player strategy at runtime
          */
         void setPlayerStrategy(PlayerStrategies * playerStrategies1);
 
+        PlayerStrategies *getPlayerStrategy();
         /**
          * Take control of a country and handle logic for making sure the player is the only
          * one that has control.
