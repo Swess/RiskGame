@@ -166,6 +166,7 @@ namespace GameEngine {
                 tournament_1->displayResults();
                 //When finished, deleting everything
                 GameEngine::instance()->game_state->clear();
+                tournament_1->~Tournament();
         }
 
     }
