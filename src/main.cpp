@@ -32,7 +32,8 @@ int main(int argc, const char*argv[]) {
         if (string_test == argv[i] ) test = true;
     }
 
-
+    //test tournament
+    GameEngine::Driver::tournament_driver();
 
     // Terminal::debug_mode_on();
     if (test) {

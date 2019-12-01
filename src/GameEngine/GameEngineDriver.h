@@ -19,7 +19,9 @@ namespace GameEngine {
         bool correct_country_players_assignation_count();
         bool test_game_loop();
         bool test_game_done();
+        bool test_tournament();
         bool run();
+        void tournament_driver();
     }
 };
 

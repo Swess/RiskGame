@@ -503,12 +503,13 @@ namespace GameEngine {
     /*
      * Tournament
      */
-//    Tournament::Tournament(vector<Map*> *maps, vector<Player::Player*> *players, int *numGames, int *maxTurns) {
+//        Tournament::Tournament(vector<Map*> *maps, vector<Player::Player*> *players, int *numGames, int *maxTurns) {
 //        this->maps = maps;
 //        this->players = players;
 //        this->numGames = numGames;
 //        this->maxTurns = maxTurns;
 //    }
+
     Tournament::Tournament() {
         map_indices = new vector<int>;
         maps = new vector<Map*>;
@@ -598,6 +599,5 @@ namespace GameEngine {
         GameEngine::instance()->set_tournament(*maxTurns);
         GameEngine::instance()->set_players(players);
     }
-
 
 }

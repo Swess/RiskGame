@@ -21,7 +21,8 @@ namespace GameEngine {
                     mutex_country_to_players() &&
                     correct_country_players_assignation_count() &&
                     test_game_done() &&
-                    test_game_loop()
+                    test_game_loop() &&
+                    test_tournament()
             );
 
             return passed;
@@ -147,6 +148,22 @@ namespace GameEngine {
         bool test_game_loop() {
             // TODO ?
             return true;
+        }
+
+        bool test_tournament(){
+            //TODO
+            return true;
+        }
+
+        void tournament_driver(){
+            //TO BE MOVED IF NECESSARY
+            // (2) when the tournament mode is chosen, the user is asked to select
+                auto tournament_1 = new Tournament();
+                tournament_1->prepareTournament(); // asks for num_maps, num_players, num_games, num_turns
+            // (3) after being started, the tournament runs without any user interaction
+                tournament_1->start();
+            // (4) upon completion, the results of the tournament are displayed as depicted above
+                tournament_1->displayResults();
         }
 
     }

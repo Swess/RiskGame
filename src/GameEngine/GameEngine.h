@@ -110,12 +110,12 @@ class Tournament {
 
 
     public:
-        Tournament(vector<Map*> maps, vector<Player::Player*> players, int numGames, int maxTurns);
+       // Tournament(vector<Map*> *maps, vector<Player::Player*> *players, int *numGames, int *maxTurns);
         Tournament();
         ~Tournament();
 
         void start();
-        void prepareTournament();
+        void prepareTournament(); // Constructor with user input
         void play(int Map);
         void displayResults();
 };
