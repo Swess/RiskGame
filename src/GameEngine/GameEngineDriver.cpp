@@ -134,8 +134,7 @@ namespace GameEngine {
         }
 
         bool test_game_done() {
-            int nb_of_players = 2;
-            GameEngine::instance()->start_test(0, nb_of_players);
+            GameEngine::instance()->start();
             GameEngine::instance()->startup_phase();
             vector<Country *> countries = GameEngine::instance()->get_map()->get_countries();
             GameEngine::instance()->get_players()->at(0)->gain_control(countries);
@@ -151,7 +150,24 @@ namespace GameEngine {
         }
 
         bool test_tournament(){
-            //TODO
+
+            auto tournament_1 = new Tournament();
+            vector<int> input_vector = {2, 2, 2, 4, 2, 3, 3, 12};
+            Terminal::set_input_vector(input_vector);
+
+            // (2) when the tournament mode is chosen, the user is asked to select
+            tournament_1->prepareTournament(); // asks for num_maps, num_players, num_games, num_turns
+            // (3) after being started, the tournament runs without any user interaction
+            tournament_1->start();
+            // (4) upon completion, the results of the tournament are displayed as depicted above
+            tournament_1->displayResults();
+            //When finished, deleting everything
+            Terminal::clear_terminal_input_counter();
+            GameEngine::instance()->game_state->clear();
+            tournament_1->~Tournament();
+
+            //assert( = );
+            GameEngine::instance()->reset_test();
             return true;
         }
 

@@ -22,7 +22,7 @@ int main(int argc, const char*argv[]) {
 
     Terminal::print("Domination Game - Team 12 - COMP 345");
 
-    bool test = false;
+    bool test = true;
     bool tournament = false;
 
     tournament = Terminal::print_select("Would you like to play a tournament?");
@@ -33,20 +33,21 @@ int main(int argc, const char*argv[]) {
     }
 
     //test tournament
-    GameEngine::Driver::tournament_driver();
+   // GameEngine::Driver::tournament_driver();
 
     // Terminal::debug_mode_on();
     if (test) {
         Terminal::test_mode_on();
-        Terminal::run_test("MapLoader", MapLoader::Driver::run);
-        Terminal::run_test("Map", Board::Driver::run);
-        Terminal::run_test("Dice", Dice::Driver::run);
-        Terminal::run_test("Cards", Cards::Driver::run);
-        Terminal::run_test("Player", Player::Driver::run);
-        Terminal::run_test("GameEngine", GameEngine::Driver::run);
-        Terminal::run_test("PlayerStrategies", PlayerStrategies::Driver::run);
-        Terminal::run_test("PlayerObservers", PlayerObserver::Driver::run);
-        Terminal::run_test("GameStatisticsObserver", GameStatisticsObserver::Driver::run);
+//        Terminal::run_test("MapLoader", MapLoader::Driver::run);
+//        Terminal::run_test("Map", Board::Driver::run);
+//        Terminal::run_test("Dice", Dice::Driver::run);
+//        Terminal::run_test("Cards", Cards::Driver::run);
+//        Terminal::run_test("Player", Player::Driver::run);
+//        Terminal::run_test("GameEngine", GameEngine::Driver::run);
+          Terminal::run_test("Tournament", GameEngine::Driver::test_tournament);
+//        Terminal::run_test("PlayerStrategies", PlayerStrategies::Driver::run);
+//        Terminal::run_test("PlayerObservers", PlayerObserver::Driver::run);
+//        Terminal::run_test("GameStatisticsObserver", GameStatisticsObserver::Driver::run);
 
         Terminal::test_mode_off();
     } else {
