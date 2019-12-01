@@ -518,7 +518,6 @@ namespace GameEngine {
         num_maps = new int();
         numGames = new int();
         maxTurns = new int();
-       prepareTournament();
     }
 
     Tournament::~Tournament() {
@@ -539,8 +538,6 @@ namespace GameEngine {
                 game_engine->load_map(map_indices->at(i));
                 //create deck
                 game_engine->create_deck();
-                //set players
-//                game_engine->set_players(players);
                 //distribute countries
                 game_engine->startup_phase();
                 //run game loop loop
@@ -556,7 +553,6 @@ namespace GameEngine {
                 game_stats->at(i)->at(j) = winner;
             }
         }
-        displayResults();
     }
     void Tournament::displayResults() {
         ostringstream os;

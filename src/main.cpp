@@ -54,7 +54,9 @@ int main(int argc, const char*argv[]) {
 
         if (tournament) {
             auto *risk_tournament = new GameEngine::Tournament;
+            risk_tournament->prepareTournament();
             risk_tournament->start();
+            risk_tournament->displayResults();
         }
     else {
             auto gameInstance = GameEngine::GameEngine::instance();
