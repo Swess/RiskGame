@@ -152,7 +152,7 @@ namespace GameEngine {
         bool test_tournament(){
             Terminal::test_mode_on();
             auto *tournament_1 = new Tournament();
-            vector<int> input_vector = {2, 2, 7, 12, 2, 3, 3, 12};
+            vector<int> input_vector = {2, 2, 7, 12, 2, 2, 2, 12}; //testing with 2 maps, 2 games, 2 players with random behavior and 12 max turns
             Terminal::set_input_vector(input_vector);
 
             // (2) when the tournament mode is chosen, the user is asked to select
@@ -166,7 +166,7 @@ namespace GameEngine {
             //assert( = );
 
             //When finished, deleting everything
-           
+
             GameEngine::instance()->game_state->clear();
             GameEngine::instance()->reset_test();
             return true;
