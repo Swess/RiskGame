@@ -500,16 +500,6 @@ namespace GameEngine {
         *game_over = false;
     }
 
-    /*
-     * Tournament
-     */
-//        Tournament::Tournament(vector<Map*> *maps, vector<Player::Player*> *players, int *numGames, int *maxTurns) {
-//        this->maps = maps;
-//        this->players = players;
-//        this->numGames = numGames;
-//        this->maxTurns = maxTurns;
-//    }
-
     Tournament::Tournament() {
         map_indices = new vector<int>;
         maps = new vector<Map*>;
@@ -532,24 +522,18 @@ namespace GameEngine {
         for (int i = 0; i < map_indices->size(); i++) {
             for (int j = 0; j < *numGames; j++) {
                 game_engine->set_tournament(*maxTurns);
-                //call new game
                 game_engine->new_game();
-                //load map
                 game_engine->load_map(map_indices->at(i));
-                //create deck
                 game_engine->create_deck();
-                //distribute countries
                 game_engine->startup_phase();
-                //run game loop loop
                 game_engine->game_loop();
                 //check for winner
-                string *winner = new string;
+                auto *winner = new string;
                 if (game_engine->game_state->get_winner())  {   // is winner null?
                     *winner = game_engine->game_state->get_winner()->getPlayerStrategy()->get_type_string();
                 } else {
                     *winner = "draw";
                 }
-                //write to game_stats vectors
                 game_stats->at(i)->at(j) = winner;
             }
         }
@@ -576,7 +560,6 @@ namespace GameEngine {
         //Ask user how many games to play in each map (1, 5)
         *numGames = Terminal::print_select(1, 5, "Select number of games to play in each map");
         //Ask user to select that number of maps (from available maps)
-        //Currently assuming these are all valid
         for (int i = 0; i < *num_maps; i++) {
             map_indices->emplace_back(Terminal::print_select(GameEngine::instance()->get_available_map()));
             game_stats->emplace_back(new vector<string *>(*numGames));
