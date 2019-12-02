@@ -21,7 +21,6 @@ namespace GameEngine {
         bool test_game_done();
         bool test_tournament();
         bool run();
-        void tournament_driver();
     }
 };
 

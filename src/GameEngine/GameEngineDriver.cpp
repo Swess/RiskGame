@@ -151,7 +151,7 @@ namespace GameEngine {
 
         bool test_tournament(){
             Terminal::test_mode_on();
-            auto tournament_1 = new Tournament();
+            auto *tournament_1 = new Tournament();
             vector<int> input_vector = {2, 2, 7, 12, 2, 3, 3, 12};
             Terminal::set_input_vector(input_vector);
 
@@ -162,27 +162,13 @@ namespace GameEngine {
             tournament_1->start();
             // (4) upon completion, the results of the tournament are displayed as depicted above
             tournament_1->displayResults();
-            //When finished, deleting everything
-            GameEngine::instance()->game_state->clear();
-
             //assert( = );
+
+            //When finished, deleting everything
+            delete tournament_1;
+            GameEngine::instance()->game_state->clear();
             GameEngine::instance()->reset_test();
             return true;
         }
-
-        void tournament_driver(){
-            //TO BE MOVED IF NECESSARY
-            // (2) when the tournament mode is chosen, the user is asked to select
-                auto tournament_1 = new Tournament();
-                tournament_1->prepareTournament(); // asks for num_maps, num_players, num_games, num_turns
-            // (3) after being started, the tournament runs without any user interaction
-                tournament_1->start();
-            // (4) upon completion, the results of the tournament are displayed as depicted above
-                tournament_1->displayResults();
-                //When finished, deleting everything
-                GameEngine::instance()->game_state->clear();
-                tournament_1->~Tournament();
-        }
-
     }
 };
