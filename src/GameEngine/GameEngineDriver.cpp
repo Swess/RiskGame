@@ -162,11 +162,13 @@ namespace GameEngine {
             tournament_1->start();
             // (4) upon completion, the results of the tournament are displayed as depicted above
             tournament_1->displayResults();
-
-            //assert( = );
+            // Asserting that game completed as expected
+            assert(GameEngine::instance()->get_map()->get_continents().at(8)->get_name() == "Mordor"); //checking that the right map has loaded
+            assert(GameEngine::instance()->get_players()->size() == 2); // checking number of instantiated players
+            assert(GameEngine::instance()->game_state->get_winner() == nullptr); // checking that the winner is null (because games always end in draws)
+            assert(GameEngine::instance()->is_game_done()); // checking that the game has ended correctly
 
             //When finished, deleting everything
-
             GameEngine::instance()->game_state->clear();
             GameEngine::instance()->reset_test();
             return true;

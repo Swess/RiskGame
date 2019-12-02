@@ -115,7 +115,6 @@ class Tournament {
 
         void start();
         void prepareTournament(); // Constructor with user input
-        void play(int Map);
         void displayResults();
 };
 
