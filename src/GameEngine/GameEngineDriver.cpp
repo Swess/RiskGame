@@ -162,10 +162,11 @@ namespace GameEngine {
             tournament_1->start();
             // (4) upon completion, the results of the tournament are displayed as depicted above
             tournament_1->displayResults();
+
             //assert( = );
 
             //When finished, deleting everything
-            delete tournament_1;
+           
             GameEngine::instance()->game_state->clear();
             GameEngine::instance()->reset_test();
             return true;
