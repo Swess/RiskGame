@@ -22,10 +22,8 @@ int main(int argc, const char*argv[]) {
 
     Terminal::print("Domination Game - Team 12 - COMP 345");
 
-    bool test = true;
-    bool tournament = false;
+    bool test = false;
 
-    tournament = Terminal::print_select("Would you like to play a tournament?");
     for (int i = 0; i < argc; i++)
     {
         string string_test = "test";
@@ -35,30 +33,20 @@ int main(int argc, const char*argv[]) {
     // Terminal::debug_mode_on();
     if (test) {
         Terminal::test_mode_on();
-//        Terminal::run_test("MapLoader", MapLoader::Driver::run);
-//        Terminal::run_test("Map", Board::Driver::run);
-//        Terminal::run_test("Dice", Dice::Driver::run);
-//        Terminal::run_test("Cards", Cards::Driver::run);
-//        Terminal::run_test("Player", Player::Driver::run);
-//        Terminal::run_test("GameEngine", GameEngine::Driver::run);
-          Terminal::run_test("Tournament", GameEngine::Driver::test_tournament);
-//        Terminal::run_test("PlayerStrategies", PlayerStrategies::Driver::run);
-//        Terminal::run_test("PlayerObservers", PlayerObserver::Driver::run);
-//        Terminal::run_test("GameStatisticsObserver", GameStatisticsObserver::Driver::run);
-
+        Terminal::run_test("PlayerStrategies", PlayerStrategies::Driver::run);
+        Terminal::run_test("Tournament", GameEngine::Driver::test_tournament);
         Terminal::test_mode_off();
     } else {
-
+        auto gameInstance = GameEngine::GameEngine::instance();
+        int debug_mode = Terminal::print_select("Do you want debug mode on?");
+        if (debug_mode) Terminal::debug_mode_on();
+        bool tournament = Terminal::print_select("Would you like to play a tournament?");
         if (tournament) {
-            auto *risk_tournament = new GameEngine::Tournament;
-            risk_tournament->prepareTournament();
-            risk_tournament->start();
-            risk_tournament->displayResults();
-        }
-    else {
-            auto gameInstance = GameEngine::GameEngine::instance();
-            int debug_mode = Terminal::print_select("Do you want debug mode on?");
-            if (debug_mode) Terminal::debug_mode_on();
+            GameEngine::Tournament tournament1;
+            tournament1.prepareTournament();
+            tournament1.start();
+            tournament1.displayResults();
+        } else {
             int automated_start = Terminal::print_select("Do you want an automated start set-up?");
             if (automated_start) {
                 int players = Terminal::print_select(2, 6, "How many players?");
@@ -74,6 +62,7 @@ int main(int argc, const char*argv[]) {
             gameInstance->game_loop();
         }
     }
+
 
 
     return 0;

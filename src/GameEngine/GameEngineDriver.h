@@ -17,7 +17,6 @@ namespace GameEngine {
         bool right_amount_of_card_in_deck();
         bool mutex_country_to_players();
         bool correct_country_players_assignation_count();
-        bool test_game_loop();
         bool test_game_done();
         bool test_tournament();
         bool run();

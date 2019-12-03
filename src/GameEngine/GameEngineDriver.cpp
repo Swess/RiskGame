@@ -21,7 +21,6 @@ namespace GameEngine {
                     mutex_country_to_players() &&
                     correct_country_players_assignation_count() &&
                     test_game_done() &&
-                    test_game_loop() &&
                     test_tournament()
             );
 
@@ -144,24 +143,19 @@ namespace GameEngine {
             return true;
         }
 
-        bool test_game_loop() {
-            // TODO ?
-            return true;
-        }
-
         bool test_tournament(){
             Terminal::test_mode_on();
-            auto *tournament_1 = new Tournament();
-            vector<int> input_vector = {2, 2, 7, 12, 2, 2, 2, 12}; //testing with 2 maps, 2 games, 2 players with random behavior and 12 max turns
+            Tournament tournament1;
+            vector<int> input_vector = {2, 2, 7, 12, 2, 2, 2, 13}; //testing with 2 maps, 2 games, 2 players with random behavior and 12 max turns
             Terminal::set_input_vector(input_vector);
 
             // (2) when the tournament mode is chosen, the user is asked to select
-            tournament_1->prepareTournament(); // asks for num_maps, num_players, num_games, num_turns
+            tournament1.prepareTournament(); // asks for num_maps, num_players, num_games, num_turns
             Terminal::clear_terminal_input_counter();
             // (3) after being started, the tournament runs without any user interaction
-            tournament_1->start();
+            tournament1.start();
             // (4) upon completion, the results of the tournament are displayed as depicted above
-            tournament_1->displayResults();
+            tournament1.displayResults();
             // Asserting that game completed as expected
             assert(GameEngine::instance()->get_map()->get_continents().at(8)->get_name() == "Mordor"); //checking that the right map has loaded
             assert(GameEngine::instance()->get_players()->size() == 2); // checking number of instantiated players
