@@ -2,11 +2,8 @@
 // Created by ker10 on 2019-09-26.
 //
 
-#include <iostream>
 #include <vector>
-#include <sstream>
 #include "Player.h"
-#include "../Cards/Cards.h"
 #include "../Dice/Dice.h"
 #include "../Terminal/Terminal.h"
 #include "../GameEngine/GameEngine.h"
@@ -315,6 +312,10 @@ namespace Player {
         playerStrategies = playerStrategies1;
     }
 
+    PlayerStrategies *Player::getPlayerStrategy() {
+        return playerStrategies;
+    }
+
     void Player::set_source_country(Country *country) {
         source_country = country;
         notify();
@@ -359,6 +360,32 @@ namespace Player {
 
     vector<pair<int, Country*>*> *Player::get_reinforcement_vector() {
         return reinforce_pair_vector;
+    }
+
+    void Player::clearPlayerForNewGame() {
+        this->countries->clear();
+        this->hand->clear_hand();
+    }
+
+    void Player::select_computer_strategy() {
+        vector<string> available_strategies = {"Benevolent", "Aggressive", "Random", "Cheater"};
+        int strat_index = Terminal::print_select(available_strategies);
+        switch (strat_index) {
+            case 0:
+                setPlayerStrategy(new BenevolentPlayerStrategy(this));
+                break;
+            case 1:
+                setPlayerStrategy(new AggressivePlayerStrategy(this));
+                break;
+            case 2:
+                setPlayerStrategy(new RandomPlayerStrategy(this));
+                break;
+            case 3:
+                setPlayerStrategy(new CheaterPlayerStrategy(this));
+                break;
+            default:
+                break;
+        }
     }
 
 }

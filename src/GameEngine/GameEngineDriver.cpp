@@ -21,7 +21,7 @@ namespace GameEngine {
                     mutex_country_to_players() &&
                     correct_country_players_assignation_count() &&
                     test_game_done() &&
-                    test_game_loop()
+                    test_tournament()
             );
 
             return passed;
@@ -133,8 +133,7 @@ namespace GameEngine {
         }
 
         bool test_game_done() {
-            int nb_of_players = 2;
-            GameEngine::instance()->start_test(0, nb_of_players);
+            GameEngine::instance()->start();
             GameEngine::instance()->startup_phase();
             vector<Country *> countries = GameEngine::instance()->get_map()->get_countries();
             GameEngine::instance()->get_players()->at(0)->gain_control(countries);
@@ -144,10 +143,29 @@ namespace GameEngine {
             return true;
         }
 
-        bool test_game_loop() {
-            // TODO ?
+        bool test_tournament(){
+            Terminal::test_mode_on();
+            Tournament tournament1;
+            vector<int> input_vector = {2, 2, 7, 12, 2, 2, 2, 13}; //testing with 2 maps, 2 games, 2 players with random behavior and 12 max turns
+            Terminal::set_input_vector(input_vector);
+
+            // (2) when the tournament mode is chosen, the user is asked to select
+            tournament1.prepareTournament(); // asks for num_maps, num_players, num_games, num_turns
+            Terminal::clear_terminal_input_counter();
+            // (3) after being started, the tournament runs without any user interaction
+            tournament1.start();
+            // (4) upon completion, the results of the tournament are displayed as depicted above
+            tournament1.displayResults();
+            // Asserting that game completed as expected
+            assert(GameEngine::instance()->get_map()->get_continents().at(8)->get_name() == "Mordor"); //checking that the right map has loaded
+            assert(GameEngine::instance()->get_players()->size() == 2); // checking number of instantiated players
+            assert(GameEngine::instance()->game_state->get_winner() == nullptr); // checking that the winner is null (because games always end in draws)
+            assert(GameEngine::instance()->is_game_done()); // checking that the game has ended correctly
+
+            //When finished, deleting everything
+            GameEngine::instance()->game_state->clear();
+            GameEngine::instance()->reset_test();
             return true;
         }
-
     }
 };

@@ -18,17 +18,19 @@ namespace Player {
 
     PlayerStrategies::PlayerStrategies() {
         player = nullptr;
+        type = nullptr;
     }
 
-    PlayerStrategies::PlayerStrategies(Player * received_player) {
+    PlayerStrategies::PlayerStrategies(Player * received_player, strategy_type received_type) {
         player = received_player;
+        type = new strategy_type(received_type);
     }
 
     PlayerStrategies::~PlayerStrategies() {
         // do nothing
     }
 
-    HumanPlayerStrategy::HumanPlayerStrategy(Player *player) : PlayerStrategies(player) {
+    HumanPlayerStrategy::HumanPlayerStrategy(Player *player) : PlayerStrategies(player, strategy_type::HUMAN) {
 
     }
 
@@ -342,7 +344,22 @@ namespace Player {
         this->player = d_player;
     }
 
-    BenevolentPlayerStrategy::BenevolentPlayerStrategy(Player *player) : PlayerStrategies(player) {
+    string PlayerStrategies::get_type_string() {
+        switch (*type) {
+            case strategy_type::HUMAN: return "Human";
+            case strategy_type::BENEVOLENT: return "Benevolent";
+            case strategy_type::AGGRESSIVE: return "Aggressive";
+            case strategy_type::RANDOM: return "Random";
+            case strategy_type::CHEATER: return "Cheater";
+            default: return "ERROR";
+        }
+    }
+
+    strategy_type PlayerStrategies::get_type() {
+        return *type;
+    }
+
+    BenevolentPlayerStrategy::BenevolentPlayerStrategy(Player *player) : PlayerStrategies(player, strategy_type::BENEVOLENT) {
 
     }
 
@@ -621,7 +638,7 @@ forces in one country),
         return last_roll_attacker;
     }
 
-    AggressivePlayerStrategy::AggressivePlayerStrategy(Player *player) : PlayerStrategies(player) {
+    AggressivePlayerStrategy::AggressivePlayerStrategy(Player *player) : PlayerStrategies(player, strategy_type::AGGRESSIVE) {
 
     }
 
@@ -629,7 +646,7 @@ forces in one country),
 
     }
 
-    RandomPlayerStrategy::RandomPlayerStrategy(Player *player) : PlayerStrategies(player) {
+    RandomPlayerStrategy::RandomPlayerStrategy(Player *player) : PlayerStrategies(player, strategy_type::RANDOM) {
 
     }
 
@@ -789,7 +806,7 @@ forces in one country),
         return last_roll_attacker;
     }
 
-    CheaterPlayerStrategy::CheaterPlayerStrategy(Player *player) : PlayerStrategies(player) {
+    CheaterPlayerStrategy::CheaterPlayerStrategy(Player *player) : PlayerStrategies(player, strategy_type::CHEATER) {
 
     }
 

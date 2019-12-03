@@ -105,31 +105,36 @@ namespace GameEngine {
         bool found_valid = false;
 
         while(!found_valid){
-            try {
-                MapLoader::MapLoader mapLoader;
-                map_selection = Terminal::print_select(maps);
-                map = mapLoader.load(map_selection)->build();
-
-                if(!map->is_connected()){
-                    Terminal::print("The selected does not represent a valid connected graph and playable map.");
-                    Terminal::print("Please select another one.");
-                    continue;
-                }
-
-                found_valid = true;
-            } catch (IOException &e) {
-                string error = e.what(maps[map_selection]);
-                Terminal::error(error);
-            } catch(runtime_error &e) {
-                string error = e.what();
-                Terminal::error(error);
-            } catch(exception &e){
-                string error = e.what();
-                Terminal::error(error);
-            }
+            MapLoader::MapLoader mapLoader;
+            map_selection = Terminal::print_select(maps);
+            found_valid = load_map(map_selection);
         }
 
         Terminal::debug("Map defined in GameEngine");
+    }
+
+    bool GameEngine::load_map(int map_selection) {
+        try {
+            MapLoader::MapLoader mapLoader;
+            map = mapLoader.load(map_selection)->build();
+
+            if(!map->is_connected()){
+                Terminal::print("The selected does not represent a valid connected graph and playable map.");
+                Terminal::print("Please select another one.");
+                return false;
+            }
+            return true;
+        } catch (IOException &e) {
+            string error = e.what("");
+            Terminal::error(error);
+        } catch(runtime_error &e) {
+            string error = e.what();
+            Terminal::error(error);
+        } catch(exception &e){
+            string error = e.what();
+            Terminal::error(error);
+        }
+        return false;
     }
 
 
@@ -218,6 +223,9 @@ namespace GameEngine {
         player_order = new vector<int>();
         player_observers = new vector<Observer::PlayerObserver*>();
         game_state = new GameState();
+        is_part_of_tournament = new bool(false);
+        max_turns = new int(-1);
+        turn_number = new int(-1);
     }
 
     GameEngine::~GameEngine() {
@@ -257,6 +265,20 @@ namespace GameEngine {
         players = new vector<Player::Player *>();
         game_state->clear();
     }
+
+    void GameEngine::new_game() {
+        delete map;
+        delete deck;
+        map = nullptr;
+        deck = nullptr;
+        delete player_order;
+        player_order = new vector<int>();
+        game_state->clear();
+        for (auto player : *players) {
+            player->clearPlayerForNewGame();
+        }
+    }
+
 
     vector<int> *GameEngine::get_player_order() {
         return player_order;
@@ -348,8 +370,18 @@ namespace GameEngine {
                 for(auto c_ptr : countries)
                     options.emplace_back(c_ptr->get_name() + " ("+to_string(c_ptr->get_armies())+" armies present)");
 
-                // Actually ask player
-                int answer = Terminal::print_select(options);
+                //ensure player is human
+                int answer;
+//                current_player->getPlayerStrategy()->get_type() == Player::strategy_type::HUMAN
+                if (*is_part_of_tournament){
+                    // for now randomly select
+                    srand(time(0));
+                    answer = rand() % options.size();
+                } else {
+                    // Actually ask player
+                    answer = Terminal::print_select(options);
+                }
+
 
                 // Process
                 countries.at(answer)->set_armies(countries.at(answer)->get_armies()+1);
@@ -365,7 +397,6 @@ namespace GameEngine {
         int count;
         bool needs_update;
         while (!game_done()) {
-            count = 0;
             needs_update = false;
             for(int player_index : *player_order){
                 if (game_done()) continue;
@@ -376,12 +407,19 @@ namespace GameEngine {
                     update_state();
                 }
             }
+            *turn_number += 1;
         }
     }
 
 
 
     bool GameEngine::game_done() {
+        if (*is_part_of_tournament) {
+            if (*turn_number >= *max_turns) {
+                *game_state->game_over = true;
+                return true;
+            }
+        }
         for(int player_index : *player_order){
             if (players->at(player_index)->get_countries().size() == map->get_countries().size()) {
                 *game_state->game_over = true;
@@ -407,6 +445,17 @@ namespace GameEngine {
         }
         game_state->notify();
     }
+
+    void GameEngine::set_tournament(int received_max_turns) {
+        *is_part_of_tournament = true;
+        *this->max_turns = received_max_turns;
+        *turn_number = 0;
+    }
+
+    void GameEngine::set_players(vector<Player::Player*>* received_players) {
+        this->players = received_players;
+    }
+
 
     GameState::GameState() {
         players_in_game = new vector<Player::Player *>;
@@ -449,6 +498,85 @@ namespace GameEngine {
         players_in_game->clear();
         winner = nullptr;
         *game_over = false;
+    }
+
+    Tournament::Tournament() {
+        map_indices = new vector<int>;
+        maps = new vector<Map*>;
+        players = new vector<Player::Player*>;
+        game_stats = new vector<vector<string *>*>;
+        num_maps = new int();
+        numGames = new int();
+        maxTurns = new int();
+    }
+
+    Tournament::~Tournament() {
+        delete numGames;
+        delete num_maps;
+        delete maxTurns;
+        delete players;
+        delete maps;
+    }
+    void Tournament::start() {
+        GameEngine *game_engine = GameEngine::instance();
+        for (int i = 0; i < map_indices->size(); i++) {
+            for (int j = 0; j < *numGames; j++) {
+                game_engine->set_tournament(*maxTurns);
+                game_engine->new_game();
+                game_engine->load_map(map_indices->at(i));
+                game_engine->create_deck();
+                game_engine->startup_phase();
+                game_engine->game_loop();
+                //check for winner
+                auto *winner = new string;
+                if (game_engine->game_state->get_winner())  {   // is winner null?
+                    *winner = game_engine->game_state->get_winner()->getPlayerStrategy()->get_type_string();
+                } else {
+                    *winner = "draw";
+                }
+                game_stats->at(i)->at(j) = winner;
+            }
+        }
+    }
+    void Tournament::displayResults() {
+        ostringstream os;
+        //top row
+        os << "map/game";
+        for (int i = 0; i < *numGames; i++) {
+            os << "\tGame " << (i + 1);
+        }
+        for (int i = 0; i < *num_maps; i++) {
+            os << "\nMap " << i + 1 << "\t";
+            for (int j = 0; j < *numGames; j++) {
+                os << "\t" << *game_stats->at(i)->at(j);
+            }
+        }
+        Terminal::print(os.str());
+    }
+
+    void Tournament::prepareTournament() {
+        //Ask user to choose number of maps (1, 5)
+        *num_maps = Terminal::print_select(1, 5, "Select number of maps");
+        //Ask user how many games to play in each map (1, 5)
+        *numGames = Terminal::print_select(1, 5, "Select number of games to play in each map");
+        //Ask user to select that number of maps (from available maps)
+        for (int i = 0; i < *num_maps; i++) {
+            map_indices->emplace_back(Terminal::print_select(GameEngine::instance()->get_available_map()));
+            game_stats->emplace_back(new vector<string *>(*numGames));
+        }
+
+        //Ask user how many players (2, 4)
+        int num_players = Terminal::print_select(2, 4, "Select number of players");
+        for (int i = 0; i < num_players; i++) {
+            auto *p = new Player::Player();
+            p->select_computer_strategy();
+            players->emplace_back(p);
+        }
+        //Ask user the max number of turns allowed (10 - 50)
+        *maxTurns = Terminal::print_select(10, 50, "Select maximum number of turns per game");
+
+        GameEngine::instance()->set_tournament(*maxTurns);
+        GameEngine::instance()->set_players(players);
     }
 
 }
